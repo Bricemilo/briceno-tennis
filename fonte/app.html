@@ -58,6 +58,13 @@ a{color:var(--dj-signal)}
 #boot .bt-ctl{display:flex;flex-direction:column;align-items:center;gap:14px;min-height:96px}
 #boot:not(.lock) .bt-ctl{visibility:hidden}
 #boot.busy .bt-ctl{opacity:.5;pointer-events:none}
+/* abertura: o "T" da quadra se desenha e a bola cai na linha */
+#boot .bt-mark .ln path{stroke-dasharray:1;stroke-dashoffset:1;animation:bt-line .45s .1s cubic-bezier(.6,0,.2,1) forwards}
+#boot .bt-mark .ln .ln2{animation-delay:.3s}
+#boot .bt-mark .bl{transform-box:fill-box;transform-origin:50% 100%;opacity:0;animation:bt-ball .45s .6s cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes bt-line{to{stroke-dashoffset:0}}
+@keyframes bt-ball{from{opacity:0;translate:0 -14px}to{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion: reduce){#boot .bt-mark .ln path{animation:none;stroke-dashoffset:0}#boot .bt-mark .bl{animation:none;opacity:1}}
 @keyframes bt-in{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){#boot .bt-mark,#boot .bt-name{animation:none}}
 .bt-face{display:flex;align-items:center;gap:10px;padding:14px 22px;border-radius:var(--r-pill);font-weight:650;color:#140903;
