@@ -51,8 +51,68 @@ const ICON = {
   person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>',
   save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg>',
   faceid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 16c1.5 1 3.5 1 5 0"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z"/></svg>',
+  pulse:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>',
   ball:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 6.5c3 2 4 3.6 4 5.5s-1 3.5-4 5.5M18.5 6.5c-3 2-4 3.6-4 5.5s1 3.5 4 5.5"/></svg>'
 };
+
+/* ---------- cartões-joia (mesma construção do Briceno Life, Home v35) ----------
+   JEWEL(cls): lâmina de luz vetorial que nasce na base e sobe em curva até a borda direita, com estrias e ponto quente. */
+const JEWEL = (() => {
+  const B = {v35: 1, ex: 186, n: 7, ox: 1.5, oy: -2.6, pk: .76, fill: 0.3, glow: 0.58};
+  const M = {
+    clay: {c: "#F2924E", hi: "#FFE6C4", sx: 66, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
+    prio: {c: "#F4B06A", hi: "#FFF1CE", sx: 72, ey: 38, c1: [120, 112], c2: [160, 82], n: 9, glow: 0.62},
+    move: {c: "#46D6C0", hi: "#DEFFF8", sx: 72, ey: 38, c1: [126, 114], c2: [164, 84], glow: 0.56},
+    sleep: {c: "#C590E4", hi: "#F7E6FF", sx: 80, ey: 42, c1: [130, 114], c2: [166, 86]},
+    wb: {c: "#F88E92", hi: "#FFE4E2", sx: 70, ey: 30, c1: [124, 110], c2: [162, 78], glow: 0.56},
+    water: {c: "#5CD0EE", hi: "#E2FAFF", sx: 104, ey: 36, c1: [140, 112], c2: [168, 82]},
+    agenda: {c: "#8AB2EE", hi: "#E6F2FF", sx: 84, ey: 38, c1: [134, 114], c2: [166, 84], glow: 0.56},
+    champ: {c: "#E6C489", hi: "#FFF0D2", sx: 80, ey: 36, c1: [128, 114], c2: [164, 84], n: 9, glow: 0.56},
+    "b-red": {c: "#FF8A78", hi: "#FFE2DA", sx: 70, ey: 32, c1: [124, 110], c2: [162, 78], glow: 0.58},
+    "b-orange": {c: "#FFAA5E", hi: "#FFEACB", sx: 68, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
+    "b-green": {c: "#B4E772", hi: "#F1FFD6", sx: 72, ey: 40, c1: [126, 116], c2: [164, 86], n: 8, glow: 0.6},
+    "b-yellow": {c: "#EADE72", hi: "#FFFBD2", sx: 72, ey: 50, c1: [126, 118], c2: [164, 92], n: 8, glow: 0.66}
+  };
+  const f = v => +v.toFixed(1);
+  const curve = (o, dx, dy) => [[o.sx + dx, 126 + dy], [o.c1[0] + dx, o.c1[1] + dy], [o.c2[0] + dx, o.c2[1] + dy], [o.ex + dx, o.ey + dy]];
+  const d = P => `M${f(P[0][0])} ${f(P[0][1])}C${P.slice(1).map(q => `${f(q[0])} ${f(q[1])}`).join(" ")}`;
+  const at = (P, t) => [0, 1].map(i => (1 - t) ** 3 * P[0][i] + 3 * (1 - t) ** 2 * t * P[1][i] + 3 * (1 - t) * t * t * P[2][i] + t ** 3 * P[3][i]);
+  const cache = {};
+  function ribbon(o, id){
+    const n = o.n, A = curve(o, 0, 0), Bc = curve(o, (n - 1) * o.ox, (n - 1) * o.oy), x1 = f(o.sx), y1 = 126, y2 = f(o.ey);
+    const g = `<linearGradient id="${id}s" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${o.ex}" y2="${y2}"><stop offset="0" stop-color="${o.c}" stop-opacity="0"/><stop offset=".2" stop-color="${o.c}" stop-opacity=".45"/><stop offset="${o.pk}" stop-color="${o.hi}"/><stop offset="${f(Math.min(o.pk + .16, .97))}" stop-color="${o.c}" stop-opacity=".8"/><stop offset="1" stop-color="${o.c}" stop-opacity=".55"/></linearGradient>`
+      + `<linearGradient id="${id}f" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${o.ex}" y2="${y2}"><stop offset="0" stop-color="${o.c}" stop-opacity="0"/><stop offset="${o.pk}" stop-color="${o.c}" stop-opacity="${o.fill}"/><stop offset="1" stop-color="${o.c}" stop-opacity="${f(o.fill * .55)}"/></linearGradient>`
+      + `<radialGradient id="${id}h"><stop offset="0" stop-color="${o.hi}" stop-opacity=".62"/><stop offset=".35" stop-color="${o.c}" stop-opacity=".24"/><stop offset="1" stop-color="${o.c}" stop-opacity="0"/></radialGradient>`;
+    const rev = [Bc[3], Bc[2], Bc[1], Bc[0]];
+    let s = `<path d="${d(A)}L${f(Bc[3][0])} ${f(Bc[3][1])}C${rev.slice(1).map(q => `${f(q[0])} ${f(q[1])}`).join(" ")}Z" fill="url(#${id}f)"/>`;
+    const main = curve(o, Math.round(n * .3) * o.ox, Math.round(n * .3) * o.oy), hot = at(main, o.pk);
+    s += `<path d="${d(main)}" stroke="url(#${id}s)" stroke-width="14" opacity="${f(o.glow * 16) / 100}"/><path d="${d(main)}" stroke="url(#${id}s)" stroke-width="6" opacity="${f(o.glow * 36) / 100}"/><path d="${d(main)}" stroke="url(#${id}s)" stroke-width="2.4" opacity="${o.glow}"/>`;
+    const grp = [[], [], []]; for (let i = 0; i < n; i++) grp[Math.min(2, Math.floor(3 * Math.abs(Math.sin(i * 1.7 + 0.6))))].push(d(curve(o, i * o.ox, i * o.oy)));
+    grp.forEach((gg, j) => { if (gg.length) s += `<path d="${gg.join("")}" stroke="url(#${id}s)" stroke-width=".5" opacity="${[.12, .2, .3][j]}"/>`; });
+    s += `<path d="${d(main)}" stroke="url(#${id}s)" stroke-width="1.5"/><circle cx="${f(hot[0])}" cy="${f(hot[1])}" r="22" fill="url(#${id}h)"/>`;
+    return `<defs>${g}</defs><g>${s}</g>`;
+  }
+  return k => {
+    const o = M[k]; if (!o) return null;
+    if (!cache[k]) { const t = document.createElement("template");
+      t.innerHTML = `<svg viewBox="0 0 180 120" preserveAspectRatio="xMaxYMax slice" fill="none" stroke-linecap="round" aria-hidden="true">${ribbon(Object.assign({}, B, o), "j" + k.replace(/\W/g, ""))}</svg>`; cache[k] = t.content.firstChild; }
+    return cache[k].cloneNode(true);
+  };
+})();
+/* jewelCard(o): o.cls material · o.icon chave de ICON ou nó · o.title · o.value (null = só legenda) · o.unit · o.sub · o.word (valor em palavra)
+   o.txt (frase) · o.wide (largura inteira) · o.fn ação · o.aria rótulo do VoiceOver */
+function jewelCard(o){
+  const v = o.value != null && o.value !== "";
+  return h("button", {class: "hc " + o.cls + (o.wide ? " wide" : ""), type: "button", onclick: once(o.fn),
+      "aria-label": o.aria || [o.title, v ? o.value + (o.unit ? " " + o.unit : "") : null, o.sub].filter(Boolean).join(". ")},
+    h("span", {class: "hc-fx", "aria-hidden": "true"}, JEWEL(o.cls)),
+    h("span", {class: "hc-h"}, h("span", {class: "hc-i"}, typeof o.icon === "string" ? svg(o.icon) : o.icon), h("span", {class: "hc-t"}, o.title)),
+    v ? h("span", {class: "hc-v"}, h("b", {class: o.txt ? "txt" : o.word ? "word" : null}, String(o.value)), o.unit ? [" ", h("small", null, o.unit)] : null) : null,
+    o.sub ? h("span", {class: "hc-s", style: v ? null : "margin-top:auto"}, o.sub) : null);
+}
+const divider = () => h("div", {class: "dj-divider", "aria-hidden": "true"});
 
 /* ---------- datas ---------- */
 const pad2 = n => String(n).padStart(2, "0");
@@ -231,7 +291,7 @@ function welcome(){
   const mark = $("#boot .bt-mark").innerHTML;
   return h("div", {class: "welcome"},
     h("div", {class: "mk", html: mark}),
-    h("h1", null, "Briceno Tennis"),
+    h("h1", null, "Briceno ", h("span", null, "Tennis")),
     h("p", null, "A evolução da sua atleta, organizada e baseada na ciência: treinos, jogos, golpes, bolas, equipamento e torneios."),
     h("p", {class: "small"}, "Os dados ficam só neste aparelho."),
     h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => athleteForm(null))}, "Cadastrar atleta"),
@@ -272,19 +332,18 @@ function diario(a){
   const lastGame = a.entries.filter(e => e.type === "jogo").sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
   const entries = a.entries.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
   const shown = entries.slice(0, view.more);
+  const nPrio = openPrio(a).length;
   return [
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
-    h("button", {type: "button", class: "focus", onclick: once(() => prioSheet(a))},
-      h("div", {class: "eb"}, "Foco da semana"),
-      h("div", {class: "ft"}, top ? top.text : "Escolher o foco da semana"),
-      h("div", {class: "fs"}, top ? "A prioridade número 1. Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo. Ex.: \"girar o ombro no forehand\".")),
-    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "note", style: "margin-top:10px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
+    jewelCard({cls: "prio", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
+      sub: top ? "Prioridade 1 de " + nPrio + ". Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo.", fn: () => prioSheet(a)}),
+    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-ruby note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
     a.entries.length ? sec("Últimos 7 dias",
-      h("div", {class: "wk"},
-        h("div", {class: "card k"}, h("div", {class: "kv"}, hm(ws.min)), h("div", {class: "kl"}, "de tênis registrado")),
-        h("div", {class: "card k"}, h("div", {class: "kv"}, String(ws.rest)), h("div", {class: "kl"}, ws.rest === 1 ? "dia sem tênis registrado" : "dias sem tênis registrado")),
-        ws.withLoad ? h("div", {class: "card k"}, h("div", {class: "kv"}, ws.load.toLocaleString("pt-BR")), h("div", {class: "kl"}, "de carga (esforço × minutos)")) : null,
-        h("div", {class: "card k"}, h("div", {class: "kv"}, String(ws.es.length)), h("div", {class: "kl"}, ws.es.length === 1 ? "registro" : "registros"))),
+      h("div", {class: "hgrid"},
+        jewelCard({cls: "clay", icon: "train", title: "Tênis", value: hm(ws.min), sub: "registrado na semana", fn: () => weekSheet(a)}),
+        jewelCard({cls: "sleep", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
+        jewelCard({cls: "wb", icon: "pulse", title: "Carga", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos" : "Registre duração e esforço", fn: () => weekSheet(a)}),
+        jewelCard({cls: "move", icon: "diary", title: "Registros", value: ws.es.length, sub: "treinos, jogos e golpes", fn: () => weekSheet(a)})),
       weekRef(a)) : null,
     sec("Registros",
       shown.length ? h("div", {class: "list"}, shown.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
@@ -293,24 +352,39 @@ function diario(a){
       entries.length > shown.length ? h("div", {class: "stack"}, h("button", {type: "button", class: "btn ghost block", onclick: () => { view.more += 30; render(); }}, "Ver registros mais antigos")) : null)
   ];
 }
+function weekSheet(a){
+  const ws = weekStats(a), age = ageAt(a.birth);
+  sheet("Últimos 7 dias", (el, close) => {
+    el.append(h("h2", null, "Últimos 7 dias"), h("p", {class: "sh-sub"}, "Somente o que foi registrado no app, de " + fmtDs(daysAgo(6)) + " até hoje."),
+      h("div", {class: "dj-glass t-clay g-card"}, h("p", null, h("b", null, hm(ws.min)), " de tênis em " + ws.es.length + (ws.es.length === 1 ? " registro" : " registros") + "."),
+        h("p", null, h("b", null, String(ws.rest)), (ws.rest === 1 ? " dia" : " dias") + " sem tênis registrado."),
+        ws.withLoad ? h("p", null, h("b", null, ws.load.toLocaleString("pt-BR")), " de carga: a soma de esforço (0 a 10) × minutos de cada sessão. Serve para comparar uma semana com outra da mesma atleta, não com outras pessoas.") : null),
+      h("div", {class: "dj-glass t-move g-card", style: "margin-top:10px"},
+        age != null && age >= 8 && age <= 18 ? h("p", null, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso.") : h("p", null, "A referência de horas foi estudada dos 8 aos 18 anos."),
+        h("div", {class: "g-meta"}, ev("moderada"), h("span", {class: "ev"}, "Estudos em crianças e adolescentes")),
+        h("div", {class: "g-src"}, "Fonte: Jayanthi e colaboradores, 2015; Academia Americana de Pediatria, 2024. Detalhes no Guia.")),
+      ws.es.length ? [h("h2", {class: "sec-t"}, "Registros da semana"), h("div", {class: "list"}, ws.es.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
+        t1: entryTitle(a, e), t2: entrySub(a, e), fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))] : null);
+  });
+}
 function weekRef(a){
   const age = ageAt(a.birth);
   if (age == null) return null;
-  if (age >= 8 && age <= 18) return h("div", {class: "ref"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
-  return h("div", {class: "ref"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
+  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-move"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
+  return h("div", {class: "ref dj-glass t-move"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
 }
 
 /* ---------- Registrar ---------- */
 function quickSheet(){
   const a = active(); if (!a) return;
   sheet("Registrar", (el, close) => {
-    const opt = (ic, t, s, fn) => h("button", {type: "button", class: "qbig", onclick: once(() => { close(); setTimeout(fn, 120); })}, svg(ic), h("b", null, t), h("span", null, s));
+    const go = fn => () => { close(); setTimeout(fn, 120); };
     el.append(h("h2", null, "Registrar"), h("div", {style: "height:8px"}),
       h("div", {class: "qgrid"},
-        opt("train", "Treino", "Tempo, esforço e anotações", () => entryForm(a, "treino")),
-        opt("match", "Jogo", "Placar e anotações", () => entryForm(a, "jogo")),
-        opt("stroke", "Golpes", "Um golpe e como está", () => entryForm(a, "golpes")),
-        opt("trophy", "Torneio", "Planejado ou resultado", () => tourForm(a))));
+        jewelCard({cls: "clay", icon: "train", title: "Treino", sub: "Tempo, esforço e anotações", fn: go(() => entryForm(a, "treino"))}),
+        jewelCard({cls: "move", icon: "match", title: "Jogo", sub: "Placar e anotações", fn: go(() => entryForm(a, "jogo"))}),
+        jewelCard({cls: "prio", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))}),
+        jewelCard({cls: "champ", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))})));
   });
 }
 function entryForm(a, type, e, preset){
@@ -368,7 +442,13 @@ function evolucao(a){
   return [
     h("h1", {class: "page-h"}, "Evolução"),
     h("p", {class: "page-sub"}, a.start ? "Começou no tênis em " + fmtMY(a.start) + (age0 != null ? ", aos " + age0 + " anos" : "") + " · há " + dur(monthsBetween(a.start)) + "." : "Registre quando começou no tênis em Dados da atleta (toque no nome, no topo)."),
-    sec("Bolas", h("button", {type: "button", class: "list", style: "display:block;width:100%;text-align:left", onclick: once(() => ballsSheet(a)), "aria-label": "Etapas da bola. Toque para editar"},
+    h("div", {class: "hgrid"},
+      jewelCard({cls: "b-" + (cb || "red"), icon: h("span", {class: "ball b-" + (cb || "red")}), title: "Bola atual", value: cb ? ballOf(cb).n : "Registrar", word: true,
+        sub: cb && a.balls[cb] ? "há " + dur(monthsBetween(a.balls[cb])) : "Toque para registrar", fn: () => ballsSheet(a)}),
+      nb ? jewelCard({cls: "b-" + nb, icon: h("span", {class: "ball b-" + nb}), title: "Próxima", value: ballOf(nb).n, word: true,
+        sub: a.nextPlan ? "Previsão: " + fmtMY(a.nextPlan) : (NEXT_AGE[nb] ? "ITF: " + NEXT_AGE[nb][0] + " a " + NEXT_AGE[nb][1] + " anos" : "Primeira etapa"), fn: () => nb !== "red" ? compSheet(a) : ballsSheet(a)})
+        : jewelCard({cls: "clay", icon: "racket", title: "Raquete", value: curRacket(a) && curRacket(a).size ? curRacket(a).size + "\"" : null, sub: curRacket(a) ? [curRacket(a).brand, curRacket(a).model].filter(Boolean).join(" ") || "Atual" : "Registrar a atual", fn: () => racketsSheet(a)})),
+    sec("Linha do tempo das bolas", h("button", {type: "button", class: "list", style: "display:block;width:100%;text-align:left", onclick: once(() => ballsSheet(a)), "aria-label": "Etapas da bola. Toque para editar"},
       h("div", {class: "tl"}, BALLS.map((b, i) => {
         const from = a.balls[b.k], nxt = BALLS.slice(i + 1).map(x => a.balls[x.k]).find(Boolean);
         let t2;
@@ -457,7 +537,7 @@ function prefSheet(a){
 function prioList(a){
   const op = openPrio(a);
   return h("div", {class: "list"}, op.length
-    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {class: "serif", style: "font-size:1.05rem"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco da semana" : null, fn: () => prioSheet(a)})),
+    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {style: "font-weight:700;font-size:var(--t-body)"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco da semana" : null, fn: () => prioSheet(a)})),
        op.length > 5 ? row({t1: "Mais " + (op.length - 5) + (op.length - 5 > 1 ? " prioridades" : " prioridade"), fn: () => prioSheet(a)}) : null]
     : row({ic: "list", t1: "Adicionar prioridades", t2: "Em ordem. A primeira vira o foco da semana.", fn: () => prioSheet(a)}));
 }
@@ -581,7 +661,7 @@ function stringForm(a, s){
 function relAge(a){
   const d = parseD(a.birth); if (!d) return null;
   const m = d.getMonth() + 1, older = m - 1, younger = 12 - m;
-  return h("div", {class: "card pad"},
+  return h("div", {class: "dj-glass t-amet g-card"},
     h("p", null, "Nasceu em " + MESX[d.getMonth()] + ". Nas categorias por ano de nascimento (como na ITF), " +
       (older ? "colegas nascidas antes, no mesmo ano, têm até " + older + (older > 1 ? " meses" : " mês") + " a mais" : "quase todas as colegas são mais novas") +
       (younger ? (older ? ", e as nascidas depois têm até " : "; as nascidas depois têm até ") + younger + (younger > 1 ? " meses" : " mês") + " a menos." : ".")),
@@ -597,11 +677,15 @@ function carreira(a){
   const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
   return [
     h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios planejados e resultados, organizados por ano."),
-    sec("Próximos torneios", h("div", {class: "list"}, next.length ? next.map(x => tourRow(a, x)) : row({ic: "cal", t1: "Nenhum torneio planejado", t2: "Estadual, nacional, sul-americano ou internacional", fn: () => tourForm(a)}))),
+    next.length ? jewelCard({cls: "champ", wide: true, icon: "flag", title: "Próximo torneio", value: next[0].name, txt: true,
+      sub: [next[0].start ? fmtD(next[0].start) + inDays(next[0].start) : null, next[0].level, next[0].city].filter(Boolean).join(" · "), fn: () => tourForm(a, next[0])})
+      : jewelCard({cls: "champ", wide: true, icon: "flag", title: "Próximo torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar o próximo torneio.", fn: () => tourForm(a)}),
+    next.length > 1 ? sec("Depois", h("div", {class: "list"}, next.slice(1).map(x => tourRow(a, x)))) : null,
     years.length ? years.map(y => sec(y === "Sem data" ? y : "Resultados de " + y, h("div", {class: "list"}, past.filter(x => ((x.start || "").slice(0, 4) || "Sem data") === y).map(x => tourRow(a, x)))))
       : sec("Resultados", h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Ao registrar um torneio, escreva o resultado e uma descrição curta. Isso vai montar o currículo.")))
   ];
 }
+function inDays(d){ const n = Math.round((parseD(d) - parseD(today())) / 864e5); return n === 0 ? " · hoje" : n === 1 ? " · amanhã" : n > 1 ? " · em " + n + " dias" : ""; }
 function tourRow(a, x){
   const res = [x.singles ? "Simples: " + resLabel(a, x.singles) : null, x.doubles ? "Duplas: " + resLabel(a, x.doubles) : null].filter(Boolean);
   return row({ic: x.singles === "champ" || x.doubles === "champ" ? "trophy" : "flag", t1: x.name,
@@ -645,8 +729,8 @@ function tourForm(a, x){
 /* ---------- Guia ---------- */
 const EV = {forte: "Forte", moderada: "Moderada", fraca: "Fraca", consenso: "Consenso de especialistas", regra: "Regra oficial"};
 const ev = (k, label) => h("span", {class: "ev " + k}, h("i"), label || EV[k]);
-function gcard(title, body, evs, pop, src){
-  return h("div", {class: "card g-card"}, h("h3", null, title), body, h("div", {class: "g-meta"}, evs, pop ? h("span", {class: "ev"}, pop) : null), src ? h("div", {class: "g-src"}, "Fonte: " + src) : null);
+function gcard(title, body, evs, pop, src, tint){
+  return h("div", {class: "dj-glass g-card " + (tint || gcard.tint || "t-clay")}, h("h3", null, title), body, h("div", {class: "g-meta"}, evs, pop ? h("span", {class: "ev"}, pop) : null), src ? h("div", {class: "g-src"}, "Fonte: " + src) : null);
 }
 function guia(a){
   const age = ageAt(a.birth), cb = curBall(a);
@@ -655,6 +739,7 @@ function guia(a){
     h("h1", {class: "page-h"}, "Guia"),
     h("p", {class: "page-sub"}, "Recomendações gerais baseadas em ciência, com a força de cada evidência. Revisado em novembro de 2026."),
     h("div", {class: "g-meta", style: "margin-top:-6px"}, ev("forte"), ev("moderada"), ev("fraca"), ev("consenso"), ev("regra")),
+    (gcard.tint = "t-clay", null),
     sec("Bolas e quadras",
       gcard("Bola por idade e desenvoltura",
         [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Idade (ITF)"), h("th", null, "Velocidade"))),
@@ -669,6 +754,7 @@ function guia(a){
       gcard("Por que bola mais lenta e quadra menor",
         h("p", null, "Com bola mais lenta, quadra menor e raquete menor, a criança acerta mais, bate na altura certa e prefere jogar assim. Por isso a ITF usa as bolas coloridas."),
         [ev("moderada")], "Estudos em crianças", "Buszard e colaboradores, 2016 (25 estudos, 989 crianças); revisão de 2025 com 35 estudos de tênis")),
+    (gcard.tint = "t-clay", null),
     sec("Raquete",
       gcard("Tamanho por etapa e altura",
         [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Raquete (ITF)"))),
@@ -679,6 +765,7 @@ function guia(a){
       gcard("Cordas e tensão",
         h("p", null, "Em estudos, só 27% dos jogadores avançados e 11% dos jogadores de elite perceberam uma diferença de cerca de 5 kg na tensão. Por isso o app só registra corda e tensão, sem recomendar."),
         [ev("fraca", "Fraca para crianças")], "Estudos em adultos", "Bower e Cross, 2003 e 2008")),
+    (gcard.tint = "t-move", null),
     sec("Carga, descanso e sono",
       gcard("Horas por semana",
         [ul("Horas de esporte organizado por semana não maiores que a idade (ex.: 10 anos, até 10 h). Quem passou disso teve cerca de 70% mais chance de lesão grave por excesso de uso.",
@@ -697,6 +784,7 @@ function guia(a){
       gcard("Sono",
         ul("6 a 12 anos: 9 a 12 horas por dia.", "13 a 18 anos: 8 a 10 horas por dia."),
         [ev("consenso", "Consenso forte")], "Crianças e adolescentes", "Academia Americana de Medicina do Sono, 2016")),
+    (gcard.tint = "t-amet", null),
     sec("Metas, motivação e pais",
       gcard("Metas de processo",
         [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco da semana."),
@@ -714,6 +802,7 @@ function guia(a){
       gcard("Deixar a criança escolher o que treinar",
         h("p", null, "Ouvir a atleta ajuda a motivação. Mas, depois de corrigir o viés de publicação, deixar a criança escolher não mostrou ganho claro de aprendizagem."),
         [ev("fraca")], null, "McKay e colaboradores, 2022")),
+    (gcard.tint = "t-champ", null),
     sec("Resultados e idade",
       gcard("Resultados no infantil",
         h("p", null, "Vencer é legítimo, e os resultados são registrados na Carreira. Mas o resultado até os 14 anos indica o futuro só um pouco (correlação de cerca de 0,21 nos meninos e 0,30 nas meninas com o ranking profissional). Por isso o dia a dia do app foca no processo."),
@@ -721,7 +810,7 @@ function guia(a){
       gcard("Mês de nascimento",
         h("p", null, "No tênis juvenil, quem nasce no começo do ano aparece mais entre os melhores, em vários países e categorias. Ajuda a não julgar cedo demais quem nasceu no fim do ano."),
         [ev("moderada")], "Juniores de tênis", "Estudos de efeito da idade relativa (PLOS ONE, 2023 e 2024, e outros)")),
-    sec("Referências", h("div", {class: "card pad refs"}, REFS.map(([t, u, d]) => h("a", {href: u, target: "_blank", rel: "noopener"}, t, h("span", null, d))))),
+    sec("Referências", h("div", {class: "list refs", style: "padding:4px 16px"}, REFS.map(([t, u, d]) => h("a", {href: u, target: "_blank", rel: "noopener"}, t, h("span", null, d))))),
     h("p", {class: "small faint", style: "margin-top:18px"}, "O Briceno Tennis não substitui o treinador, o pediatra ou o nutricionista, e não faz diagnóstico.")
   ];
 }
@@ -895,7 +984,7 @@ function lockSheet(){
       const c = lockCfg();
       if (step === "code") return put(body, h("h2", null, "Código de recuperação"),
         h("p", {class: "sh-sub"}, "Abre o app se o Face ID deixar de funcionar. Guarde em um lugar seguro: ele aparece só agora."),
-        h("div", {class: "card pad serif", style: "font-size:1.6rem;text-align:center;letter-spacing:.08em;user-select:all;-webkit-user-select:all"}, code),
+        h("div", {class: "dj-glass pad", style: "font-weight:700;font-size:1.6rem;text-align:center;letter-spacing:.08em;user-select:all;-webkit-user-select:all"}, code),
         h("div", {class: "stack"}, h("button", {class: "btn primary block", type: "button", onclick: once(async () => { const ok = lockSave({on: true, id: paint.id, rec: await recHash(code), after: 0, at: Date.now()}); close(); render(); toast(ok ? "Face ID ativado" : "Não foi possível salvar neste aparelho"); })}, "Guardei o código")));
       if (c) return put(body, h("h2", null, "Abrir com Face ID"), h("p", {class: "sh-sub"}, "Ligado neste aparelho. Ao abrir o app, o iPhone confirma que é você."),
         group("Travar ao sair do app", h("div", {class: "seg", role: "radiogroup"}, AFTER.map(([v, l]) => h("button", {type: "button", role: "radio", class: (c.after || 0) === v ? "on" : "", "aria-checked": String((c.after || 0) === v),
