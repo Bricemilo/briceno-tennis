@@ -122,6 +122,8 @@ b,strong{font-weight:650}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 0 6px -2px color-mix(in srgb,var(--g) 50%,transparent),0 2px 6px -2px rgba(0,0,0,.7)}
 .hc-i svg{width:19px;height:19px}
 .hc-i .ball{width:14px;height:14px}
+.hc-i .mth.sm{width:100%;height:100%;border-radius:8px;border:0}
+.hc-i:has(.mth){padding:0;overflow:hidden}
 .hc-t{flex:1;min-width:0;font-size:var(--t-sm);font-weight:640;letter-spacing:-.012em;color:#fff;line-height:1.25}
 .hc-v{display:block;margin-top:auto;padding-top:10px;min-width:0}
 .hc-v b{font-size:var(--t-num);font-weight:700;letter-spacing:-.02em;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
@@ -716,19 +718,32 @@ function diario(a){
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
     jewelCard({cls: "bola", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
       sub: top ? "Prioridade 1 de " + nPrio + ". Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo.", fn: () => prioSheet(a)}),
+    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
     lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
-    a.entries.length ? sec("Últimos 7 dias",
-      h("div", {class: "hgrid"},
-        jewelCard({cls: "saibro", icon: "train", title: "Tênis", value: hm(ws.min), sub: [ws.nT ? ws.nT + (ws.nT > 1 ? " treinos" : " treino") : null, ws.nJ ? ws.nJ + (ws.nJ > 1 ? " jogos" : " jogo") : null].filter(Boolean).join(" · ") || "registrado na semana", fn: () => weekSheet(a)}),
-        jewelCard({cls: "celeste", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
-        jewelCard({cls: "noite", wide: true, icon: "pulse", title: "Carga da semana", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos, somando as sessões" : "Registre duração e esforço para ver a carga", fn: () => weekSheet(a)})),
-      weekRef(a)) : null,
-    sec("Registros",
+    sec("Últimos 7 dias", ws.es.length
+      ? [h("div", {class: "hgrid"},
+          jewelCard({cls: "saibro", icon: "train", title: "Tênis", value: hm(ws.min), sub: [ws.nT ? ws.nT + (ws.nT > 1 ? " treinos" : " treino") : null, ws.nJ ? ws.nJ + (ws.nJ > 1 ? " jogos" : " jogo") : null].filter(Boolean).join(" · ") || "registrado na semana", fn: () => weekSheet(a)}),
+          jewelCard({cls: "celeste", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
+          jewelCard({cls: "noite", wide: true, icon: "pulse", title: "Carga da semana", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos, somando as sessões" : "Registre duração e esforço para ver a carga", fn: () => weekSheet(a)})),
+        weekRef(a)]
+      : jewelCard({cls: "saibro", wide: true, icon: "train", title: "Esta semana", value: "Nenhum treino ainda", txt: true, sub: "Toque para registrar o treino de hoje. Tempo, esforço e o que está bom.", fn: () => entryForm(a, "treino")})),
+    !shown.length ? null : sec("Registros",
       shown.length ? h("div", {class: "list"}, shown.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
         t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, e.type, e)})))
       : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum registro ainda"), "Toque no + para registrar o primeiro treino ou jogo.")),
       entries.length > shown.length ? h("div", {class: "stack"}, h("button", {type: "button", class: "btn ghost block", onclick: () => { view.more += 30; render(); }}, "Ver registros mais antigos")) : null)
   ];
+}
+function nextTourCard(a){
+  const t = today(), x = a.tours.filter(v => !v.singles && !v.doubles && (v.end || v.start || "") >= t).sort((p, q) => (p.start || "").localeCompare(q.start || ""))[0];
+  return x ? jewelCard({cls: "grama", icon: "flag", title: "Próximo torneio", value: x.name, txt: true, sub: x.start ? fmtDs(x.start) + inDays(x.start) : (x.level || ""), fn: () => tourForm(a, x)})
+    : jewelCard({cls: "grama", icon: "flag", title: "Próximo torneio", value: "Nenhum", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
+}
+function strokeCard(a){
+  const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
+  const m = vs.find(v => v.best) || vs[0];
+  return m ? jewelCard({cls: "bola", icon: thumb(m, "sm"), title: m.best ? "Melhor golpe" : (m.kind === "video" ? "Último vídeo" : "Última foto"), value: m.stroke, txt: true, sub: fmtDs(m.date) + (m.kind === "video" ? " · toque para ver" : ""), fn: () => mediaViewer(a, m)})
+    : jewelCard({cls: "bola", icon: "stroke", title: "Golpes em vídeo", value: "Grave 5 s", txt: true, sub: "Toque para começar", fn: () => go("golpes")});
 }
 function weekSheet(a){
   const ws = weekStats(a), age = ageAt(a.birth);
