@@ -1017,4 +1017,4 @@ function lockSheet(){
 })();
 load();
 try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
-if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1150))); }
+if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 650))); }

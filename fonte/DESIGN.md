@@ -21,6 +21,10 @@ O cobre continua como a assinatura da família Briceno: "+", aba ativa, seletor 
 - **B · Vidro (`.dj-glass` + tom `t-*`)**: referências, notas e cartões do Guia.
 - **C · Discreto (`.list`, `.card`)**: listas, formulários e informação secundária.
 
+## Ícone
+- Criado no ChatGPT, como o do Briceno Life: o mesmo "B" cobre da família, sobre fundo verde-grama, com a bola amarela no fim do traço.
+- Original em `fonte/icone-original.png`. `python3 fonte/icones.py` recorta por dentro da moldura (o iPhone aplica os próprios cantos) e gera todos os tamanhos, a imagem da abertura e as telas de abertura do iPhone.
+
 ## Regras
 - Escuro, como o Briceno Life. O modo claro fica preparado nos tokens (`data-theme="light"`), sem estar ativado.
 - Barra inferior igual à do Briceno Life: 49 pt de conteúdo, quatro abas e o "+" cobre de 48 pt no centro.

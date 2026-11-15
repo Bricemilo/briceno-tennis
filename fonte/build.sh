@@ -8,7 +8,8 @@ import sys, hashlib, re
 R = sys.argv[1]
 t = open(f"{R}/fonte/app.html", encoding="utf-8").read()
 app = open(f"{R}/fonte/app.js", encoding="utf-8").read()
-mark = open(f"{R}/fonte/mark.svg", encoding="utf-8").read().strip()
+import base64
+mark = '<img src="data:image/jpeg;base64,' + base64.b64encode(open(f"{R}/fonte/icone-288.jpg", "rb").read()).decode() + '" alt="" width="96" height="96">'
 page = t.replace("__MARK__", mark).replace("<script>__APP__</script>", "<script>\n" + app + "\n</script>")
 assert "__APP__" not in page and "__MARK__" not in page
 open(f"{R}/index.html", "w", encoding="utf-8").write(page)
