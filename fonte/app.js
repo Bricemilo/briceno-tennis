@@ -54,6 +54,8 @@ const ICON = {
   target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>',
   moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z"/></svg>',
   pulse:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5Z"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>',
   ball:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 6.5c3 2 4 3.6 4 5.5s-1 3.5-4 5.5M18.5 6.5c-3 2-4 3.6-4 5.5s1 3.5 4 5.5"/></svg>'
 };
 
@@ -168,7 +170,7 @@ let S;
 const blank = () => ({app: "briceno-tennis", version: VERSION, athletes: [], activeId: null, meta: {lastBackup: null}});
 function normAthlete(a){
   a.balls = a.balls || {}; a.comp = a.comp || {}; a.rackets = a.rackets || []; a.strings = a.strings || [];
-  a.prefs = a.prefs || []; a.prio = a.prio || []; a.entries = a.entries || []; a.tours = a.tours || [];
+  a.prefs = a.prefs || []; a.prio = a.prio || []; a.entries = a.entries || []; a.tours = a.tours || []; a.media = a.media || [];
   return a;
 }
 function load(){
@@ -201,7 +203,7 @@ function undoTo(s){ S = JSON.parse(s); S.athletes.forEach(normAthlete); save(); 
 function toast(msg, undo){
   const t = $("#toast"), off = () => t.classList.remove("on", "act");
   put(t, h("span", null, msg), undo ? h("button", {type: "button", class: "undo", onclick: () => { clearTimeout(toast.t); off(); undo(); }}, "Desfazer") : null);
-  t.classList.toggle("act", !!undo); t.classList.toggle("top", !!document.querySelector(".sheet.on")); t.classList.add("on");
+  t.classList.toggle("act", !!undo); t.classList.toggle("top", !!document.querySelector(".sheet.on")); t.classList.add("on"); toast.at = Date.now();
   clearTimeout(toast.t); toast.t = setTimeout(off, undo ? 6000 : 1800);
 }
 function sheet(label, build){
@@ -210,7 +212,7 @@ function sheet(label, build){
   let closed = false;
   function close(){ if (closed) return; closed = true; el.classList.remove("on"); scrim.classList.remove("on"); setTimeout(() => { el.remove(); scrim.remove(); }, 280); }
   const add0 = el.append.bind(el); el.append = (...k) => add0(...k.flat(Infinity).filter(x => x != null && x !== false));
-  { const t = $("#toast"); clearTimeout(toast.t); t.classList.remove("on", "act"); }   // ao abrir outra folha, o aviso anterior sai
+  if (Date.now() - (toast.at || 0) > 800) { const t = $("#toast"); clearTimeout(toast.t); t.classList.remove("on", "act"); }   // ao abrir outra folha, um aviso antigo sai (o recém-mostrado fica)
   scrim.addEventListener("click", close);
   el.append(h("button", {class: "sh-x", type: "button", "aria-label": "Fechar", onclick: close}, svg("x")));
   build(el, close);
@@ -254,7 +256,8 @@ function rpePick(value){
 const numOrNull = s => { const n = parseFloat(String(s).replace(",", ".")); return isFinite(n) && n >= 0 ? n : null; };
 
 /* ---------- navegação ---------- */
-const TABS = [["diario", "Diário", "diary"], ["evolucao", "Evolução", "growth"], ["carreira", "Carreira", "flag"], ["guia", "Guia", "book"]];
+const TABS = [["diario", "Diário", "diary"], ["golpes", "Golpes", "stroke"], ["torneios", "Torneios", "flag"], ["evolucao", "Evolução", "growth"]];
+const PAGES = ["guia"];   // telas abertas pelo topo, sem aba na barra
 let view = {tab: "diario", more: 30};
 function paintTabs(){
   const nav = $("#tabs"), a = active();
@@ -268,14 +271,15 @@ function paintTabs(){
   }
   nav.querySelectorAll(".tab").forEach(t => { const on = t.dataset.k === view.tab; t.classList.toggle("on", on); on ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current"); });
 }
-function go(tab){ if (view.tab === tab) { window.scrollTo({top: 0, behavior: "smooth"}); return; } view.tab = tab; view.more = 30; render(); window.scrollTo(0, 0); }
+function go(tab){ if (view.tab === tab) { window.scrollTo({top: 0, behavior: "smooth"}); return; } if (!PAGES.includes(view.tab)) view.prev = view.tab; view.tab = tab; view.more = 30; render(); window.scrollTo(0, 0); }
 function render(){
   const app = $("#app"), a = active();
   try { sessionStorage.setItem(KEY + ".view", JSON.stringify({tab: view.tab})); } catch (e) {}
   paintTabs();
   if (!a) { put(app, welcome()); return; }
-  const scr = {diario: diario, evolucao: evolucao, carreira: carreira, guia: guia}[view.tab] || diario;
-  put(app, topBar(a), scr(a));
+  const scr = {diario: diario, golpes: golpes, torneios: carreira, evolucao: evolucao, guia: guia}[view.tab] || diario;
+  const backTo = PAGES.includes(view.tab) ? (TABS.find(t => t[0] === view.prev) || TABS[0]) : null;
+  put(app, topBar(a), backTo ? h("button", {type: "button", class: "backlink", onclick: () => go(backTo[0])}, svg("back"), backTo[1]) : null, scr(a));
 }
 function topBar(a){
   const cb = curBall(a);
@@ -358,7 +362,8 @@ function weekSheet(a){
       h("div", {class: "dj-glass t-celeste g-card", style: "margin-top:10px"},
         age != null && age >= 8 && age <= 18 ? h("p", null, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso.") : h("p", null, "A referência de horas foi estudada dos 8 aos 18 anos."),
         h("div", {class: "g-meta"}, ev("moderada"), h("span", {class: "ev"}, "Estudos em crianças e adolescentes")),
-        h("div", {class: "g-src"}, "Fonte: Jayanthi e colaboradores, 2015; Academia Americana de Pediatria, 2024. Detalhes no Guia.")),
+        h("div", {class: "g-src"}, "Fonte: Jayanthi e colaboradores, 2015; Academia Americana de Pediatria, 2024."),
+        h("button", {type: "button", class: "btn ghost block", style: "margin-top:12px", onclick: () => { close(); go("guia"); }}, svg("book"), "Abrir o Guia")),
       ws.es.length ? [h("h2", {class: "sec-t"}, "Registros da semana"), h("div", {class: "list"}, ws.es.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
         t1: entryTitle(a, e), t2: entrySub(a, e), fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))] : null);
   });
@@ -366,8 +371,8 @@ function weekSheet(a){
 function weekRef(a){
   const age = ageAt(a.birth);
   if (age == null) return null;
-  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-celeste"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
-  return h("div", {class: "ref dj-glass t-celeste"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
+  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-celeste"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Toque em Carga para ver a fonte.");
+  return h("div", {class: "ref dj-glass t-celeste"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Detalhes no Guia (toque no nome, no topo).");
 }
 
 /* ---------- Registrar ---------- */
@@ -401,6 +406,8 @@ function entryForm(a, type, e, preset){
     const tours = a.tours.slice().sort((x, y) => (y.start || "").localeCompare(x.start || ""));
     const tsel = h("select", {class: "input"}, h("option", {value: ""}, "Nenhum"), tours.map(t => h("option", {value: t.id, selected: e.tid === t.id ? true : null}, t.name + (t.start ? " · " + fmtMY(t.start) : ""))));
     const slot = h("div");
+    let mfile = null; const mlab = h("span", null, "Foto ou vídeo");
+    const mbtn = type === "golpes" && isNew ? h("button", {type: "button", class: "btn ghost block", onclick: () => pickMedia(f => { mfile = f; mlab.textContent = (/^video/.test(f.type) ? "Vídeo" : "Foto") + " escolhido · trocar"; })}, svg("plus"), mlab) : null;
     const doSave = once(() => {
       const d = date.value || today();
       const n = Object.assign(e, {type, date: d, min: numOrNull(min.value), rpe: rpe.get(), good: clean(good.value), improve: clean(improve.value), fun: fun.get(),
@@ -410,6 +417,7 @@ function entryForm(a, type, e, preset){
       const before = snap();
       if (isNew) { n.id = uid(); n.at = Date.now(); a.entries.push(n); }
       if (!save()) return; close(); render(); toast(isNew ? T + " registrado" : "Alterações salvas", () => undoTo(before));
+      if (mfile) setTimeout(() => addMedia(a, n.strokes[0], mfile, d), 300);
     });
     el.append(h("h2", null, isNew ? T : "Editar " + T.toLowerCase()),
       type === "jogo" ? h("div", {class: "note", style: "margin:6px 0 16px"}, "Antes de anotar: pergunte primeiro como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : h("p", {class: "sh-sub"}, "\"O que está bom\" vem primeiro."),
@@ -417,6 +425,7 @@ function entryForm(a, type, e, preset){
       type === "jogo" ? [fld(gx(a, "Adversária", "Adversário"), opp, null, true), fld("Placar", score, null, true), group("Resultado", outcome, true), group("Piso", surf, true),
         tours.length ? fld("Torneio", tsel, null, true) : null] : null,
       type === "golpes" ? group("Golpe", strokes) : null,
+      mbtn ? h("div", {class: "fld"}, h("span", {class: "lbl"}, "Foto ou vídeo de até 5 s", h("span", {class: "opt"}, " · opcional")), mbtn) : null,
       fld("O que está bom", good),
       fld("Para melhorar", improve, "Escolha uma coisa principal para a próxima vez."),
       type !== "golpes" ? group("Golpes trabalhados", strokes, true) : null,
@@ -429,6 +438,24 @@ function entryForm(a, type, e, preset){
           const before = snap(); a.entries = a.entries.filter(x => x !== e); if (!save()) return; close(); render(); toast("Registro apagado", () => undoTo(before)); })}, "Apagar registro") : null),
       slot);
   });
+}
+
+/* ---------- Golpes ---------- */
+function golpes(a){
+  const p = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
+  const all = a.media || [], nv = all.filter(m => m.kind === "video").length, nf = all.length - nv;
+  return [
+    h("h1", {class: "page-h"}, "Golpes"),
+    h("p", {class: "page-sub"}, all.length ? [nv ? nv + (nv > 1 ? " vídeos" : " vídeo") : null, nf ? nf + (nf > 1 ? " fotos" : " foto") : null].filter(Boolean).join(" e ") + ". Toque num golpe para ver a evolução." : "Anotações, fotos e vídeos curtos de cada golpe."),
+    jewelCard({cls: "bola", wide: true, icon: "heart", title: "Golpe preferido", value: p && p.likes ? p.likes : (p ? "—" : "Perguntar " + gx(a, "a ela", "a ele")), txt: true,
+      sub: p ? [p.dislikes ? "Menos gosta: " + p.dislikes : null, "na voz " + gx(a, "dela", "dele") + ", em " + fmtDs(p.date)].filter(Boolean).join(" · ") : "O que mais gosta e o que menos gosta, com a data.", fn: () => prefSheet(a)}),
+    sec("Os 7 golpes", h("div", {class: "list"}, STROKES.map(s => {
+      const ms = strokeMedia(a, s), ns = strokeNotes(a, s), v = ms.filter(m => m.kind === "video").length;
+      const parts = [v ? v + (v > 1 ? " vídeos" : " vídeo") : null, ms.length - v ? (ms.length - v) + (ms.length - v > 1 ? " fotos" : " foto") : null, ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") : null].filter(Boolean);
+      const last = [ms[0] && ms[0].date, ns[0] && ns[0].date].filter(Boolean).sort().pop();
+      return row({ic: ms[0] ? thumb(ms[0], "sm") : "stroke", t1: s, t2: parts.length ? parts.join(" · ") : "Nada registrado ainda", t3: last ? "Último registro em " + fmtDs(last) + (ms.some(m => m.best) ? " · tem melhor golpe" : "") : null, fn: () => strokeSheet(a, s)});
+    })))
+  ];
 }
 
 /* ---------- Evolução ---------- */
@@ -454,9 +481,6 @@ function evolucao(a){
         return h("div", {class: "tl-i" + (from ? "" : " off") + (b.k === cb ? " now" : "")}, h("span", {class: "ball b-" + b.k}), h("div", {class: "bd"}, h("div", {class: "t1"}, b.n), h("div", {class: "t2"}, t2)));
       }))),
       nb && nb !== "red" ? h("div", {class: "list", style: "margin-top:10px"}, row({ic: "list", t1: "Pronta para a " + ballOf(nb).n.toLowerCase() + "?", t2: "Competências da ITF, marcadas pela família e pelo treinador", fn: () => compSheet(a)})) : null),
-    sec("Golpes",
-      h("div", {class: "list"}, prefRow(a), STROKES.map(s => { const ns = strokeNotes(a, s);
-        return row({t1: s, t2: ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") + " · última em " + fmtDs(ns[0].date) : "Sem anotações ainda", fn: () => strokeSheet(a, s)}); }))),
     sec("Prioridades de melhoria", prioList(a)),
     sec("Equipamento", h("div", {class: "list"}, racketRow(a), stringRow(a))),
     a.birth ? sec("Mês de nascimento", relAge(a)) : null
@@ -499,16 +523,6 @@ function compSheet(a){
   });
 }
 function strokeNotes(a, s){ return a.entries.filter(e => (e.strokes || []).includes(s) && (e.good || e.improve)).sort((x, y) => (y.date || "").localeCompare(x.date || "")); }
-function strokeSheet(a, s){
-  sheet(s, (el, close) => {
-    const ns = strokeNotes(a, s);
-    el.append(h("h2", null, s), h("p", {class: "sh-sub"}, "A história do que foi escrito sobre este golpe, do mais recente ao mais antigo."),
-      ns.length ? h("div", {class: "list"}, ns.map(e => row({t1: fmtD(e.date) + " · " + (e.type === "golpes" ? "Sessão de golpes" : e.type === "jogo" ? "Jogo" : "Treino"),
-        t2: e.good ? "Bom: " + e.good : null, t3: e.improve ? "Melhorar: " + e.improve : null, fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))
-        : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Sem anotações ainda"), "Registre uma sessão de golpes ou marque este golpe num treino.")),
-      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => { close(); setTimeout(() => entryForm(a, "golpes", null, s), 150); })}, "Registrar " + s.toLowerCase())));
-  });
-}
 function prefRow(a){
   const p = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
   return row({ic: "heart", t1: p ? "Mais gosta: " + (p.likes || "—") + " · Menos gosta: " + (p.dislikes || "—") : "Golpe que mais gosta e que menos gosta",
@@ -672,7 +686,7 @@ function carreira(a){
   const past = all.filter(x => !next.includes(x));
   const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
   return [
-    h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios planejados e resultados, organizados por ano."),
+    h("h1", {class: "page-h"}, "Torneios"), h("p", {class: "page-sub"}, "Planejados e resultados, organizados por ano."),
     next.length ? jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: next[0].name, txt: true,
       sub: [next[0].start ? fmtD(next[0].start) + inDays(next[0].start) : null, next[0].level, next[0].city].filter(Boolean).join(" · "), fn: () => tourForm(a, next[0])})
       : jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar o próximo torneio.", fn: () => tourForm(a)}),
@@ -715,10 +729,200 @@ function tourForm(a, x){
         Object.assign(x, {name: clean(name.value), level: level.get(), cat: clean(cat.value), city: clean(city.value), start: start.value || null, end: end.value || null, surface: surf.get(),
           singles: sing.get(), doubles: dbl.get(), partner: clean(partner.value), scores: clean(scores.value), desc: clean(desc.value)});
         if (isNew) { x.id = uid(); a.tours.push(x); }
-        if (!save()) return; close(); if (isNew) view.tab = "carreira"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        if (!save()) return; close(); if (isNew) view.tab = "torneios"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
         !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este torneio?" + (a.entries.some(e => e.tid === x.id) ? " Os jogos ligados a ele continuam no Diário." : ""), "Apagar", () => {
           const before = snap(); a.tours = a.tours.filter(t => t !== x); a.entries.forEach(e => { if (e.tid === x.id) e.tid = null; }); save(); close(); render(); toast("Torneio apagado", () => undoTo(before)); })}, "Apagar torneio") : null),
       slot);
+  });
+}
+
+/* ---------- fotos e vídeos dos golpes ----------
+   Ficam num banco separado dos registros (IndexedDB "bricenotennis-midia"): se algo acontecer com a mídia, os registros não são afetados.
+   O app guarda uma cópia leve: vídeo de até 5 s em 720p (cerca de 2 MB) e foto com até 1600 px (cerca de 0,3 MB). O original continua no app Fotos.
+   Em cada atleta, a.media guarda só a descrição: {id, stroke, date, kind: "video" | "foto", dur, size, best, at}. */
+const MDB = "bricenotennis-midia", MAX_S = 5, VID_MAX = 1280, FOTO_MAX = 1600;
+let mdbP = null;
+function mdb(){
+  return mdbP || (mdbP = new Promise((res, rej) => { const r = indexedDB.open(MDB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("m"); r.onsuccess = () => res(r.result); r.onerror = () => { mdbP = null; rej(r.error); }; }));
+}
+async function mtx(mode, fn){ const db = await mdb(); return new Promise((res, rej) => { const t = db.transaction("m", mode), st = t.objectStore("m"); let out; const r = fn(st); if (r) r.onsuccess = () => out = r.result;
+  t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); }
+const mput = (id, rec) => mtx("readwrite", st => st.put(rec, id));
+const mget = id => mtx("readonly", st => st.get(id));
+const mdel = id => mtx("readwrite", st => st.delete(id));
+const mkeys = () => mtx("readonly", st => st.getAllKeys());
+// apagar de verdade só depois do prazo do "Desfazer", e só se ninguém mais usa aquele arquivo
+const allMediaIds = () => new Set(S.athletes.flatMap(x => (x.media || []).map(m => m.id)));
+function dropLater(ids){ setTimeout(async () => { const live = allMediaIds(); for (const id of ids) if (!live.has(id)) { try { await mdel(id); } catch (e) {} const u = URLS.get(id); if (u) { URL.revokeObjectURL(u.t); if (u.b) URL.revokeObjectURL(u.b); URLS.delete(id); } } }, 9000); }
+const URLS = new Map();
+async function mediaURL(id, full){
+  let u = URLS.get(id);
+  if (!u) { const rec = await mget(id).catch(() => null); if (!rec) return null; u = {t: URL.createObjectURL(rec.thumb || rec.blob), rec}; URLS.set(id, u); }
+  if (full && !u.b) { const rec = u.rec || await mget(id); u.b = URL.createObjectURL(rec.blob); }
+  return full ? u.b : u.t;
+}
+const fmtMB = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / 1048576).toFixed(n < 10485760 ? 1 : 0).replace(".", ",") + " MB";
+const strokeMedia = (a, s) => (a.media || []).filter(m => m.stroke === s).sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
+function thumb(m, cls){
+  const img = h("img", {alt: "", loading: "lazy"}), box = h("span", {class: "mth " + (cls || "")}, img, m.kind === "video" ? h("i", {class: "mplay", "aria-hidden": "true"}, svg("play")) : null);
+  mediaURL(m.id).then(u => { if (u) img.src = u; else box.classList.add("gone"); });
+  return box;
+}
+// ---- preparar foto e vídeo ----
+function loadImg(file){ return new Promise((res, rej) => { const i = new Image(), u = URL.createObjectURL(file); i.onload = () => res(i); i.onerror = () => rej(new Error("img")); i.src = u; }); }
+const canvasBlob = (c, type, q) => new Promise(res => c.toBlob(res, type, q));
+function drawScaled(src, w, h, max){ const s = Math.min(1, max / Math.max(w, h)), c = document.createElement("canvas"); c.width = Math.round(w * s / 2) * 2; c.height = Math.round(h * s / 2) * 2; c.getContext("2d").drawImage(src, 0, 0, c.width, c.height); return c; }
+async function prepPhoto(file){
+  const i = await loadImg(file);
+  const blob = await canvasBlob(drawScaled(i, i.naturalWidth, i.naturalHeight, FOTO_MAX), "image/jpeg", .82), th = await canvasBlob(drawScaled(i, i.naturalWidth, i.naturalHeight, 360), "image/jpeg", .74);
+  URL.revokeObjectURL(i.src);
+  return {kind: "foto", blob, thumb: th, dur: null};
+}
+function loadVideo(file){
+  return new Promise((res, rej) => {
+    const v = h("video", {muted: true, playsinline: true, preload: "auto", style: "position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0"});
+    v.muted = true; v.playsInline = true; v.src = URL.createObjectURL(file);
+    v.onloadedmetadata = () => res(v); v.onerror = () => rej(new Error("video")); document.body.append(v);
+  });
+}
+const seek = (v, t) => new Promise(res => { const done = () => { v.removeEventListener("seeked", done); res(); }; v.addEventListener("seeked", done); v.currentTime = t; });
+const REC_TYPES = ["video/mp4;codecs=avc1.42E01E", "video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+async function prepVideo(file, start, onTick){
+  const v = await loadVideo(file);
+  try {
+    const len = Math.max(.3, Math.min(MAX_S, (v.duration || MAX_S) - start));
+    const mime = window.MediaRecorder && REC_TYPES.find(t => MediaRecorder.isTypeSupported(t));
+    const c = document.createElement("canvas"), s = Math.min(1, VID_MAX / Math.max(v.videoWidth, v.videoHeight));
+    c.width = Math.round(v.videoWidth * s / 2) * 2; c.height = Math.round(v.videoHeight * s / 2) * 2;
+    const ctx = c.getContext("2d");
+    await seek(v, start); ctx.drawImage(v, 0, 0, c.width, c.height);
+    if (!mime || !c.captureStream) {   // sem gravador no aparelho: guarda o original, se já for curto e leve
+      if ((v.duration || 99) <= MAX_S + .3 && file.size <= 25 * 1048576) return {kind: "video", blob: file, thumb: await canvasBlob(drawScaled(c, c.width, c.height, 360), "image/jpeg", .74), dur: v.duration};
+      throw new Error("sem-gravador");
+    }
+    const stream = c.captureStream(30), rec = new MediaRecorder(stream, {mimeType: mime, videoBitsPerSecond: 2500000}), chunks = [];
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    const stopped = new Promise(res => rec.onstop = res);
+    let th = null, alive = true;
+    const draw = () => { if (!alive) return; ctx.drawImage(v, 0, 0, c.width, c.height);
+      const el = v.currentTime - start; onTick && onTick(Math.min(1, el / len));
+      if (!th && el >= len * .45) { th = true; canvasBlob(drawScaled(c, c.width, c.height, 360), "image/jpeg", .74).then(b => th = b); }
+      if (el >= len || v.ended) { alive = false; v.pause(); rec.stop(); return; }
+      v.requestVideoFrameCallback ? v.requestVideoFrameCallback(draw) : requestAnimationFrame(draw); };
+    rec.start(250); await v.play(); draw();
+    await stopped;
+    if (!(th instanceof Blob)) th = await canvasBlob(drawScaled(c, c.width, c.height, 360), "image/jpeg", .74);
+    return {kind: "video", blob: new Blob(chunks, {type: mime.split(";")[0]}), thumb: th, dur: len};
+  } finally { URL.revokeObjectURL(v.src); v.remove(); }
+}
+// ---- adicionar: foto direto; vídeo com escolha do trecho de 5 s quando for mais longo ----
+function pickMedia(onFile){ const f = h("input", {type: "file", accept: "image/*,video/*", style: "display:none"}); f.addEventListener("change", () => { const x = f.files && f.files[0]; f.remove(); if (x) onFile(x); }); document.body.append(f); f.click(); }
+async function storeMedia(a, stroke, date, p){
+  const id = uid(); await mput(id, {blob: p.blob, thumb: p.thumb, type: p.blob.type});
+  a.media = a.media || []; a.media.push({id, stroke, date: date || today(), kind: p.kind, dur: p.dur ? Math.round(p.dur * 10) / 10 : null, size: p.blob.size + (p.thumb ? p.thumb.size : 0), best: false, at: Date.now()});
+  save(); return id;
+}
+function addMedia(a, stroke, file, date, after){
+  const isVid = /^video\//.test(file.type) || /\.(mov|mp4|m4v|webm)$/i.test(file.name || "");
+  sheet(isVid ? "Vídeo" : "Foto", (el, close) => {
+    const status = h("p", {class: "small muted", role: "status", style: "min-height:1.4em;margin-top:10px"});
+    const dt = inp({type: "date", value: date || today(), max: "2100-12-31"});
+    const finish = async (p) => { await storeMedia(a, stroke, dt.value, p); close(); render(); after && after(); toast(p.kind === "video" ? "Vídeo salvo · " + fmtMB(p.blob.size) : "Foto salva · " + fmtMB(p.blob.size)); };
+    const fail = e => { status.textContent = e && e.message === "sem-gravador" ? "Este aparelho não consegue preparar o vídeo. Escolha um vídeo de até 5 segundos." : "Não foi possível preparar este arquivo."; go.disabled = false; };
+    let go;
+    if (!isVid) {
+      const prev = h("img", {class: "mview", alt: ""}); prev.src = URL.createObjectURL(file);
+      go = h("button", {type: "button", class: "btn primary block", onclick: once(async () => { go.disabled = true; status.textContent = "Preparando a foto…"; try { await finish(await prepPhoto(file)); } catch (e) { fail(e); } }, 1500)}, "Salvar foto");
+      el.append(h("h2", null, stroke + " · foto"), h("p", {class: "sh-sub"}, "O app guarda uma cópia leve. A original continua no app Fotos."), prev, fld("Data", dt), h("div", {class: "stack"}, go), status);
+      return;
+    }
+    const pv = h("video", {class: "mview", muted: true, playsinline: true, autoplay: true, loop: false}); pv.muted = true; pv.playsInline = true; pv.src = URL.createObjectURL(file);
+    let start = 0;
+    const lab = h("div", {class: "hint"}), rng = h("input", {type: "range", class: "rng", min: "0", max: "0", step: "0.1", value: "0", "aria-label": "Início do trecho"});
+    const trim = h("div", {class: "fld", hidden: true}, h("span", {class: "lbl"}, "Escolha o trecho de 5 segundos"), rng, lab);
+    const paintLab = () => lab.textContent = "De " + start.toFixed(1).replace(".", ",") + " s até " + Math.min(pv.duration, start + MAX_S).toFixed(1).replace(".", ",") + " s, de " + pv.duration.toFixed(1).replace(".", ",") + " s.";
+    pv.addEventListener("loadedmetadata", () => { if (pv.duration > MAX_S + .2) { trim.hidden = false; rng.max = String(Math.max(0, pv.duration - MAX_S).toFixed(1)); paintLab(); } pv.play().catch(() => {}); });
+    pv.addEventListener("timeupdate", () => { if (pv.currentTime > start + MAX_S || pv.currentTime < start - .2) { pv.currentTime = start; } });
+    rng.addEventListener("input", () => { start = parseFloat(rng.value) || 0; pv.currentTime = start; paintLab(); });
+    go = h("button", {type: "button", class: "btn primary block", onclick: once(async () => {
+      go.disabled = true; pv.pause(); status.textContent = "Preparando o vídeo…";
+      try { await finish(await prepVideo(file, start, f => status.textContent = "Preparando o vídeo… " + Math.round(f * 100) + "%")); } catch (e) { fail(e); } }, 1500)}, "Salvar vídeo");
+    el.append(h("h2", null, stroke + " · vídeo"), h("p", {class: "sh-sub"}, "O app guarda até 5 segundos em 720p (cerca de 2 MB). O original continua no app Fotos."), pv, trim, fld("Data", dt), h("div", {class: "stack"}, go), status);
+  });
+}
+// ---- página do golpe ----
+function strokeSheet(a, s){
+  sheet(s, (el, close) => {
+    const ms = strokeMedia(a, s), ns = strokeNotes(a, s);
+    const reopen = () => setTimeout(() => strokeSheet(a, s), 150);
+    el.append(h("h2", null, s), h("p", {class: "sh-sub"}, "Fotos, vídeos e anotações, do mais recente ao mais antigo."),
+      ms.length ? h("div", {class: "mgrid"}, ms.map(m => h("button", {type: "button", class: "mcell", "aria-label": (m.kind === "video" ? "Vídeo" : "Foto") + " de " + fmtD(m.date) + (m.best ? ", melhor golpe" : ""), onclick: once(() => { close(); setTimeout(() => mediaViewer(a, m), 150); })},
+        thumb(m), h("span", {class: "mdate"}, fmtDs(m.date)), m.best ? h("span", {class: "mbest"}, "Melhor") : null))) : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhuma foto ou vídeo ainda"), "Vídeos de até 5 segundos mostram a evolução melhor que palavras.")),
+      h("div", {class: "stack"},
+        h("button", {type: "button", class: "btn primary block", onclick: once(() => pickMedia(f => { close(); setTimeout(() => addMedia(a, s, f, today(), reopen), 150); }))}, svg("plus"), "Foto ou vídeo"),
+        ms.length >= 2 ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { close(); setTimeout(() => compareSheet(a, s, ms[ms.length - 1].id, ms[0].id), 150); })}, "Comparar antes e agora") : null),
+      h("h2", {class: "sec-t"}, "Anotações"),
+      ns.length ? h("div", {class: "list"}, ns.map(e => row({t1: fmtD(e.date) + " · " + (e.type === "golpes" ? "Sessão de golpes" : e.type === "jogo" ? "Jogo" : "Treino"),
+        t2: e.good ? "Bom: " + e.good : null, t3: e.improve ? "Melhorar: " + e.improve : null, fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))
+        : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Sem anotações ainda"), "Registre uma sessão de golpes ou marque este golpe num treino.")),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn ghost block", onclick: once(() => { close(); setTimeout(() => entryForm(a, "golpes", null, s), 150); })}, "Escrever anotação")));
+  });
+}
+// ---- ver um vídeo ou foto: câmera lenta, melhor golpe, apagar ----
+function speedSeg(media){
+  let r = 1; const seg = h("div", {class: "seg", role: "radiogroup", "aria-label": "Velocidade"});
+  const paint = () => put(seg, [[1, "Normal"], [.5, "½"], [.25, "¼"]].map(([v, l]) => h("button", {type: "button", role: "radio", class: r === v ? "on" : "", "aria-checked": String(r === v),
+    onclick: () => { r = v; media().forEach(m => { m.playbackRate = v; }); paint(); }}, l)));
+  paint(); return seg;
+}
+function mediaViewer(a, m){
+  sheet("Golpe", (el, close) => {
+    const slot = h("div"), back = () => setTimeout(() => strokeSheet(a, m.stroke), 150);
+    let media;
+    if (m.kind === "video") { media = h("video", {class: "mview", muted: true, playsinline: true, autoplay: true, loop: true, controls: false}); media.muted = true; media.playsInline = true; }
+    else media = h("img", {class: "mview", alt: ""});
+    mediaURL(m.id, true).then(u => { if (u) { media.src = u; if (m.kind === "video") media.play().catch(() => {}); } else put(slot, h("p", {class: "small muted"}, "Este arquivo não está neste aparelho. Restaure o backup com fotos e vídeos.")); });
+    const best = h("button", {type: "button", class: "chip" + (m.best ? " on" : ""), "aria-pressed": String(!!m.best), onclick: () => {
+      a.media.filter(x => x.stroke === m.stroke && x !== m).forEach(x => { if (!m.best) x.best = false; }); m.best = !m.best; save(); best.classList.toggle("on", m.best); best.setAttribute("aria-pressed", String(m.best)); render();
+      toast(m.best ? "Marcado como melhor golpe" : "Desmarcado"); }}, "Melhor golpe");
+    const others = strokeMedia(a, m.stroke).filter(x => x.id !== m.id);
+    el.append(h("h2", null, m.stroke + " · " + fmtD(m.date)), h("p", {class: "sh-sub"}, (m.kind === "video" ? "Vídeo de " + String(m.dur || "").replace(".", ",") + " s" : "Foto") + " · " + fmtMB(m.size || 0)),
+      media, m.kind === "video" ? h("div", {style: "margin-top:12px"}, speedSeg(() => [media])) : null,
+      h("div", {class: "chips", style: "margin-top:14px"}, best),
+      h("p", {class: "hint"}, "\"Melhor golpe\" marca um exemplo do que " + gx(a, "ela", "ele") + " já faz bem, para rever antes de treinar. Um por golpe."),
+      h("div", {class: "stack"},
+        others.length ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { close(); setTimeout(() => compareSheet(a, m.stroke, others[others.length - 1].id, m.id), 150); })}, "Comparar com outro") : null,
+        h("button", {type: "button", class: "btn plain block", onclick: () => { close(); back(); }}, "Voltar ao " + m.stroke.toLowerCase()),
+        h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar " + (m.kind === "video" ? "este vídeo" : "esta foto") + " do app? O original no app Fotos não é afetado.", "Apagar", () => {
+          const before = snap(); a.media = a.media.filter(x => x !== m); save(); close(); render(); dropLater([m.id]); toast("Apagado", () => undoTo(before)); back(); })}, "Apagar")),
+      slot);
+  });
+}
+// ---- comparar antes e agora, lado a lado e sincronizado ----
+function compareSheet(a, s, idA, idB){
+  sheet("Comparar", (el, close) => {
+    const ms = strokeMedia(a, s).slice().reverse();
+    const pick = id => ms.find(m => m.id === id) || ms[0];
+    let A = pick(idA), B = pick(idB);
+    const panes = h("div", {class: "cmp"}), gap = h("p", {class: "hint", style: "text-align:center"});
+    let els = [];
+    const sel = (cur, on) => { const x = h("select", {class: "input", "aria-label": "Escolher"}, ms.map(m => h("option", {value: m.id, selected: m.id === cur.id ? true : null}, fmtD(m.date) + (m.kind === "video" ? " · vídeo" : " · foto") + (m.best ? " · melhor" : "")))); x.addEventListener("change", () => on(pick(x.value))); return x; };
+    const playing = () => els.filter(x => x.tagName === "VIDEO");
+    function paint(){
+      els = [A, B].map(m => { let x; if (m.kind === "video") { x = h("video", {muted: true, playsinline: true, loop: true, "data-dur": m.dur || ""}); x.muted = true; x.playsInline = true; } else x = h("img", {alt: ""}); mediaURL(m.id, true).then(u => { if (u) x.src = u; }); if (m.kind === "video") mediaURL(m.id).then(t => { if (t) x.poster = t; }); return x; });
+      put(panes, [A, B].map((m, i) => h("div", {class: "cmp-c"}, els[i], h("div", {class: "cmp-l"}, i === 0 ? "Antes" : "Agora", h("span", null, fmtD(m.date))))));
+      const mo = monthsBetween(A.date < B.date ? A.date : B.date, A.date < B.date ? B.date : A.date);
+      gap.textContent = A.id === B.id ? "Escolha dois registros diferentes." : "Intervalo de " + (mo ? dur(mo) : "menos de 1 mês") + ".";
+    }
+    paint();
+    const playBtn = h("button", {type: "button", class: "btn primary block", onclick: () => { const vs = playing(); if (!vs.length) return; const p = vs.some(v => v.paused); vs.forEach(v => { if (p) { v.currentTime = 0; v.play().catch(() => {}); } else v.pause(); }); playBtn.textContent = p ? "Pausar" : "Assistir juntos"; }}, "Assistir juntos");
+    const rng = h("input", {type: "range", class: "rng", min: "0", max: "1", step: "0.01", value: "0", "aria-label": "Mesmo momento nos dois vídeos"});
+    rng.addEventListener("input", () => playing().forEach(v => { v.pause(); const d = isFinite(v.duration) && v.duration ? v.duration : parseFloat(v.dataset.dur) || 0; if (d) v.currentTime = Math.min(d - .05, d * parseFloat(rng.value)); playBtn.textContent = "Assistir juntos"; }));
+    el.append(h("h2", null, "Comparar " + s.toLowerCase()), h("p", {class: "sh-sub"}, "Olhe primeiro o que melhorou. Use a câmera lenta e a barra para parar os dois no mesmo momento."),
+      h("div", {class: "two"}, sel(A, m => { A = m; paint(); }), sel(B, m => { B = m; paint(); })), panes, gap,
+      h("div", {class: "fld"}, h("span", {class: "lbl"}, "Mesmo momento nos dois"), rng),
+      group("Velocidade", speedSeg(playing)), h("div", {class: "stack"}, playBtn));
   });
 }
 
@@ -795,6 +999,10 @@ function guia(a){
       gcard("Depois do jogo",
         h("p", null, "Jovens tenistas preferem que os pais não deem conselhos técnicos logo depois do jogo. Valorizam apoio, foco no esforço e na atitude, e ajuda prática."),
         [ev("moderada", "Moderada (estudos qualitativos)")], "Jovens tenistas", "Harwood e Knight; Knight e Holt (ITF Coaching Review)"),
+      gcard("Vídeo dos golpes",
+        [h("p", null, "Ver o próprio movimento em vídeo parece ajudar mais do que só ouvir a explicação. Rever os próprios melhores golpes tem resultado misto no desempenho, mas alguns estudos com crianças mostraram mais motivação. Por isso o app guarda vídeos curtos, permite câmera lenta, comparação lado a lado e um \"melhor golpe\" por golpe."),
+         h("p", {class: "small muted"}, "5 segundos cobrem a preparação, o golpe e a finalização. Comece pelo que melhorou.")],
+        [ev("moderada", "Moderada a limitada")], "Educação física, crianças e jovens", "Mödinger, Woll e Wagner, 2021 (11 estudos); Zhou, Shao e Wang, 2021; estudos de auto-observação positiva"),
       gcard("Deixar a criança escolher o que treinar",
         h("p", null, "Ouvir a atleta ajuda a motivação. Mas, depois de corrigir o viés de publicação, deixar a criança escolher não mostrou ganho claro de aprendizagem."),
         [ev("fraca")], null, "McKay e colaboradores, 2022")),
@@ -834,6 +1042,9 @@ const REFS = [
   ["Harwood e colaboradores, 2015", "https://researchportal.bath.ac.uk/en/publications/a-systematic-review-of-the-intrapersonal-correlates-of-motivation/", "Clima motivacional, revisão sistemática · moderada"],
   ["Harwood e Knight, 2012", "https://cronfa.swan.ac.uk/Record/cronfa14909", "Pais no tênis · moderada"],
   ["Knight e Holt · ITF Coaching Review", "https://itfcoachingreview.com/index.php/journal/article/view/410", "Recomendações a pais e treinadores · moderada"],
+  ["Mödinger, Woll e Wagner, 2021 · German Journal of Exercise and Sport Research", "https://link.springer.com/10.1007/s12662-021-00782-y", "Vídeo do movimento em educação física, revisão sistemática · moderada"],
+  ["Zhou, Shao e Wang, 2021 · IJERPH", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8296044/", "Retorno ao aluno em educação física, revisão sistemática · moderada"],
+  ["Auto-observação positiva no esporte · Frontiers, 2011", "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2011.00155/full", "Rever os próprios melhores movimentos · fraca a moderada"],
   ["McKay e colaboradores, 2022 · Meta-Psychology", "https://conferences.lnu.se/index.php/metapsychology/article/view/2803", "Escolha da criança no treino · fraca"],
   ["Brouwers e colaboradores, 2012", "https://ideas.repec.org/a/taf/rsmrxx/v15y2012i4p461-475.html", "Resultados juvenis e sucesso profissional · moderada"],
   ["Grove e Jetter, 2014 · IZA", "https://www.iza.org/publications/dp/8103", "Rankings de 14 e 16 anos · moderada"],
@@ -855,7 +1066,8 @@ function athleteSheet(){
       h("h2", {class: "sec-t"}, "Ajustes"),
       h("div", {class: "list"},
         a ? row({ic: "person", t1: "Dados de " + a.name, t2: "Nome, nascimento, início no tênis e mão", fn: later(() => athleteForm(a))}) : null,
-        row({ic: "save", t1: "Backup", t2: lb ? "Último: " + fmtD(lb) : "Nenhum backup feito ainda", fn: later(backupSheet)}),
+        row({ic: "book", t1: "Guia e referências", t2: "Recomendações da ciência e as fontes do app", fn: () => { close(); go("guia"); }}),
+        row({ic: "save", t1: "Backup e espaço", t2: lb ? "Último backup: " + fmtD(lb) : "Nenhum backup feito ainda", fn: later(backupSheet)}),
         row({ic: "faceid", t1: "Abrir com Face ID", t2: lockCfg() ? "Ligado" : "Desligado", fn: later(lockSheet)})));
   });
 }
@@ -879,49 +1091,89 @@ function athleteForm(a){
         if (isNew) { a.id = uid(); normAthlete(a); if (ball.get()) a.balls[ball.get()] = since.value || today(); S.athletes.push(a); S.activeId = a.id; view.tab = "diario"; }
         if (!save()) return; close(); render(); toast(isNew ? "Atleta cadastrada" : "Dados salvos", () => undoTo(before)); })}, "Salvar"),
         !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar " + a.name + " e todos os registros " + gx(a, "dela", "dele") + " deste aparelho?", "Apagar", () => {
-          const before = snap(); S.athletes = S.athletes.filter(x => x !== a); S.activeId = S.athletes[0] ? S.athletes[0].id : null; save(); close(); render(); toast("Atleta apagada", () => undoTo(before)); })}, "Apagar atleta") : null),
+          const before = snap(); S.athletes = S.athletes.filter(x => x !== a); S.activeId = S.athletes[0] ? S.athletes[0].id : null; save(); close(); render(); dropLater((a.media || []).map(m => m.id)); toast("Atleta apagada", () => undoTo(before)); })}, "Apagar atleta") : null),
       slot);
   });
 }
 function backupText(){ return JSON.stringify({app: "briceno-tennis", version: VERSION, exportedAt: new Date().toISOString(), data: S}, null, 1); }
+async function shareOrDownload(blob, name, title){
+  try { const file = new File([blob], name, {type: blob.type || "application/octet-stream"});
+    if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title}); return true; } }
+  catch (e) { if (e && e.name === "AbortError") return false; }
+  const url = URL.createObjectURL(blob), link = h("a", {href: url, download: name}); document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); return true;
+}
 async function doBackup(){
-  const name = "briceno-tennis-backup-" + today() + ".json", text = backupText();
-  let ok = false;
-  try {
-    const file = new File([text], name, {type: "application/json"});
-    if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title: "Backup do Briceno Tennis"}); ok = true; }
-  } catch (e) { if (e && e.name === "AbortError") return false; }
-  if (!ok) { const url = URL.createObjectURL(new Blob([text], {type: "application/json"})), link = h("a", {href: url, download: name}); document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); ok = true; }
+  const ok = await shareOrDownload(new Blob([backupText()], {type: "application/json"}), "briceno-tennis-backup-" + today() + ".json", "Backup do Briceno Tennis");
   if (ok) { S.meta.lastBackup = today(); save(); }
   return ok;
 }
+/* Backup completo (.btbackup): "BTNS1\n" + tamanho do índice (12 dígitos) + "\n" + índice JSON + os arquivos, um depois do outro.
+   Montado e lido por partes (Blob.slice): nenhum vídeo vira texto gigante na memória do iPhone. */
+async function doFullBackup(onTick){
+  const ids = [...allMediaIds()], index = [], parts = []; let off = 0, i = 0;
+  for (const id of ids) { const rec = await mget(id).catch(() => null); onTick && onTick(++i / ids.length); if (!rec) continue;
+    const e = {id, type: rec.blob.type, off, len: rec.blob.size}; parts.push(rec.blob); off += rec.blob.size;
+    if (rec.thumb) { e.toff = off; e.tlen = rec.thumb.size; e.ttype = rec.thumb.type; parts.push(rec.thumb); off += rec.thumb.size; }
+    index.push(e); }
+  const head = new TextEncoder().encode(JSON.stringify({app: "briceno-tennis", version: VERSION, exportedAt: new Date().toISOString(), data: S, media: index}));
+  const blob = new Blob(["BTNS1\n", String(head.length).padStart(12, "0"), "\n", head, ...parts], {type: "application/octet-stream"});
+  const ok = await shareOrDownload(blob, "briceno-tennis-completo-" + today() + ".btbackup", "Backup completo do Briceno Tennis");
+  if (ok) { S.meta.lastBackup = today(); S.meta.lastFull = today(); save(); }
+  return ok;
+}
+async function readBackup(f){
+  const magic = await f.slice(0, 6).text();
+  if (magic === "BTNS1\n") { const n = parseInt(await f.slice(6, 18).text(), 10), d = JSON.parse(await f.slice(19, 19 + n).text()); d.body = 19 + n; d.file = f; return d; }
+  return JSON.parse(await f.text());
+}
+// libera espaço: em cada golpe, guarda um por mês (o "melhor golpe" do mês ou, sem ele, o mais recente) e os marcados como melhor
+function spareMedia(){
+  const drop = [];
+  for (const a of S.athletes) { const keep = new Set(), byKey = {};
+    for (const m of (a.media || [])) { (byKey[m.stroke + "|" + (m.date || "").slice(0, 7) + "|" + m.kind] ||= []).push(m); if (m.best) keep.add(m); }
+    for (const k in byKey) { const g = byKey[k].sort((x, y) => (y.best - x.best) || (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0)); keep.add(g[0]); }
+    for (const m of (a.media || [])) if (!keep.has(m)) drop.push([a, m]); }
+  return drop;
+}
 function backupSheet(){
   sheet("Backup", (el, close) => {
-    const lb = S.meta.lastBackup;
-    el.append(h("h2", null, "Backup"), h("p", {class: "sh-sub"}, lb ? "Último backup: " + fmtD(lb) + "." : "Nenhum backup feito ainda."),
-      h("div", {class: "note"}, "Os dados ficam só neste aparelho. No iPhone, apagar o ícone do app apaga os dados: faça o backup antes e guarde o arquivo no app Arquivos ou envie para você mesmo."),
+    const lb = S.meta.lastBackup, all = S.athletes.flatMap(x => x.media || []), msize = all.reduce((t, m) => t + (m.size || 0), 0);
+    const dsize = new Blob([JSON.stringify(S)]).size, used = h("span"), prog = h("p", {class: "small muted", role: "status"}), slot = h("div");
+    if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(e => { if (e && e.usage) used.textContent = " No total, o app ocupa " + fmtMB(e.usage) + " neste iPhone."; }).catch(() => {});
+    const spare = spareMedia(), free = spare.reduce((t, [, m]) => t + (m.size || 0), 0);
+    el.append(h("h2", null, "Backup e espaço"), h("p", {class: "sh-sub"}, lb ? "Último backup: " + fmtD(lb) + "." : "Nenhum backup feito ainda."),
+      h("div", {class: "dj-glass t-celeste g-card"}, h("p", null, h("b", null, "Registros: "), fmtMB(dsize) + "."), h("p", null, h("b", null, "Fotos e vídeos: "), all.length ? fmtMB(msize) + " em " + all.length + (all.length > 1 ? " arquivos" : " arquivo") + "." : "nenhum ainda."), h("p", {class: "small muted", style: "margin:0"}, used)),
+      h("div", {class: "note dj-glass t-saibro", style: "margin-top:10px"}, "Tudo fica só neste aparelho. No iPhone, apagar o ícone do app apaga os dados, as fotos e os vídeos: faça o backup antes e guarde o arquivo no app Arquivos."),
       h("div", {class: "stack"},
-        h("button", {type: "button", class: "btn primary block", onclick: once(async () => { if (await doBackup()) { close(); toast("Backup salvo"); render(); } }, 1500)}, "Fazer backup agora"),
-        h("button", {type: "button", class: "btn ghost block", onclick: once(() => { close(); setTimeout(restoreSheet, 150); })}, "Restaurar de um arquivo")));
+        h("button", {type: "button", class: "btn primary block", onclick: once(async () => { if (await doBackup()) { close(); toast("Backup dos registros salvo"); render(); } }, 1500)}, "Backup dos registros"),
+        all.length ? h("button", {type: "button", class: "btn ghost block", onclick: once(async () => { prog.textContent = "Preparando…"; if (await doFullBackup(f => prog.textContent = "Preparando… " + Math.round(f * 100) + "%")) { close(); toast("Backup completo salvo"); render(); } else prog.textContent = ""; }, 3000)}, "Backup com fotos e vídeos · " + fmtMB(msize + dsize)) : null,
+        spare.length ? h("button", {type: "button", class: "btn ghost block", onclick: () => ask(slot, "Liberar " + fmtMB(free) + "? Em cada golpe, o app guarda um registro por mês e os marcados como melhor golpe, e apaga " + spare.length + (spare.length > 1 ? " outros" : " outro") + ". Os originais no app Fotos não são afetados.", "Liberar", () => {
+          const before = snap(); for (const [a, m] of spare) a.media = a.media.filter(x => x !== m); save(); close(); render(); dropLater(spare.map(([, m]) => m.id)); toast("Espaço liberado", () => undoTo(before)); })}, "Liberar espaço · " + fmtMB(free)) : null,
+        h("button", {type: "button", class: "btn plain block", onclick: once(() => { close(); setTimeout(restoreSheet, 150); })}, "Restaurar de um arquivo")),
+      prog, slot);
   });
 }
 function restoreSheet(){
   sheet("Restaurar", (el, close) => {
     const status = h("p", {class: "small muted", role: "status"}), slot = h("div");
-    const file = h("input", {type: "file", accept: "application/json,.json", hidden: true});
+    const file = h("input", {type: "file", hidden: true});
     file.addEventListener("change", async () => {
       const f = file.files && file.files[0]; if (!f) return;
-      let d; try { d = JSON.parse(await f.text()); } catch (e) { status.textContent = "Este arquivo não é um backup válido."; return; }
+      let d; try { d = await readBackup(f); } catch (e) { status.textContent = "Este arquivo não é um backup válido."; return; }
       const data = d && d.app === "briceno-tennis" && d.data && Array.isArray(d.data.athletes) ? d.data : null;
       if (!data) { status.textContent = "Este arquivo não é um backup do Briceno Tennis."; return; }
-      const n = data.athletes.length;
-      ask(slot, "Restaurar o backup de " + (d.exportedAt ? fmtD(d.exportedAt.slice(0, 10)) : "data desconhecida") + " com " + n + (n === 1 ? " atleta" : " atletas") + "? Os dados atuais deste aparelho serão substituídos.", "Restaurar", () => {
+      const n = data.athletes.length, nm = (d.media || []).length;
+      ask(slot, "Restaurar o backup de " + (d.exportedAt ? fmtD(d.exportedAt.slice(0, 10)) : "data desconhecida") + " com " + n + (n === 1 ? " atleta" : " atletas") + (nm ? " e " + nm + (nm > 1 ? " fotos e vídeos" : " foto ou vídeo") : "") + "? Os registros atuais deste aparelho serão substituídos." + (nm ? "" : " As fotos e vídeos que já estão aqui continuam."), "Restaurar", async () => {
+        try { let i = 0; for (const e of (d.media || [])) { status.textContent = "Restaurando fotos e vídeos… " + Math.round(++i / nm * 100) + "%";
+            const blob = d.file.slice(d.body + e.off, d.body + e.off + e.len, e.type), th = e.tlen ? d.file.slice(d.body + e.toff, d.body + e.toff + e.tlen, e.ttype) : null;
+            await mput(e.id, {blob: new Blob([await blob.arrayBuffer()], {type: e.type}), thumb: th ? new Blob([await th.arrayBuffer()], {type: e.ttype}) : null, type: e.type}); URLS.delete(e.id); } }
+        catch (err) { status.textContent = "Não foi possível restaurar as fotos e vídeos. Os registros não foram alterados."; return; }
         const before = snap(); S = data; S.athletes = S.athletes.filter(x => x && typeof x === "object").map(normAthlete); S.meta = S.meta || {lastBackup: null};
         if (!S.athletes.some(x => x.id === S.activeId)) S.activeId = S.athletes[0] ? S.athletes[0].id : null;
         if (!save()) return; close(); render(); toast("Backup restaurado", () => undoTo(before));
       });
     });
-    el.append(h("h2", null, "Restaurar backup"), h("p", {class: "sh-sub"}, "Escolha o arquivo .json salvo antes. Antes de substituir, o app pede confirmação, e dá para desfazer."),
+    el.append(h("h2", null, "Restaurar backup"), h("p", {class: "sh-sub"}, "Escolha o arquivo salvo antes: .json (registros) ou .btbackup (com fotos e vídeos). O app pede confirmação, e dá para desfazer."),
       h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: () => file.click()}, "Escolher arquivo")), file, status, slot);
   });
 }
@@ -1016,5 +1268,5 @@ function lockSheet(){
   document.documentElement.classList.toggle("big-text", px >= 21);
 })();
 load();
-try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
+try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v && v.tab === "carreira") v.tab = "torneios"; if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
 if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 650))); }
