@@ -64,6 +64,7 @@ const ICON = {
 const JEWEL = (() => {
   const B = {v35: 1, ex: 186, n: 7, ox: 1.5, oy: -2.6, pk: .76, fill: 0.3, glow: 0.58};
   const M = {
+    ambar: {c: "#F4B06A", hi: "#FFF1CE", sx: 72, ey: 38, c1: [120, 112], c2: [160, 82], n: 9, glow: 0.62},
     saibro: {c: "#F08A5C", hi: "#FFDCC4", sx: 66, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
     bola: {c: "#E6EE70", hi: "#FBFFD4", sx: 72, ey: 44, c1: [126, 116], c2: [164, 88], n: 8, glow: 0.64},
     noite: {c: "#80AEF0", hi: "#E2EEFF", sx: 80, ey: 38, c1: [132, 114], c2: [166, 84], glow: 0.58},
@@ -336,7 +337,7 @@ function diario(a){
   const nPrio = openPrio(a).length;
   return [
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
-    jewelCard({cls: "bola", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
+    jewelCard({cls: "ambar", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
       sub: top ? "Prioridade 1 de " + nPrio + ". Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo.", fn: () => prioSheet(a)}),
     h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
     lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
@@ -397,8 +398,8 @@ function quickSheet(){
       h("div", {class: "qgrid"},
         jewelCard({cls: "saibro", icon: "train", title: "Treino", sub: "Tempo, esforço e anotações", fn: go(() => entryForm(a, "treino"))}),
         jewelCard({cls: "noite", icon: "match", title: "Jogo", sub: "Placar e anotações", fn: go(() => entryForm(a, "jogo"))}),
-        jewelCard({cls: "bola", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))}),
-        jewelCard({cls: "grama", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))})));
+        jewelCard({cls: "grama", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))}),
+        jewelCard({cls: "bola", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))})));
   });
 }
 function entryForm(a, type, e, preset){
@@ -1034,11 +1035,12 @@ function guia(a){
 }
 // cada material tem um motivo no tênis
 const CORES = [
-  ["saibro", "Saibro", "A quadra onde se constrói o jogo, com paciência. A mais comum nos clubes do Brasil. É a cor do treino."],
-  ["bola", "Bola amarela", "Olho na bola: a cor do foco da semana e dos golpes."],
-  ["noite", "Azul-noite", "As quadras duras nos jogos à noite: competição e intensidade. É a cor dos jogos e da carga."],
-  ["celeste", "Azul-celeste", "A quadra dura do verão, onde a temporada recomeça. É a cor do descanso e da recuperação."],
+  ["ambar", "Âmbar", "A cor das prioridades, a mesma do Briceno Life. É a cor do foco da semana."],
   ["grama", "Grama", "A superfície mais tradicional, com o roxo da história. É a cor da carreira e dos torneios."],
+  ["bola", "Bola amarela", "Olho na bola: a cor dos golpes e dos vídeos."],
+  ["saibro", "Saibro", "A quadra onde se constrói o jogo, com paciência. A mais comum nos clubes do Brasil. É a cor do treino e do tempo de tênis."],
+  ["celeste", "Azul-celeste", "A quadra dura do verão, onde a temporada recomeça. É a cor do descanso e da recuperação."],
+  ["noite", "Azul-noite", "As quadras duras nos jogos à noite: competição e intensidade. É a cor dos jogos e da carga."],
   ["b-red", "Bolas da ITF", "Vermelha, laranja, verde e amarela: as etapas de quem está aprendendo."]
 ];
 const REFS = [

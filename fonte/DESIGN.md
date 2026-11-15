@@ -7,12 +7,21 @@ Cada material vem de uma quadra ou de um objeto do jogo. As telas mostram só as
 
 | Material | Inspiração | Sentido | Onde |
 |---|---|---|---|
-| `saibro` | Quadras de saibro (Roland Garros e a maioria dos clubes do Brasil) | Construir o jogo, paciência, o treino de cada dia | Tênis na semana, Treino, Raquete |
-| `bola` | A bola amarela oficial | Foco: olho na bola | Foco da semana, Golpes |
-| `noite` | Quadras duras nas sessões noturnas (US Open) | Competição e intensidade | Carga da semana, Jogo |
-| `celeste` | Quadra dura azul-clara de verão (Australian Open, o primeiro Grand Slam do ano) | Recomeço e recuperação | Descanso, referência de horas |
+| `ambar` | As Prioridades do Briceno Life | O que mais importa agora | Foco da semana |
 | `grama` | Grama com o roxo da tradição (Wimbledon) | Conquista e história | Próximo torneio, Torneio |
+| `bola` | A bola amarela oficial | Olho na bola | Golpes, vídeos, golpe preferido |
+| `saibro` | Quadras de saibro (Roland Garros e a maioria dos clubes do Brasil) | Construir o jogo, paciência | Treino, tempo de tênis, raquete |
+| `celeste` | Quadra dura azul-clara de verão (Australian Open, o primeiro Grand Slam do ano) | Recomeço e recuperação | Descanso, referência de horas |
+| `noite` | Quadras duras nas sessões noturnas (US Open) | Competição e intensidade | Jogo, carga da semana |
 | `b-red` … `b-yellow` | Bolas da ITF | Progressão por etapas | Bola atual e próxima |
+
+**Sequência na tela** (como na Home do Briceno Life):
+- Cada cor aparece uma só vez por tela.
+- Vizinhos alternam quente e frio, como num tabuleiro.
+- A tela vai da luz para a profundidade.
+
+Diário: Foco (âmbar) · Próximo torneio (grama) | Golpe em vídeo (bola) · Tênis (saibro) | Descanso (celeste) · Carga (noite).
+"+": Treino (saibro) | Jogo (noite) · Torneio (grama) | Golpes (bola).
 
 O cobre continua como a assinatura da família Briceno: "+", aba ativa, seletor do topo e botões principais.
 

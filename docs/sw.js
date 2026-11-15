@@ -1,5 +1,5 @@
 // Guarda o app no aparelho para abrir rápido e funcionar sem internet.
-const VERSION = "ae4644396b";
+const VERSION = "d5a825c972";
 const CACHE = "briceno-tennis-" + VERSION;
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 self.addEventListener("install", e => {
