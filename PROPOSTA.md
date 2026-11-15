@@ -147,6 +147,98 @@ Puxa sozinho os dados de Atleta, Evolução e Carreira, e tudo pode ser editado 
 - [UTR — perfil para recrutamento universitário](https://www.utrsports.net/blogs/news/how-to-get-recruited-to-play-college-tennis-the-ultimate-guide)
 
 ## Pendências para conferir antes de mostrar no app
-- Faixas exatas de idade, altura e tamanho de raquete por bola no manual Tennis10s da ITF (as fontes secundárias divergem).
+- ~~Faixas de idade e tamanho de raquete por bola~~: conferido no manual oficial Tennis10s da ITF (ver Proposta v3).
+- Conferir o texto atual das Regras do Tênis da ITF (o site da ITF não abriu nesta sessão; os trechos de 2020 e 2021 encontrados batem com o manual).
+- Conferir no texto original do relatório da Academia Americana de Pediatria (2024) o tempo de pausa por ano (as fontes secundárias dizem 2 a 3 meses ou 3 meses).
 - Categorias e idades atuais da CBT e da COSAT para 2027.
 - O número "22 de 27 estudos em laboratório" no texto completo de Williamson.
+
+---
+
+# Proposta v3 — Guia de recomendações e referências (15/11/2026)
+
+## O que o Camilo pediu
+Uma área de **recomendação geral**, baseada nas melhores pesquisas: raquete por altura e desenvoltura, bola por idade e desenvoltura, carga de treino por idade, objetivo e desenvoltura. E um **ícone com todas as referências do app**.
+
+## Como fica
+- **Um único ícone (livro)** no topo abre o **Guia**, com duas partes: **Recomendações** e **Referências** (todas as fontes do app, com a força da evidência de cada uma).
+- As recomendações também aparecem **no lugar certo**: ao registrar uma raquete, aparece a faixa recomendada; ao ver as bolas, aparece a faixa da ITF. Sem botões extras.
+- Cada recomendação mostra: **o que diz**, **de onde vem**, **força** (forte, moderada, fraca ou consenso de especialistas) e **se foi estudado em crianças ou em adultos**.
+
+## Princípio: separar o que é estudo do que é regra ou opinião
+- **Regra oficial** (ex.: Regras do Tênis da ITF): é o que vale em competição.
+- **Consenso de especialistas** (ex.: manual da ITF, Academia Americana de Pediatria): orientação de quem estuda o assunto, sem um estudo que prove o número exato.
+- **Estudo** (com força forte, moderada ou fraca).
+- **Não existe evidência**: dizer isso claramente, em vez de inventar um número.
+
+## 1. Bola por idade e desenvoltura — conferido na fonte oficial
+Fonte: **manual Tennis10s da ITF** (lido no original). Desde 2012, as regras da ITF proíbem a bola amarela em competição de 10 anos ou menos.
+
+| Etapa | Idade de referência (ITF) | Bola | Quadra |
+|---|---|---|---|
+| Vermelha | 5 a 8 anos ("principalmente até 8") | 75% mais lenta que a amarela | 11–12 m × 5–6 m, rede 80 cm |
+| Laranja | 8 a 10 anos (ideal mudar aos 8 ou 9) | 50% mais lenta | 18 m × 6,5–8,23 m, rede 80–91 cm |
+| Verde | 9 a 10 anos | 25% mais lenta | Quadra oficial |
+| Amarela | Em média de 10 a 12 anos, sem idade fixa | Normal | Quadra oficial |
+
+**Desenvoltura (competências da ITF), avaliadas na bola atual antes de mudar:**
+- Saque e devolução: sacar com consistência na área certa; devolver o 2º saque.
+- Troca de bolas: manter a troca; mover a adversária; boa posição em quadra; golpe entre a cintura e o ombro, um pouco à frente do corpo.
+- Rede: voleio consistente; aproximar na hora certa.
+- Jogo: entende e conta o placar; decide as bolas na linha.
+- **Diversão: compete com confiança e alegria na bola atual e quer ir para a próxima.**
+
+**Regras práticas da ITF:**
+- Ao mudar, fazer um **período de transição de 6 a 10 semanas** usando as duas bolas.
+- **Mudar cedo demais** pode baixar a confiança, a motivação e a diversão, e prejudicar a técnica.
+- Quem começa tarde (9 anos ou mais) também deve começar pela vermelha.
+
+**Como aparece no app:** a família marca as competências ao lado da bola atual (sim ou ainda não, sem nota nem porcentagem). O app mostra a **faixa de idade da ITF** para a próxima bola, calculada pela data de nascimento. A data prevista continua sendo escrita pela família.
+
+**Força:** regra e consenso da ITF. A vantagem de bola mais lenta e quadra menor para aprender tem **evidência moderada** em crianças.
+
+## 2. Raquete por idade, altura e desenvoltura — conferido na fonte oficial
+| Etapa | Tamanho (ITF) |
+|---|---|
+| Vermelha | Até 23" (43–58 cm). Dos 5 aos 7 anos, 19" ou 21" pode ser melhor, conforme o tamanho e a força. |
+| Laranja | 23" a 25" (58–63 cm) |
+| Verde | 25" a 26" (63–66 cm), balanço neutro |
+| Amarela (11 anos ou mais) | 26" a 29" (66–73,7 cm) |
+
+- **Teste da altura (ITF):** em pé, segurando a raquete apontada para o chão, a ponta deve ficar **a uns 3 cm do chão. Se tocar o chão, está grande.**
+- Raquete grande demais pode diminuir a diversão, atrapalhar o controle e sobrecarregar braços em crescimento (ITF).
+- A ITF também mostra que a altura média de uma criança de 10 anos (cerca de 1,38–1,39 m) é **menor** que o quique da bola amarela (1,35–1,47 m). Por isso a bola mais lenta, que quica mais baixo, faz diferença.
+- Tabelas de altura dos fabricantes **não são estudo científico**. Se aparecerem no app, serão marcadas como orientação de fabricante.
+- **Força:** consenso da ITF. Estudos com crianças mostram que raquete e bola adaptadas melhoram o golpe (**moderada**).
+
+## 3. Carga de treino por idade, objetivo e desenvoltura — com honestidade
+**O que existe (limites de segurança, em crianças e adolescentes):**
+- **Horas por semana de esporte organizado não maiores que a idade** (ex.: 10 anos, até 10 h). Quem passou disso teve cerca de **70% mais chance de lesão grave por excesso de uso**. Estudo com 1.206 atletas de 8 a 18 anos (Jayanthi e colaboradores). **Força: moderada (estudo observacional).**
+- **Esporte organizado até o dobro do tempo de brincadeira livre.** Acima disso, chance cerca de 1,9 vez maior de lesão grave por excesso de uso (Jayanthi, 2015). **Moderada (observacional).**
+- **Especialização em um só esporte:** risco de lesão por excesso de uso 1,81 vez maior (alta especialização contra baixa). Meta-análise de Bell e colaboradores, *Pediatrics* 2018. **Moderada.** A ITF recomenda especializar no tênis por volta dos **11 a 13 anos para meninas** e praticar vários esportes antes.
+- **Descanso:** 1 a 2 dias por semana sem treino nem jogo do esporte, e alguns meses por ano longe do esporte específico (Academia Americana de Pediatria, 2024). **Consenso de especialistas.** (Conferir o número exato de meses no texto original.)
+- **Sono:** 9 a 12 h para 6 a 12 anos; 8 a 10 h para 13 a 18 anos (Academia Americana de Medicina do Sono, 2016). **Consenso forte.**
+- **Tênis:** em juniores, quem especializou só no tênis desistiu mais de torneios por lesão (estudo com 519 jogadores, apresentado em congresso, Jayanthi). **Fraca a moderada.**
+
+**O que NÃO existe:** um estudo que diga "X horas por semana para quem quer ser profissional" ou "Y horas para o nível intermediário". Por **objetivo e desenvoltura**, o que há é opinião de federações e treinadores. O app **não inventa esse número**. Diz isso claramente e deixa o plano por conta da família e do treinador.
+
+**Como aparece no app (sem alarme e sem classificação de risco):**
+- Na semana, o app soma as horas **realmente registradas** no Diário e mostra ao lado a referência: "Referência para 10 anos: até 10 h de esporte organizado por semana".
+- Mostra também os dias de descanso registrados na semana.
+- Sem vermelho, sem alerta piscando, sem "risco alto". Só o fato e a referência, com a fonte.
+
+## 4. Ícone de Referências
+- Lista **todas** as fontes do app, agrupadas por tema (Bolas e quadras, Raquete, Carga e descanso, Sono, Metas e motivação, Pais, Resultados juvenis, Nutrição), cada uma com a força da evidência, se é de crianças ou adultos, e o link.
+- Funciona sem internet (o texto fica no app; só o link precisa de internet).
+- Data da última revisão das referências, para mostrar que é mantido em dia.
+
+## Fontes novas (v3)
+- [ITF — manual Tennis10s (idades, bolas, quadras, raquetes, competências)](http://s3.amazonaws.com/ustaassets/assets/935/15/tennis10s_manual_eng.pdf)
+- [ITF — Regras do Tênis 2021 (apêndice de 10 anos ou menos)](https://www.itftennis.com/media/4421/2021-rules-of-tennis-english.pdf)
+- [Jayanthi e colaboradores — treino intenso e especializado e lesão (2015)](https://discover.luc.edu/works/21122)
+- [Jayanthi — horas por semana maiores que a idade (coorte de 1.206 atletas)](https://cm.healio.com/news/orthopedics/20150514/age-sportspecialized-training-excessive-play-may-be-linked-to-injury-risk)
+- [Bell e colaboradores — especialização e lesão por excesso de uso, meta-análise (Pediatrics, 2018)](https://pubmed.ncbi.nlm.nih.gov/30135085)
+- [Academia Americana de Pediatria — excesso de uso, excesso de treino e esgotamento (2024)](https://cm.healio.com/news/primary-care/20240201/aap-calls-attention-to-athletic-burnout-recovery-among-children)
+- [Academia Americana de Medicina do Sono — horas de sono por idade (2016)](https://pmc.ncbi.nlm.nih.gov/articles/PMC5078711)
+- [Jayanthi — especialização em 519 juniores de tênis (congresso, 2009)](https://www.eurekalert.org/news-releases/540470)
+- [Kachel, Buszard e Reid — compressão da bola em juniores de 10 anos (2015)](https://vuir.vu.edu.au/28951/)
