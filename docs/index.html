@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Briceno Tennis</title>
+<meta name="color-scheme" content="dark light">
+<style>
+/* ---------- tokens (escuro é o padrão da família Briceno; claro segue o aparelho) ---------- */
+:root{
+  --bg:#0B0A09; --bg2:#100E0C; --surface:#161311; --surface2:#1E1A17; --raise:#24201C;
+  --line:rgba(255,236,218,.09); --line2:rgba(255,236,218,.16);
+  --text:#F5EFE8; --muted:#B0A396; --faint:#8A7E73;
+  --clay:#E0875A; --clay-2:#C96E42; --clay-ink:#1B0E07; --clay-soft:rgba(224,135,90,.14);
+  --gold:#D7B378; --scrim:rgba(0,0,0,.55);
+  --b-red:#E8624E; --b-orange:#F29A4C; --b-green:#8FC45A; --b-yellow:#D8DE52;
+  --ok:#8FC45A; --danger:#E86A5C;
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px rgba(0,0,0,.35);
+  --r-card:18px; --r-sm:12px; --r-pill:999px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+  --t-cap:.8125rem; --t-sm:.875rem; --t-body:1rem; --t-lg:1.125rem; --t-xl:1.375rem; --t-xxl:1.75rem;
+  --serif:ui-serif,"New York","Iowan Old Style",Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+  --tabbar:56px; --sab:env(safe-area-inset-bottom,0px); --sat:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F6F2ED; --bg2:#EFE9E2; --surface:#FFFFFF; --surface2:#F5F0EA; --raise:#FFFFFF;
+    --line:rgba(52,32,14,.10); --line2:rgba(52,32,14,.18);
+    --text:#1C1714; --muted:#685C52; --faint:#8C8076;
+    --clay:#B95D30; --clay-2:#A24F26; --clay-ink:#FFFFFF; --clay-soft:rgba(185,93,48,.10);
+    --gold:#8E6A2E; --scrim:rgba(20,12,6,.35);
+    --b-red:#D24A36; --b-orange:#DD7D25; --b-green:#5E9A2C; --b-yellow:#A9AE16;
+    --ok:#5E9A2C; --danger:#C2412F;
+    --shadow:0 1px 2px rgba(52,32,14,.06), 0 8px 24px rgba(52,32,14,.07);
+  }
+}
+:root[data-theme="dark"]{ color-scheme:dark }
+html{font-size:17px;-webkit-text-size-adjust:100%;background:var(--bg)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:var(--t-body);line-height:1.45;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--text)}
+a{color:var(--clay)}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--clay);outline-offset:2px;border-radius:8px}
+
+/* ---------- abertura ---------- */
+#boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .45s ease}
+#boot.out{opacity:0;pointer-events:none}
+#boot.inst{transition:none}
+#boot .bt-mark{width:88px;height:88px;border-radius:22px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.45);animation:bt-in .7s cubic-bezier(.2,.8,.2,1) both}
+#boot .bt-name{font-family:var(--serif);font-size:1.5rem;letter-spacing:.01em;animation:bt-in .7s .08s cubic-bezier(.2,.8,.2,1) both}
+#boot .bt-name span{color:var(--clay)}
+#boot .bt-ctl{display:flex;flex-direction:column;align-items:center;gap:14px;min-height:96px}
+#boot:not(.lock) .bt-ctl{visibility:hidden}
+#boot.busy .bt-ctl{opacity:.5;pointer-events:none}
+@keyframes bt-in{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){#boot .bt-mark,#boot .bt-name{animation:none}}
+.bt-face{display:flex;align-items:center;gap:10px;padding:14px 22px;border-radius:var(--r-pill);background:var(--clay);color:var(--clay-ink);font-weight:600}
+.bt-face svg{width:22px;height:22px}
+.bt-rec{color:var(--muted);font-size:var(--t-sm);padding:8px}
+.bt-msg{color:var(--danger);min-height:1.2em;margin:0;font-size:var(--t-sm)}
+.bt-form{display:flex;gap:8px}
+
+/* ---------- estrutura ---------- */
+.app{max-width:620px;margin:0 auto;min-height:100vh;padding:calc(var(--sat) + 8px) 16px calc(var(--tabbar) + var(--sab) + 40px)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+.who{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 12px 4px 4px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--line);max-width:100%}
+.who .av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95rem;color:#1a1208;background:var(--ballc,var(--clay))}
+.who .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who svg{width:16px;height:16px;color:var(--muted);flex:0 0 16px}
+.page-h{font-family:var(--serif);font-weight:500;font-size:var(--t-xxl);line-height:1.15;margin:18px 0 4px;letter-spacing:.005em}
+.page-sub{color:var(--muted);margin:0 0 18px}
+.sec-t{display:flex;align-items:center;gap:10px;margin:28px 2px 10px;font-size:var(--t-cap);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.sec-t::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow)}
+.card.pad{padding:16px}
+.card + .card{margin-top:10px}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.small{font-size:var(--t-sm)} .cap{font-size:var(--t-cap)}
+.serif{font-family:var(--serif)}
+p{margin:0 0 8px}
+
+/* linhas tocáveis */
+.list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;box-shadow:var(--shadow)}
+.row{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:14px 16px;min-height:56px;border-top:1px solid var(--line)}
+.list > .row:first-child,.list > :first-child .row{border-top:0}
+button.row:active{background:var(--surface2)}
+.row .ic{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;background:var(--surface2);border:1px solid var(--line);color:var(--clay)}
+.row .ic svg{width:19px;height:19px}
+.row .bd{flex:1;min-width:0}
+.row .t1{font-weight:600;overflow-wrap:anywhere}
+.row .t2{color:var(--muted);font-size:var(--t-sm);overflow-wrap:anywhere}
+.row .t3{color:var(--text);font-size:var(--t-sm);margin-top:4px;overflow-wrap:anywhere;opacity:.92}
+.row .rv{color:var(--muted);font-size:var(--t-sm);white-space:nowrap;text-align:right;padding-top:2px}
+.row .chev{width:16px;height:16px;flex:0 0 16px;color:var(--faint);margin-top:4px}
+.empty{padding:22px 18px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-weight:600;margin-bottom:4px}
+
+/* bolas */
+.ball{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--bc);box-shadow:inset 0 -2px 3px rgba(0,0,0,.25),inset 0 1px 2px rgba(255,255,255,.35);vertical-align:-1px;flex:0 0 12px}
+.b-red{--bc:var(--b-red)} .b-orange{--bc:var(--b-orange)} .b-green{--bc:var(--b-green)} .b-yellow{--bc:var(--b-yellow)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:var(--r-pill);background:var(--surface2);border:1px solid var(--line);font-size:var(--t-sm);white-space:nowrap}
+
+/* cartão de destaque (foco da semana) */
+.focus{position:relative;overflow:hidden;padding:18px;background:linear-gradient(140deg,color-mix(in srgb,var(--clay) 20%,var(--surface)) 0%,var(--surface) 62%);border:1px solid color-mix(in srgb,var(--clay) 35%,var(--line));border-radius:var(--r-card);width:100%;text-align:left;box-shadow:var(--shadow)}
+.focus .eb{font-size:var(--t-cap);letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:600}
+.focus .ft{font-family:var(--serif);font-size:var(--t-xl);line-height:1.25;margin-top:6px;overflow-wrap:anywhere}
+.focus .fs{color:var(--muted);font-size:var(--t-sm);margin-top:6px}
+
+/* semana */
+.wk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wk .k{padding:14px 16px;margin:0}
+.wk .kv{font-family:var(--serif);font-size:var(--t-xl);line-height:1.2}
+.wk .kl{color:var(--muted);font-size:var(--t-sm)}
+.ref{margin-top:10px;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface2);border:1px solid var(--line);font-size:var(--t-sm);color:var(--muted)}
+.ref b{color:var(--text);font-weight:600}
+.note{padding:12px 14px;border-radius:var(--r-sm);background:var(--clay-soft);border:1px solid color-mix(in srgb,var(--clay) 25%,transparent);font-size:var(--t-sm)}
+
+/* linha do tempo das bolas */
+.tl{padding:6px 16px}
+.tl-i{display:flex;gap:14px;position:relative;padding:12px 0}
+.tl-i:not(:last-child)::before{content:"";position:absolute;left:8px;top:34px;bottom:-6px;width:2px;background:var(--line2)}
+.tl-i .ball{width:18px;height:18px;flex:0 0 18px;margin-top:2px}
+.tl-i.off .ball{opacity:.28}
+.tl-i .bd{flex:1;min-width:0}
+.tl-i .t1{font-weight:600}
+.tl-i .t2{color:var(--muted);font-size:var(--t-sm)}
+.tl-i.now .t1::after{content:"atual";margin-left:8px;font-size:var(--t-cap);font-weight:600;color:var(--clay);letter-spacing:.06em;text-transform:uppercase}
+
+/* barra inferior */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(18px);-webkit-backdrop-filter:saturate(1.4) blur(18px);border-top:1px solid var(--line);padding-bottom:var(--sab)}
+.tabs-in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 72px repeat(2,minmax(0,1fr));height:var(--tabbar);align-items:stretch}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--faint);font-size:12px;font-weight:500;position:relative;min-width:0}
+.tab svg{width:23px;height:23px}
+.tab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tab.on{color:var(--clay)}
+.tab.on::before{content:"";position:absolute;top:0;left:30%;right:30%;height:2px;border-radius:0 0 2px 2px;background:var(--clay)}
+.tab:active{opacity:.6}
+.fab{justify-self:center;align-self:center;width:52px;height:52px;border-radius:50%;margin-top:-18px;display:grid;place-items:center;color:var(--clay-ink);background:radial-gradient(120% 120% at 30% 20%,color-mix(in srgb,var(--clay) 70%,#fff) 0%,var(--clay) 45%,var(--clay-2) 100%);box-shadow:0 0 0 5px var(--bg),0 10px 24px rgba(0,0,0,.35)}
+.fab svg{width:26px;height:26px}
+.fab:active{filter:brightness(.88)}
+
+/* folhas */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:50;opacity:0;transition:opacity .22s}
+.scrim.on{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;background:var(--bg2);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;max-width:620px;margin:0 auto;max-height:calc(100% - var(--sat) - 12px);overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 18px calc(var(--sab) + 22px);transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.sheet.on{transform:none}
+@media (prefers-reduced-motion: reduce){.sheet,.scrim{transition:none}}
+.grab{width:38px;height:5px;border-radius:3px;background:var(--line2);margin:2px auto 12px}
+.sheet h2{font-family:var(--serif);font-weight:500;font-size:var(--t-xl);margin:4px 0 4px;line-height:1.2}
+.sh-sub{color:var(--muted);margin:0 0 16px;font-size:var(--t-sm)}
+.sh-x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.sh-x svg{width:20px;height:20px}
+
+/* formulários */
+.fld{display:block;margin:0 0 14px}
+.lbl{display:block;font-size:var(--t-sm);font-weight:600;color:var(--muted);margin:0 0 6px}
+.lbl .opt{font-weight:400;color:var(--faint)}
+.input,.ta,select.input{width:100%;min-height:48px;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line2);outline:none;font-size:max(16px,1rem)}
+.ta{min-height:88px;resize:vertical;line-height:1.4}
+.input:focus,.ta:focus{border-color:var(--clay)}
+input[type=date].input,input[type=month].input{-webkit-appearance:none;appearance:none;display:block}
+.hint{font-size:var(--t-cap);color:var(--faint);margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;padding:8px 14px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--line2);font-size:var(--t-sm)}
+.chip.on{background:var(--clay);border-color:var(--clay);color:var(--clay-ink);font-weight:600}
+.rpe{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.rpe button{min-height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--line2);font-variant-numeric:tabular-nums;font-size:var(--t-sm)}
+.rpe button.on{background:var(--clay);border-color:var(--clay);color:var(--clay-ink);font-weight:700}
+.rpe-l{font-size:var(--t-sm);color:var(--text);margin-top:8px;min-height:1.4em}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.seg button{min-height:40px;border-radius:10px;font-size:var(--t-sm);padding:0 6px}
+.seg button.on{background:var(--clay);color:var(--clay-ink);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 20px;border-radius:14px;font-weight:600}
+.btn.block{width:100%}
+.btn.primary{background:var(--clay);color:var(--clay-ink)}
+.btn.ghost{background:var(--surface);border:1px solid var(--line2)}
+.btn.plain{color:var(--muted)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5}
+.btn:active{filter:brightness(.9)}
+.stack{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.chk{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:12px 0;border-top:1px solid var(--line);min-height:48px}
+.chk:first-of-type{border-top:0}
+.chk .bx{width:24px;height:24px;flex:0 0 24px;border-radius:7px;border:1.5px solid var(--line2);display:grid;place-items:center;margin-top:1px}
+.chk.on .bx{background:var(--clay);border-color:var(--clay);color:var(--clay-ink)}
+.chk .bx svg{width:16px;height:16px}
+.chk-g{font-size:var(--t-cap);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:18px 0 2px}
+.ord{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.ord:first-child{border-top:0}
+.ord .n{width:26px;flex:0 0 26px;font-family:var(--serif);color:var(--clay);font-size:var(--t-lg);text-align:center}
+.ord .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.ord .mv{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;color:var(--muted);background:var(--surface);border:1px solid var(--line)}
+.ord .mv svg{width:18px;height:18px}
+.ord .mv:disabled{opacity:.3}
+
+/* registrar */
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.qbig{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:16px;min-height:104px;border-radius:var(--r-card);background:var(--surface);border:1px solid var(--line);text-align:left}
+.qbig svg{width:26px;height:26px;color:var(--clay)}
+.qbig b{font-weight:600}
+.qbig span{font-size:var(--t-cap);color:var(--muted)}
+
+/* guia */
+.ev{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-cap);font-weight:600;padding:3px 9px;border-radius:var(--r-pill);border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.ev i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.ev.forte{color:var(--ok)} .ev.moderada{color:var(--gold)} .ev.fraca{color:var(--faint)} .ev.consenso{color:var(--clay)} .ev.regra{color:var(--text)}
+.g-card{padding:16px}
+.g-card h3{font-family:var(--serif);font-weight:500;font-size:var(--t-lg);margin:0 0 8px;line-height:1.25}
+.g-card ul{margin:6px 0 8px;padding-left:20px}
+.g-card li{margin:4px 0}
+.g-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.g-src{font-size:var(--t-cap);color:var(--faint);margin-top:8px}
+.tbl{width:100%;border-collapse:collapse;font-size:var(--t-sm);margin:6px 0 4px}
+.tbl th{text-align:left;font-weight:600;color:var(--muted);padding:6px 6px 6px 0;border-bottom:1px solid var(--line2)}
+.tbl td{padding:8px 6px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr.me td{color:var(--clay);font-weight:600}
+.tbl td:first-child{white-space:nowrap}
+.refs a{display:block;padding:12px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--text)}
+.refs a:first-child{border-top:0}
+.refs a span{display:block;color:var(--faint);font-size:var(--t-cap)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--tabbar) + var(--sab) + 18px);transform:translate(-50%,20px);z-index:60;display:flex;align-items:center;gap:14px;max-width:calc(100% - 32px);padding:12px 16px;border-radius:14px;background:var(--text);color:var(--bg);font-size:var(--t-sm);font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.act{pointer-events:auto}
+#toast.top{bottom:auto;top:calc(var(--sat) + 12px);transform:translate(-50%,-20px)}
+#toast.top.on{transform:translate(-50%,0)}
+#toast .undo{color:var(--clay-2);font-weight:700;padding:6px 2px;min-height:36px}
+.ask{margin-top:12px;padding:14px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line2)}
+.ask-b{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.ask-b .btn{min-height:44px}
+
+/* boas-vindas */
+.welcome{min-height:70vh;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:20px 4px}
+.welcome .mk{width:72px;height:72px;border-radius:18px;overflow:hidden}
+.welcome h1{font-family:var(--serif);font-weight:500;font-size:2rem;line-height:1.15;margin:8px 0 0}
+.welcome p{color:var(--muted)}
+
+/* telas estreitas e texto ampliado */
+@media (max-width:360px){
+  .app{padding-left:12px;padding-right:12px}
+  .tab{font-size:11px}
+  .rpe{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .two{grid-template-columns:1fr}
+}
+.big-text .wk,.big-text .qgrid,.big-text .two{grid-template-columns:1fr}
+.big-text .rpe{grid-template-columns:repeat(6,minmax(0,1fr))}
+.big-text .row{flex-wrap:wrap}
+.big-text .row .rv{order:3;width:100%;text-align:left;padding-left:46px}
+</style>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tennis">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0B0A09">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1320x2868.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 420px) and (device-height: 912px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1260x2736.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1206x2622.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1290x2796.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1179x2556.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1284x2778.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1170x2532.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1125x2436.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1242x2688.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icons/launch/828x1792.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="icons/launch/1242x2208.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icons/launch/750x1334.png">
+<link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="icons/launch/640x1136.png">
+</head>
+<body>
+<div id="boot" class="inst" aria-hidden="true"><div class="bt-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="Briceno Tennis"><defs><linearGradient id="btm-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E1A10"/><stop offset="1" stop-color="#0C0908"/></linearGradient><radialGradient id="btm-ball" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#F6B184"/><stop offset=".55" stop-color="#E0875A"/><stop offset="1" stop-color="#A9532A"/></radialGradient></defs><rect width="100" height="100" fill="url(#btm-bg)"/><circle cx="50" cy="50" r="27" fill="url(#btm-ball)"/><path d="M28.5 34c9 6 13 11 13 16s-4 10-13 16M71.5 34c-9 6-13 11-13 16s4 10 13 16" fill="none" stroke="#1B0E07" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round"/></svg></div><div class="bt-name">Briceno <span>Tennis</span></div><div class="bt-ctl"></div></div>
+<div class="app" id="app"></div>
+<nav class="tabs" id="tabs" aria-label="Seções" hidden></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* Briceno Tennis · Fase 1
+   Diário (treinos, jogos, sessões de golpes), Evolução (bolas, golpes, prioridades, equipamento),
+   Carreira (torneios planejados e resultados) e Guia (recomendações e referências).
+   Dados só neste aparelho (localStorage), com Face ID opcional e backup em arquivo. */
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "html") el.innerHTML = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "value") el.value = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(c));
+  return el;
+}
+const put = (el, ...kids) => el.replaceChildren(...kids.flat(Infinity).filter(x => x != null && x !== false));
+const svg = name => h("span", {html: ICON[name], style: "display:contents", "aria-hidden": "true"});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clean = s => String(s == null ? "" : s).trim();
+const haptic = () => { try { navigator.vibrate && navigator.vibrate(8); } catch (e) {} };
+// proteção contra toque duplo: a mesma ação não roda duas vezes seguidas
+function once(fn, ms = 700){ let busy = false; return (...a) => { if (busy) return; busy = true; setTimeout(() => busy = false, ms); haptic(); return fn(...a); }; }
+
+const ICON = {
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  diary:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z"/><path d="M6 3v18M10 8h5M10 12h5"/></svg>',
+  growth:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M5 16l4-4 3 3 6-7"/><path d="M14 8h4v4"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-4.5-2-8-2v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2V4c-3.5 0-6 .5-8 2Z"/><path d="M12 6v14"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  train:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>',
+  match:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M12 5v14M3 12h18M7.5 5v14M16.5 5v14"/></svg>',
+  stroke:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="14.5" cy="8.5" rx="5" ry="6" transform="rotate(40 14.5 8.5)"/><path d="m10.5 13-6.5 7"/><circle cx="6" cy="6" r="2"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M12 13v4M8 20h8"/></svg>',
+  racket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="14" cy="9" rx="6" ry="7" transform="rotate(35 14 9)"/><path d="m9.5 14.5-6 6"/><path d="M11 6l6 6M10 9.5l4.5 4.5M13.5 4.5l4.5 4.5"/></svg>',
+  strings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v18M12 3v18M16 3v18M4 8h16M4 12h16M4 16h16"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>',
+  save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg>',
+  faceid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 16c1.5 1 3.5 1 5 0"/></svg>',
+  ball:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 6.5c3 2 4 3.6 4 5.5s-1 3.5-4 5.5M18.5 6.5c-3 2-4 3.6-4 5.5s1 3.5 4 5.5"/></svg>'
+};
+
+/* ---------- datas ---------- */
+const pad2 = n => String(n).padStart(2, "0");
+const iso = d => d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+const today = () => iso(new Date());
+const parseD = s => { if (!s) return null; const [y, m, d] = String(s).split("-").map(Number); return y ? new Date(y, (m || 1) - 1, d || 1) : null; };
+const MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const MESX = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const fmtD = s => { const d = parseD(s); return d ? d.getDate() + " " + MES[d.getMonth()] + " " + d.getFullYear() : ""; };
+const fmtDs = s => { const d = parseD(s); if (!d) return ""; return d.getDate() + " " + MES[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? " " + d.getFullYear() : ""); };
+const fmtMY = s => { const d = parseD(s); return d ? MES[d.getMonth()] + " " + d.getFullYear() : ""; };
+function ageAt(birth, at){ const b = parseD(birth), d = at ? parseD(at) : new Date(); if (!b || !d) return null;
+  let a = d.getFullYear() - b.getFullYear(); if (d.getMonth() < b.getMonth() || (d.getMonth() === b.getMonth() && d.getDate() < b.getDate())) a--; return a; }
+function monthsBetween(a, b){ const x = parseD(a), y = b ? parseD(b) : new Date(); if (!x || !y) return null;
+  let m = (y.getFullYear() - x.getFullYear()) * 12 + (y.getMonth() - x.getMonth()); if (y.getDate() < x.getDate()) m--; return Math.max(0, m); }
+function dur(m){ if (m == null) return ""; if (m < 1) return "menos de 1 mês"; const y = Math.floor(m / 12), r = m % 12;
+  return [y ? y + (y > 1 ? " anos" : " ano") : "", r ? r + (r > 1 ? " meses" : " mês") : ""].filter(Boolean).join(" e "); }
+function addYears(s, n){ const d = parseD(s); if (!d) return null; return iso(new Date(d.getFullYear() + n, d.getMonth(), d.getDate())); }
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return iso(d); };
+const hm = min => { min = Math.round(min || 0); const hh = Math.floor(min / 60), mm = min % 60; return hh ? hh + " h" + (mm ? " " + pad2(mm) : "") : mm + " min"; };
+
+/* ---------- referências fixas ---------- */
+// Etapas e números conferidos no manual Tennis10s da ITF (lido no original). Faixas de idade são referência, não regra de data.
+const BALLS = [
+  {k: "red", n: "Vermelha", age: "5 a 8 anos", racket: "Até 23\" (19\" ou 21\" dos 5 aos 7 anos)", speed: "75% mais lenta que a amarela", court: "11–12 m × 5–6 m, rede de 80 cm"},
+  {k: "orange", n: "Laranja", age: "8 a 10 anos (ideal mudar aos 8 ou 9)", racket: "23\" a 25\"", speed: "50% mais lenta", court: "18 m × 6,5–8,23 m, rede de 80–91 cm"},
+  {k: "green", n: "Verde", age: "9 a 10 anos", racket: "25\" a 26\", balanço neutro", speed: "25% mais lenta", court: "Quadra oficial"},
+  {k: "yellow", n: "Amarela", age: "Em média 10 a 12 anos, sem idade fixa", racket: "26\" a 29\"", speed: "Bola normal", court: "Quadra oficial"}
+];
+// idade em que a ITF costuma situar a mudança PARA esta bola: [de, até] (anos completos)
+const NEXT_AGE = {orange: [8, 9], green: [9, 10], yellow: [10, 12]};
+const ballOf = k => BALLS.find(b => b.k === k) || BALLS[0];
+const STROKES = ["Saque", "Devolução", "Forehand", "Backhand", "Voleio", "Smash", "Deslocamento"];
+const LEVELS = ["Clube", "Estadual", "Nacional", "Sul-americano", "Internacional"];
+const SURFACES = ["Saibro", "Rápida", "Grama", "Outra"];
+const RESULTS = [["champ", "Campeã", "Campeão"], ["vice", "Vice-campeã", "Vice-campeão"], ["semi", "Semifinal"], ["quartas", "Quartas de final"], ["oitavas", "Oitavas de final"],
+  ["r2", "Segunda rodada"], ["r1", "Primeira rodada"], ["grupos", "Fase de grupos"]];
+const FUN = [["sim", "Sim"], ["mais", "Mais ou menos"], ["nao", "Não"]];
+// escala de esforço percebido da sessão (CR-10 de Borg, como no método de Foster)
+const RPE = {0: "Repouso", 1: "Muito, muito fácil", 2: "Fácil", 3: "Moderado", 4: "Um pouco difícil", 5: "Difícil", 7: "Muito difícil", 10: "Máximo"};
+const rpeLabel = v => { if (v == null) return ""; let k = v; while (!(k in RPE)) k--; return RPE[k]; };
+// competências da ITF para mudar de bola (avaliadas na bola atual)
+const COMP = [
+  ["Saque e devolução", [["s1", "Saca com consistência na área de saque certa"], ["s2", "Varia a direção do saque (na laranja e na verde)"], ["s3", "Devolve o segundo saque com consistência"]]],
+  ["Troca de bolas", [["r1", "Mantém a troca de bolas com consistência"], ["r2", "Direciona a bola para movimentar quem está do outro lado"], ["r3", "Fica bem posicionada para atacar, trocar ou defender"],
+    ["r4", "Bate entre a cintura e o ombro, um pouco à frente do corpo"], ["r5", "Faz o split step entre os golpes, quando dá tempo"]]],
+  ["Rede", [["n1", "Voleia com consistência para dentro da quadra"], ["n2", "Sobe à rede na hora certa"]]],
+  ["Jogo", [["g1", "Entende e conta o placar"], ["g2", "Decide as bolas na linha"]]],
+  ["Diversão", [["e1", "Compete com confiança e alegria na bola atual"], ["e2", "Quer ir para a próxima bola"]]]
+];
+
+/* ---------- dados salvos neste aparelho ---------- */
+// A chave não muda depois de publicada. Migrações nunca apagam dados: guardam uma cópia antes.
+const KEY = "bricenotennis.v1", VERSION = 1;
+let S;
+const blank = () => ({app: "briceno-tennis", version: VERSION, athletes: [], activeId: null, meta: {lastBackup: null}});
+function normAthlete(a){
+  a.balls = a.balls || {}; a.comp = a.comp || {}; a.rackets = a.rackets || []; a.strings = a.strings || [];
+  a.prefs = a.prefs || []; a.prio = a.prio || []; a.entries = a.entries || []; a.tours = a.tours || [];
+  return a;
+}
+function load(){
+  let raw = null; try { raw = localStorage.getItem(KEY); } catch (e) {}
+  try { S = raw ? JSON.parse(raw) : null; } catch (e) { S = null; }
+  if (!S || typeof S !== "object") { S = blank(); return; }
+  if ((S.version || 1) < VERSION) { try { if (!localStorage.getItem(KEY + ".antes-da-v" + VERSION)) localStorage.setItem(KEY + ".antes-da-v" + VERSION, raw); } catch (e) {} S.version = VERSION; }
+  S.athletes = (S.athletes || []).filter(a => a && typeof a === "object").map(normAthlete);
+  S.meta = S.meta || {lastBackup: null};
+  if (!S.athletes.some(a => a.id === S.activeId)) S.activeId = S.athletes[0] ? S.athletes[0].id : null;
+}
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); return true; }
+  catch (e) { toast("Não foi possível salvar neste aparelho"); return false; }
+}
+const active = () => S.athletes.find(a => a.id === S.activeId) || null;
+const fem = a => !a || a.sex !== "m";
+const gx = (a, f, m) => fem(a) ? f : m;
+const resLabel = (a, k) => { const r = RESULTS.find(x => x[0] === k); return r ? (r[2] && !fem(a) ? r[2] : r[1]) : ""; };
+function curBall(a){ let c = null; for (const b of BALLS) if (a.balls[b.k]) c = b.k; return c; }
+function nextBall(a){ const c = curBall(a); const i = BALLS.findIndex(b => b.k === c); return i >= 0 && i < BALLS.length - 1 ? BALLS[i + 1].k : (c ? null : "red"); }
+const curRacket = a => a.rackets.filter(r => !r.to).sort((x, y) => (y.from || "").localeCompare(x.from || ""))[0] || null;
+const curString = a => a.strings.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0] || null;
+const openPrio = a => a.prio.filter(p => !p.done);
+// snapshot para Desfazer
+const snap = () => JSON.stringify(S);
+function undoTo(s){ S = JSON.parse(s); S.athletes.forEach(normAthlete); save(); render(); }
+
+/* ---------- toast, folhas e confirmação ---------- */
+function toast(msg, undo){
+  const t = $("#toast"), off = () => t.classList.remove("on", "act");
+  put(t, h("span", null, msg), undo ? h("button", {type: "button", class: "undo", onclick: () => { clearTimeout(toast.t); off(); undo(); }}, "Desfazer") : null);
+  t.classList.toggle("act", !!undo); t.classList.toggle("top", !!document.querySelector(".sheet.on")); t.classList.add("on");
+  clearTimeout(toast.t); toast.t = setTimeout(off, undo ? 6000 : 1800);
+}
+function sheet(label, build){
+  const scrim = h("div", {class: "scrim"});
+  const el = h("div", {class: "sheet", role: "dialog", "aria-modal": "true", "aria-label": label}, h("div", {class: "grab"}));
+  let closed = false;
+  function close(){ if (closed) return; closed = true; el.classList.remove("on"); scrim.classList.remove("on"); setTimeout(() => { el.remove(); scrim.remove(); }, 280); }
+  const add0 = el.append.bind(el); el.append = (...k) => add0(...k.flat(Infinity).filter(x => x != null && x !== false));
+  scrim.addEventListener("click", close);
+  el.append(h("button", {class: "sh-x", type: "button", "aria-label": "Fechar", onclick: close}, svg("x")));
+  build(el, close);
+  document.body.append(scrim, el);
+  requestAnimationFrame(() => { scrim.classList.add("on"); el.classList.add("on"); });
+  return {el, close};
+}
+function ask(slot, text, label, fn){
+  const close = () => slot.replaceChildren();
+  slot.replaceChildren(h("div", {class: "ask", role: "alertdialog"}, h("div", null, text),
+    h("div", {class: "ask-b"}, h("button", {class: "btn ghost", type: "button", onclick: close}, "Cancelar"),
+      h("button", {class: "btn ghost danger", type: "button", onclick: () => { close(); fn(); }}, label))));
+  slot.scrollIntoView({block: "nearest", behavior: "smooth"});
+}
+
+/* ---------- campos de formulário ---------- */
+const fld = (label, input, hint, opt) => h("label", {class: "fld"}, h("span", {class: "lbl"}, label, opt ? h("span", {class: "opt"}, " · opcional") : null), input, hint ? h("div", {class: "hint"}, hint) : null);
+const inp = (attrs) => h("input", Object.assign({class: "input"}, attrs));
+const ta = (value, ph) => h("textarea", {class: "ta", placeholder: ph || "", value: value || ""});
+function group(label, el, opt){ return h("div", {class: "fld", role: "group", "aria-label": label}, h("span", {class: "lbl"}, label, opt ? h("span", {class: "opt"}, " · opcional") : null), el); }
+// escolha única (pode desmarcar se allowNone)
+function choice(opts, value, allowNone, onchange){
+  let v = value; const wrap = h("div", {class: "chips"});
+  const paint = () => put(wrap, opts.map(([k, l]) => h("button", {type: "button", class: "chip" + (v === k ? " on" : ""), "aria-pressed": String(v === k),
+    onclick: () => { v = (allowNone && v === k) ? null : k; paint(); onchange && onchange(v); }}, l)));
+  paint(); wrap.get = () => v; return wrap;
+}
+function multi(opts, values){
+  const set = new Set(values || []); const wrap = h("div", {class: "chips"});
+  const paint = () => put(wrap, opts.map(o => h("button", {type: "button", class: "chip" + (set.has(o) ? " on" : ""), "aria-pressed": String(set.has(o)),
+    onclick: () => { set.has(o) ? set.delete(o) : set.add(o); paint(); }}, o)));
+  paint(); wrap.get = () => opts.filter(o => set.has(o)); return wrap;
+}
+function rpePick(value){
+  let v = value == null ? null : value; const lab = h("div", {class: "rpe-l"});
+  const grid = h("div", {class: "rpe", role: "radiogroup", "aria-label": "Esforço de 0 a 10"});
+  const paint = () => { put(grid, Array.from({length: 11}, (_, i) => h("button", {type: "button", role: "radio", class: v === i ? "on" : "", "aria-checked": String(v === i), "aria-label": i + ", " + rpeLabel(i),
+    onclick: () => { v = v === i ? null : i; paint(); }}, String(i)))); lab.textContent = v == null ? "Toque no número que ela escolher." : v + " · " + rpeLabel(v); };
+  paint(); const w = h("div", null, grid, lab); w.get = () => v; return w;
+}
+const numOrNull = s => { const n = parseFloat(String(s).replace(",", ".")); return isFinite(n) && n >= 0 ? n : null; };
+
+/* ---------- navegação ---------- */
+const TABS = [["diario", "Diário", "diary"], ["evolucao", "Evolução", "growth"], ["carreira", "Carreira", "flag"], ["guia", "Guia", "book"]];
+let view = {tab: "diario", more: 30};
+function paintTabs(){
+  const nav = $("#tabs"), a = active();
+  nav.hidden = !a;
+  if (!a) return;
+  if (!nav.firstChild) {
+    const mk = ([k, l, ic]) => h("button", {type: "button", class: "tab", "data-k": k, onclick: () => go(k)}, svg(ic), h("span", null, l));
+    put(nav, h("div", {class: "tabs-in"}, mk(TABS[0]), mk(TABS[1]),
+      h("button", {type: "button", class: "fab", "aria-label": "Registrar", onclick: once(() => quickSheet())}, svg("plus")),
+      mk(TABS[2]), mk(TABS[3])));
+  }
+  nav.querySelectorAll(".tab").forEach(t => { const on = t.dataset.k === view.tab; t.classList.toggle("on", on); on ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current"); });
+}
+function go(tab){ if (view.tab === tab) { window.scrollTo({top: 0, behavior: "smooth"}); return; } view.tab = tab; view.more = 30; render(); window.scrollTo(0, 0); }
+function render(){
+  const app = $("#app"), a = active();
+  try { sessionStorage.setItem(KEY + ".view", JSON.stringify({tab: view.tab})); } catch (e) {}
+  paintTabs();
+  if (!a) { put(app, welcome()); return; }
+  const scr = {diario: diario, evolucao: evolucao, carreira: carreira, guia: guia}[view.tab] || diario;
+  put(app, topBar(a), scr(a));
+}
+function topBar(a){
+  const cb = curBall(a);
+  return h("div", {class: "top"},
+    h("button", {type: "button", class: "who", "aria-label": "Atleta: " + a.name + ". Trocar de atleta, dados, backup e Face ID", onclick: once(() => athleteSheet())},
+      h("span", {class: "av", style: cb ? "--ballc:var(--b-" + cb + ")" : null}, (a.name || "?").trim().charAt(0).toUpperCase()),
+      h("span", {class: "nm"}, a.name), svg("down")));
+}
+function welcome(){
+  const mark = $("#boot .bt-mark").innerHTML;
+  return h("div", {class: "welcome"},
+    h("div", {class: "mk", html: mark}),
+    h("h1", null, "Briceno Tennis"),
+    h("p", null, "A evolução da sua atleta, organizada e baseada na ciência: treinos, jogos, golpes, bolas, equipamento e torneios."),
+    h("p", {class: "small"}, "Os dados ficam só neste aparelho."),
+    h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => athleteForm(null))}, "Cadastrar atleta"),
+      h("button", {type: "button", class: "btn plain block", onclick: once(() => restoreSheet())}, "Restaurar um backup")));
+}
+function sec(t, ...kids){ return [h("h2", {class: "sec-t"}, t), ...kids]; }
+function row(o){
+  const tag = o.fn ? "button" : "div";
+  return h(tag, {class: "row", type: o.fn ? "button" : null, onclick: o.fn ? once(o.fn) : null, "aria-label": o.aria || null},
+    o.ic ? h("span", {class: "ic"}, typeof o.ic === "string" ? svg(o.ic) : o.ic) : null,
+    h("span", {class: "bd"}, h("div", {class: "t1"}, o.t1), o.t2 ? h("div", {class: "t2"}, o.t2) : null, o.t3 ? h("div", {class: "t3"}, o.t3) : null),
+    o.rv ? h("span", {class: "rv"}, o.rv) : null,
+    o.fn ? h("span", {class: "chev"}, svg("chev")) : null);
+}
+
+/* ---------- Diário ---------- */
+function weekStats(a){
+  const from = daysAgo(6), t = today();
+  const es = a.entries.filter(e => e.date >= from && e.date <= t);
+  const min = es.reduce((s, e) => s + (e.min || 0), 0);
+  const load = es.reduce((s, e) => s + (e.min && e.rpe != null ? e.min * e.rpe : 0), 0);
+  const days = new Set(es.map(e => e.date));
+  return {es, min, load, rest: 7 - days.size, withLoad: es.some(e => e.min && e.rpe != null)};
+}
+function entryTitle(a, e){
+  if (e.type === "jogo") return "Jogo" + (e.opp ? " · " + e.opp : "");
+  if (e.type === "golpes") return "Golpes" + (e.strokes && e.strokes.length ? " · " + e.strokes.join(", ") : "");
+  return "Treino" + (e.strokes && e.strokes.length ? " · " + e.strokes.join(", ") : "");
+}
+function entrySub(a, e){
+  const t = a.tours.find(x => x.id === e.tid);
+  return [fmtDs(e.date), e.type === "jogo" && e.score ? e.score : null, t ? t.name : null, e.min ? hm(e.min) : null, e.rpe != null ? "esforço " + e.rpe : null].filter(Boolean).join(" · ");
+}
+function diario(a){
+  const age = ageAt(a.birth), cb = curBall(a), top = openPrio(a)[0];
+  const sub = [age != null ? age + " anos" : null, cb ? "bola " + ballOf(cb).n.toLowerCase() + (a.balls[cb] ? " desde " + fmtMY(a.balls[cb]) : "") : null].filter(Boolean).join(" · ");
+  const ws = weekStats(a);
+  const lastGame = a.entries.filter(e => e.type === "jogo").sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
+  const entries = a.entries.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
+  const shown = entries.slice(0, view.more);
+  return [
+    h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
+    h("button", {type: "button", class: "focus", onclick: once(() => prioSheet(a))},
+      h("div", {class: "eb"}, "Foco da semana"),
+      h("div", {class: "ft"}, top ? top.text : "Escolher o foco da semana"),
+      h("div", {class: "fs"}, top ? "A prioridade número 1. Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo. Ex.: \"girar o ombro no forehand\".")),
+    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "note", style: "margin-top:10px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
+    a.entries.length ? sec("Últimos 7 dias",
+      h("div", {class: "wk"},
+        h("div", {class: "card k"}, h("div", {class: "kv"}, hm(ws.min)), h("div", {class: "kl"}, "de tênis registrado")),
+        h("div", {class: "card k"}, h("div", {class: "kv"}, String(ws.rest)), h("div", {class: "kl"}, ws.rest === 1 ? "dia sem tênis registrado" : "dias sem tênis registrado")),
+        ws.withLoad ? h("div", {class: "card k"}, h("div", {class: "kv"}, ws.load.toLocaleString("pt-BR")), h("div", {class: "kl"}, "de carga (esforço × minutos)")) : null,
+        h("div", {class: "card k"}, h("div", {class: "kv"}, String(ws.es.length)), h("div", {class: "kl"}, ws.es.length === 1 ? "registro" : "registros"))),
+      weekRef(a)) : null,
+    sec("Registros",
+      shown.length ? h("div", {class: "list"}, shown.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
+        t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, e.type, e)})))
+      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum registro ainda"), "Toque no + para registrar o primeiro treino ou jogo.")),
+      entries.length > shown.length ? h("div", {class: "stack"}, h("button", {type: "button", class: "btn ghost block", onclick: () => { view.more += 30; render(); }}, "Ver registros mais antigos")) : null)
+  ];
+}
+function weekRef(a){
+  const age = ageAt(a.birth);
+  if (age == null) return null;
+  if (age >= 8 && age <= 18) return h("div", {class: "ref"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
+  return h("div", {class: "ref"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
+}
+
+/* ---------- Registrar ---------- */
+function quickSheet(){
+  const a = active(); if (!a) return;
+  sheet("Registrar", (el, close) => {
+    const opt = (ic, t, s, fn) => h("button", {type: "button", class: "qbig", onclick: once(() => { close(); setTimeout(fn, 120); })}, svg(ic), h("b", null, t), h("span", null, s));
+    el.append(h("h2", null, "Registrar"), h("div", {style: "height:8px"}),
+      h("div", {class: "qgrid"},
+        opt("train", "Treino", "Tempo, esforço e anotações", () => entryForm(a, "treino")),
+        opt("match", "Jogo", "Placar e anotações", () => entryForm(a, "jogo")),
+        opt("stroke", "Golpes", "Um golpe e como está", () => entryForm(a, "golpes")),
+        opt("trophy", "Torneio", "Planejado ou resultado", () => tourForm(a))));
+  });
+}
+function entryForm(a, type, e, preset){
+  const isNew = !e; e = e || (preset ? {strokes: [preset]} : {});
+  const T = {treino: "Treino", jogo: "Jogo", golpes: "Sessão de golpes"}[type];
+  sheet(T, (el, close) => {
+    const date = inp({type: "date", value: e.date || today(), max: "2100-12-31"});
+    const min = inp({type: "number", inputmode: "numeric", min: "0", max: "600", placeholder: "Ex.: 90", value: e.min || ""});
+    const rpe = rpePick(e.rpe);
+    const strokes = type === "golpes" ? choice(STROKES.map(s => [s, s]), (e.strokes || [])[0] || null, true) : multi(STROKES, e.strokes);
+    const good = ta(e.good, type === "jogo" ? "Ex.: manteve a calma nos pontos longos" : "Ex.: o forehand saiu mais solto e para a frente");
+    const improve = ta(e.improve, "Ex.: preparar a raquete mais cedo no backhand");
+    const fun = choice(FUN, e.fun || null, true);
+    const opp = inp({value: e.opp || "", placeholder: "Nome", autocomplete: "off"});
+    const score = inp({value: e.score || "", placeholder: "Ex.: 6/4 3/6 10/7", autocomplete: "off"});
+    const surf = choice(SURFACES.map(s => [s, s]), e.surface || null, true);
+    const outcome = choice([["v", "Vitória"], ["d", "Derrota"]], e.outcome || null, true);
+    const tours = a.tours.slice().sort((x, y) => (y.start || "").localeCompare(x.start || ""));
+    const tsel = h("select", {class: "input"}, h("option", {value: ""}, "Nenhum"), tours.map(t => h("option", {value: t.id, selected: e.tid === t.id ? true : null}, t.name + (t.start ? " · " + fmtMY(t.start) : ""))));
+    const slot = h("div");
+    const doSave = once(() => {
+      const d = date.value || today();
+      const n = Object.assign(e, {type, date: d, min: numOrNull(min.value), rpe: rpe.get(), good: clean(good.value), improve: clean(improve.value), fun: fun.get(),
+        strokes: type === "golpes" ? (strokes.get() ? [strokes.get()] : []) : strokes.get()});
+      if (type === "jogo") Object.assign(n, {opp: clean(opp.value), score: clean(score.value), surface: surf.get(), outcome: outcome.get(), tid: tsel.value || null});
+      if (type === "golpes" && !n.strokes.length) { toast("Escolha o golpe"); return; }
+      const before = snap();
+      if (isNew) { n.id = uid(); n.at = Date.now(); a.entries.push(n); }
+      if (!save()) return; close(); render(); toast(isNew ? T + " registrado" : "Alterações salvas", () => undoTo(before));
+    });
+    el.append(h("h2", null, isNew ? T : "Editar " + T.toLowerCase()),
+      type === "jogo" ? h("div", {class: "note", style: "margin:6px 0 16px"}, "Antes de anotar: pergunte primeiro como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : h("p", {class: "sh-sub"}, "\"O que está bom\" vem primeiro."),
+      fld("Data", date),
+      type === "jogo" ? [fld(gx(a, "Adversária", "Adversário"), opp, null, true), fld("Placar", score, null, true), group("Resultado", outcome, true), group("Piso", surf, true),
+        tours.length ? fld("Torneio", tsel, null, true) : null] : null,
+      type === "golpes" ? group("Golpe", strokes) : null,
+      fld("O que está bom", good),
+      fld("Para melhorar", improve, "Escolha uma coisa principal para a próxima vez."),
+      type !== "golpes" ? group("Golpes trabalhados", strokes, true) : null,
+      fld("Duração em minutos", min, null, true),
+      group("Esforço de 0 a 10", rpe, true),
+      h("div", {class: "hint", style: "margin:-8px 0 14px"}, "Pergunte cerca de 30 minutos depois: \"Quão puxado foi?\". Vale anotar até 24 horas depois."),
+      group("Se divertiu?", fun, true),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: doSave}, "Salvar"),
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este registro?", "Apagar", () => {
+          const before = snap(); a.entries = a.entries.filter(x => x !== e); if (!save()) return; close(); render(); toast("Registro apagado", () => undoTo(before)); })}, "Apagar registro") : null),
+      slot);
+  });
+}
+
+/* ---------- Evolução ---------- */
+function evolucao(a){
+  const age0 = a.birth && a.start ? ageAt(a.birth, a.start) : null;
+  const cb = curBall(a), nb = nextBall(a);
+  return [
+    h("h1", {class: "page-h"}, "Evolução"),
+    h("p", {class: "page-sub"}, a.start ? "Começou no tênis em " + fmtMY(a.start) + (age0 != null ? ", aos " + age0 + " anos" : "") + " · há " + dur(monthsBetween(a.start)) + "." : "Registre quando começou no tênis em Dados da atleta (toque no nome, no topo)."),
+    sec("Bolas", h("button", {type: "button", class: "list", style: "display:block;width:100%;text-align:left", onclick: once(() => ballsSheet(a)), "aria-label": "Etapas da bola. Toque para editar"},
+      h("div", {class: "tl"}, BALLS.map((b, i) => {
+        const from = a.balls[b.k], nxt = BALLS.slice(i + 1).map(x => a.balls[x.k]).find(Boolean);
+        let t2;
+        if (from) t2 = (nxt ? fmtMY(from) + " a " + fmtMY(nxt) + " · " + dur(monthsBetween(from, nxt)) : "Desde " + fmtMY(from) + " · " + dur(monthsBetween(from)));
+        else if (b.k === nb) t2 = [a.nextPlan ? "Previsão da família: " + fmtMY(a.nextPlan) : null, nextRange(a, b.k)].filter(Boolean).join(" · ") || "Próxima etapa";
+        else t2 = cb && BALLS.findIndex(x => x.k === cb) > i ? "Sem data registrada" : "—";
+        return h("div", {class: "tl-i" + (from ? "" : " off") + (b.k === cb ? " now" : "")}, h("span", {class: "ball b-" + b.k}), h("div", {class: "bd"}, h("div", {class: "t1"}, b.n), h("div", {class: "t2"}, t2)));
+      }))),
+      nb && nb !== "red" ? h("div", {class: "list", style: "margin-top:10px"}, row({ic: "list", t1: "Pronta para a " + ballOf(nb).n.toLowerCase() + "?", t2: "Competências da ITF, marcadas pela família e pelo treinador", fn: () => compSheet(a)})) : null),
+    sec("Golpes",
+      h("div", {class: "list"}, prefRow(a), STROKES.map(s => { const ns = strokeNotes(a, s);
+        return row({t1: s, t2: ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") + " · última em " + fmtDs(ns[0].date) : "Sem anotações ainda", fn: () => strokeSheet(a, s)}); }))),
+    sec("Prioridades de melhoria", prioList(a)),
+    sec("Equipamento", h("div", {class: "list"}, racketRow(a), stringRow(a))),
+    a.birth ? sec("Mês de nascimento", relAge(a)) : null
+  ];
+}
+function nextRange(a, k){
+  const r = NEXT_AGE[k]; if (!r) return null;
+  const s = "ITF: " + r[0] + " a " + r[1] + " anos";
+  if (!a.birth) return s;
+  const fromD = addYears(a.birth, r[0]), toD = addYears(a.birth, r[1] + 1);
+  return s + " (" + fmtMY(fromD) + " a " + fmtMY(iso(new Date(parseD(toD).getTime() - 864e5))) + ")";
+}
+function ballsSheet(a){
+  sheet("Etapas da bola", (el, close) => {
+    const ins = {}; BALLS.forEach(b => ins[b.k] = inp({type: "date", value: a.balls[b.k] || "", max: "2100-12-31"}));
+    const plan = inp({type: "date", value: a.nextPlan || "", max: "2100-12-31"});
+    const nb = nextBall(a);
+    el.append(h("h2", null, "Etapas da bola"), h("p", {class: "sh-sub"}, "Quando " + gx(a, "ela", "ele") + " começou em cada bola. Deixe em branco as que ainda não chegaram."),
+      BALLS.map(b => fld(h("span", null, h("span", {class: "ball b-" + b.k, style: "margin-right:8px"}), b.n + " desde"), ins[b.k], "ITF: " + b.age)),
+      nb ? fld("Previsão da família para a " + ballOf(nb).n.toLowerCase(), plan, (nextRange(a, nb) || "") + ". A ITF não fixa data: a mudança depende das competências e da vontade " + gx(a, "dela", "dele") + ".", true) : null,
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        const vals = BALLS.map(b => ins[b.k].value || null);
+        for (let i = 1; i < vals.length; i++) for (let j = 0; j < i; j++) if (vals[i] && vals[j] && vals[i] < vals[j]) { toast("A data da " + BALLS[i].n.toLowerCase() + " está antes da " + BALLS[j].n.toLowerCase()); return; }
+        const before = snap(); BALLS.forEach((b, i) => { if (vals[i]) a.balls[b.k] = vals[i]; else delete a.balls[b.k]; }); a.nextPlan = plan.value || null;
+        if (!save()) return; close(); render(); toast("Etapas salvas", () => undoTo(before)); })}, "Salvar")));
+  });
+}
+function compSheet(a){
+  const cb = curBall(a) || "red", nb = nextBall(a);
+  sheet("Competências", (el, close) => {
+    const box = h("div");
+    const c = a.comp[cb] = a.comp[cb] || {};
+    const paint = () => put(box, COMP.map(([g, items]) => [h("div", {class: "chk-g"}, g), items.map(([k, t]) => h("button", {type: "button", class: "chk" + (c[k] ? " on" : ""), "aria-pressed": String(!!c[k]),
+      onclick: () => { if (c[k]) delete c[k]; else c[k] = today(); save(); paint(); }}, h("span", {class: "bx"}, c[k] ? svg("check") : null), h("span", null, t)))]));
+    paint();
+    el.append(h("h2", null, "Pronta para a " + (nb ? ballOf(nb).n.toLowerCase() : "próxima bola") + "?"),
+      h("p", {class: "sh-sub"}, "Lista da ITF, avaliada na bola atual (" + ballOf(cb).n.toLowerCase() + "). Marque junto com o treinador. Não é nota: serve para conversar."), box,
+      h("div", {class: "note", style: "margin-top:16px"}, "A ITF recomenda 6 a 10 semanas de transição, usando as duas bolas. Mudar cedo demais pode tirar confiança, motivação e diversão."),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: () => { close(); render(); }}, "Pronto")));
+  });
+}
+function strokeNotes(a, s){ return a.entries.filter(e => (e.strokes || []).includes(s) && (e.good || e.improve)).sort((x, y) => (y.date || "").localeCompare(x.date || "")); }
+function strokeSheet(a, s){
+  sheet(s, (el, close) => {
+    const ns = strokeNotes(a, s);
+    el.append(h("h2", null, s), h("p", {class: "sh-sub"}, "A história do que foi escrito sobre este golpe, do mais recente ao mais antigo."),
+      ns.length ? h("div", {class: "list"}, ns.map(e => row({t1: fmtD(e.date) + " · " + (e.type === "golpes" ? "Sessão de golpes" : e.type === "jogo" ? "Jogo" : "Treino"),
+        t2: e.good ? "Bom: " + e.good : null, t3: e.improve ? "Melhorar: " + e.improve : null, fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))
+        : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Sem anotações ainda"), "Registre uma sessão de golpes ou marque este golpe num treino.")),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => { close(); setTimeout(() => entryForm(a, "golpes", null, s), 150); })}, "Registrar " + s.toLowerCase())));
+  });
+}
+function prefRow(a){
+  const p = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
+  return row({ic: "heart", t1: p ? "Mais gosta: " + (p.likes || "—") + " · Menos gosta: " + (p.dislikes || "—") : "Golpe que mais gosta e que menos gosta",
+    t2: p ? "Na voz " + gx(a, "dela", "dele") + ", em " + fmtD(p.date) : "Pergunte " + gx(a, "a ela", "a ele") + " e registre com a data", fn: () => prefSheet(a)});
+}
+function prefSheet(a){
+  sheet("Golpes preferidos", (el, close) => {
+    const likes = choice(STROKES.map(s => [s, s]), null, true), dis = choice(STROKES.map(s => [s, s]), null, true);
+    const date = inp({type: "date", value: today(), max: "2100-12-31"});
+    const hist = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+    const slot = h("div");
+    el.append(h("h2", null, "Golpe que mais gosta e que menos gosta"), h("p", {class: "sh-sub"}, "Pergunte " + gx(a, "a ela", "a ele") + ". Registrar com a data mostra como muda com o tempo."),
+      fld("Data", date), group("Mais gosta", likes), group("Menos gosta", dis),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        if (!likes.get() && !dis.get()) { toast("Escolha pelo menos um golpe"); return; }
+        const before = snap(); a.prefs.push({id: uid(), date: date.value || today(), likes: likes.get(), dislikes: dis.get()});
+        if (!save()) return; close(); render(); toast("Registrado", () => undoTo(before)); })}, "Salvar")),
+      hist.length ? [h("h2", {class: "sec-t"}, "Histórico"), h("div", {class: "list"}, hist.map(p => row({t1: "Mais: " + (p.likes || "—") + " · Menos: " + (p.dislikes || "—"), t2: fmtD(p.date),
+        fn: () => ask(slot, "Apagar o registro de " + fmtD(p.date) + "?", "Apagar", () => { const before = snap(); a.prefs = a.prefs.filter(x => x !== p); save(); close(); render(); toast("Apagado", () => undoTo(before)); })}))), slot] : null);
+  });
+}
+function prioList(a){
+  const op = openPrio(a);
+  return h("div", {class: "list"}, op.length
+    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {class: "serif", style: "font-size:1.05rem"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco da semana" : null, fn: () => prioSheet(a)})),
+       op.length > 5 ? row({t1: "Mais " + (op.length - 5) + (op.length - 5 > 1 ? " prioridades" : " prioridade"), fn: () => prioSheet(a)}) : null]
+    : row({ic: "list", t1: "Adicionar prioridades", t2: "Em ordem. A primeira vira o foco da semana.", fn: () => prioSheet(a)}));
+}
+function prioSheet(a){
+  sheet("Prioridades", (el, close) => {
+    const box = h("div"), txt = inp({placeholder: "Ex.: girar o ombro no forehand", autocomplete: "off", enterkeyhint: "done"});
+    const add = () => { const t = clean(txt.value); if (!t) return; a.prio.push({id: uid(), text: t, at: today(), done: null}); save(); txt.value = ""; paint(); render(); };
+    txt.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); add(); } });
+    const done = () => a.prio.filter(p => p.done).sort((x, y) => (y.done || "").localeCompare(x.done || ""));
+    function move(p, d){ const op = openPrio(a), i = op.indexOf(p), j = i + d; if (j < 0 || j >= op.length) return;
+      const ai = a.prio.indexOf(op[i]), aj = a.prio.indexOf(op[j]); [a.prio[ai], a.prio[aj]] = [a.prio[aj], a.prio[ai]]; save(); paint(); render(); }
+    function paint(){
+      const op = openPrio(a), dn = done();
+      put(box,
+        op.length ? h("div", {class: "card pad", style: "padding-top:4px;padding-bottom:4px"}, op.map((p, i) => h("div", {class: "ord"},
+          h("span", {class: "n"}, String(i + 1)), h("span", {class: "tx"}, p.text),
+          h("button", {type: "button", class: "mv", "aria-label": "Subir " + p.text, disabled: i === 0 ? true : null, onclick: () => move(p, -1)}, svg("up")),
+          h("button", {type: "button", class: "mv", "aria-label": "Mais opções para " + p.text, onclick: () => prioMenu(a, p, paint)}, svg("chev")))))
+          : h("p", {class: "muted small"}, "Nenhuma prioridade ainda."),
+        dn.length ? [h("h2", {class: "sec-t"}, "Alcançadas"), h("div", {class: "list"}, dn.map(p => row({t1: p.text, t2: "Alcançada em " + fmtD(p.done), fn: () => prioMenu(a, p, paint)})))] : null);
+    }
+    paint();
+    el.append(h("h2", null, "Prioridades de melhoria"),
+      h("p", {class: "sh-sub"}, "Em ordem. A primeira vira o foco da semana. Escreva como processo (\"o que fazer\"), não como resultado (\"ganhar o torneio\"): metas de processo têm o maior efeito no desempenho."),
+      h("div", {class: "fld"}, h("div", {style: "display:flex;gap:8px"}, txt, h("button", {type: "button", class: "btn primary", "aria-label": "Adicionar prioridade", onclick: once(add)}, svg("plus")))),
+      box);
+  });
+}
+function prioMenu(a, p, repaint){
+  sheet("Prioridade", (el, close) => {
+    const slot = h("div"), txt = inp({value: p.text});
+    const after = () => { save(); close(); repaint(); render(); };
+    el.append(h("h2", null, "Prioridade"), fld("Texto", txt),
+      h("div", {class: "stack"},
+        h("button", {type: "button", class: "btn primary block", onclick: once(() => { const t = clean(txt.value); if (t) p.text = t; after(); })}, "Salvar"),
+        !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const op = openPrio(a); a.prio = [p, ...a.prio.filter(x => x !== p)]; void op; after(); toast("Agora é o foco da semana"); })}, "Tornar o foco da semana") : null,
+        !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const before = snap(); p.done = today(); after(); toast("Marcada como alcançada", () => undoTo(before)); })}, "Marcar como alcançada")
+          : h("button", {type: "button", class: "btn ghost block", onclick: once(() => { p.done = null; after(); })}, "Voltar para a lista"),
+        h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar esta prioridade?", "Apagar", () => { const before = snap(); a.prio = a.prio.filter(x => x !== p); after(); toast("Prioridade apagada", () => undoTo(before)); })}, "Apagar")),
+      slot);
+  });
+}
+function racketRow(a){
+  const r = curRacket(a), cb = curBall(a);
+  return row({ic: "racket", t1: r ? [r.brand, r.model].filter(Boolean).join(" ") || "Raquete atual" : "Raquete",
+    t2: r ? [r.size ? r.size + "\"" : null, r.from ? "desde " + fmtMY(r.from) : null].filter(Boolean).join(" · ") + (cb ? " · ITF para a " + ballOf(cb).n.toLowerCase() + ": " + ballOf(cb).racket : "") : "Registre a atual e as de cada etapa",
+    fn: () => racketsSheet(a)});
+}
+function racketsSheet(a){
+  sheet("Raquetes", (el, close) => {
+    const list = a.rackets.slice().sort((x, y) => (y.from || "").localeCompare(x.from || ""));
+    const cb = curBall(a);
+    el.append(h("h2", null, "Raquetes"), h("p", {class: "sh-sub"}, "A atual e as de cada etapa."),
+      cb ? h("div", {class: "ref", style: "margin:0 0 14px"}, h("b", null, "ITF para a bola " + ballOf(cb).n.toLowerCase() + ": "), ballOf(cb).racket + ". Teste: em pé, com a raquete apontada para o chão, a ponta fica a uns 3 cm do chão. Se tocar, está grande.") : null,
+      list.length ? h("div", {class: "list"}, list.map(r => row({t1: [r.brand, r.model].filter(Boolean).join(" ") || "Raquete", t2: [r.size ? r.size + "\"" : null, r.from ? fmtMY(r.from) + (r.to ? " a " + fmtMY(r.to) : " até hoje") : null, r.ball ? "bola " + ballOf(r.ball).n.toLowerCase() : null].filter(Boolean).join(" · "),
+        rv: r.to ? null : "Atual", fn: () => { close(); setTimeout(() => racketForm(a, r), 150); }}))) : null,
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => { close(); setTimeout(() => racketForm(a, null), 150); })}, "Adicionar raquete")));
+  });
+}
+function racketForm(a, r){
+  const isNew = !r; r = r || {};
+  sheet("Raquete", (el, close) => {
+    const brand = inp({value: r.brand || "", placeholder: "Ex.: Babolat", autocomplete: "off"}), model = inp({value: r.model || "", placeholder: "Ex.: Pure Drive 25", autocomplete: "off"});
+    const size = choice([["19", "19\""], ["21", "21\""], ["23", "23\""], ["25", "25\""], ["26", "26\""], ["27", "27\""]], r.size || null, true);
+    const ball = choice(BALLS.map(b => [b.k, b.n]), r.ball || curBall(a), true);
+    const from = inp({type: "date", value: r.from || today(), max: "2100-12-31"}), to = inp({type: "date", value: r.to || "", max: "2100-12-31"});
+    const slot = h("div");
+    el.append(h("h2", null, isNew ? "Nova raquete" : "Raquete"),
+      h("div", {class: "two"}, fld("Marca", brand, null, true), fld("Modelo", model, null, true)),
+      group("Tamanho", size, true), group("Bola em que usou", ball, true),
+      h("div", {class: "two"}, fld("Desde", from), fld("Até", to, "Em branco = usa hoje", true)),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        if (to.value && from.value && to.value < from.value) { toast("\"Até\" está antes de \"Desde\""); return; }
+        const before = snap();
+        Object.assign(r, {brand: clean(brand.value), model: clean(model.value), size: size.get(), ball: ball.get(), from: from.value || null, to: to.value || null});
+        if (isNew) { r.id = uid(); if (!r.to) a.rackets.forEach(x => { if (!x.to && x !== r) x.to = r.from || today(); }); a.rackets.push(r); }
+        if (!save()) return; close(); render(); toast(isNew ? "Raquete adicionada" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar esta raquete?", "Apagar", () => { const before = snap(); a.rackets = a.rackets.filter(x => x !== r); save(); close(); render(); toast("Raquete apagada", () => undoTo(before)); })}, "Apagar") : null),
+      slot);
+  });
+}
+const strDesc = s => s.type === "hibrida"
+  ? "Híbrida · vertical " + [s.main, s.mainT].filter(Boolean).join(" ") + " · horizontal " + [s.cross, s.crossT].filter(Boolean).join(" ")
+  : "Única · " + [s.main, s.mainT].filter(Boolean).join(" ");
+function stringRow(a){
+  const s = curString(a);
+  return row({ic: "strings", t1: s ? strDesc(s) : "Cordas", t2: s ? "Encordoada em " + fmtD(s.date) : "Única ou híbrida, com as tensões", fn: () => stringsSheet(a)});
+}
+function stringsSheet(a){
+  sheet("Cordas", (el, close) => {
+    const list = a.strings.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""));
+    el.append(h("h2", null, "Cordas"), h("p", {class: "sh-sub"}, "Cada encordoamento, com a data. O app só registra: não recomenda corda nem tensão."),
+      list.length ? h("div", {class: "list"}, list.map((s, i) => row({t1: strDesc(s), t2: fmtD(s.date) + (i === 0 ? " · atual" : ""), fn: () => { close(); setTimeout(() => stringForm(a, s), 150); }}))) : null,
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => { close(); setTimeout(() => stringForm(a, null), 150); })}, "Registrar encordoamento")));
+  });
+}
+function stringForm(a, s){
+  const isNew = !s; const last = curString(a); s = s || (last ? {type: last.type, main: last.main, mainT: last.mainT, cross: last.cross, crossT: last.crossT} : {type: "unica"});
+  sheet("Encordoamento", (el, close) => {
+    const date = inp({type: "date", value: isNew ? today() : s.date, max: "2100-12-31"});
+    const main = inp({value: s.main || "", placeholder: "Ex.: RPM Blast 1.25", autocomplete: "off"}), mainT = inp({value: s.mainT || "", placeholder: "Ex.: 50 lb", autocomplete: "off"});
+    const cross = inp({value: s.cross || "", placeholder: "Ex.: Touch VS 1.30", autocomplete: "off"}), crossT = inp({value: s.crossT || "", placeholder: "Ex.: 48 lb", autocomplete: "off"});
+    const hyb = h("div");
+    const mainLbl = h("span"), type = choice([["unica", "Única"], ["hibrida", "Híbrida"]], s.type || "unica", false, v => paint(v));
+    function paint(v){ mainLbl.textContent = v === "hibrida" ? "Vertical" : "Corda"; hyb.hidden = v !== "hibrida"; }
+    put(hyb, h("div", {class: "two"}, fld("Horizontal", cross), fld("Tensão", crossT)));
+    paint(type.get());
+    const slot = h("div");
+    el.append(h("h2", null, isNew ? "Novo encordoamento" : "Encordoamento"), fld("Data", date), group("Tipo", type),
+      h("div", {class: "two"}, h("label", {class: "fld"}, h("span", {class: "lbl"}, mainLbl), main), fld("Tensão", mainT)), hyb,
+      h("div", {class: "hint", style: "margin:-6px 0 14px"}, "Escreva a unidade junto (lb ou kg)."),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        const before = snap(); const t = type.get();
+        const n = Object.assign(isNew ? {id: uid()} : s, {date: date.value || today(), type: t, main: clean(main.value), mainT: clean(mainT.value), cross: t === "hibrida" ? clean(cross.value) : "", crossT: t === "hibrida" ? clean(crossT.value) : ""});
+        if (isNew) a.strings.push(n);
+        if (!save()) return; close(); render(); toast(isNew ? "Encordoamento registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este encordoamento?", "Apagar", () => { const before = snap(); a.strings = a.strings.filter(x => x !== s); save(); close(); render(); toast("Apagado", () => undoTo(before)); })}, "Apagar") : null),
+      slot);
+  });
+}
+function relAge(a){
+  const d = parseD(a.birth); if (!d) return null;
+  const m = d.getMonth() + 1, older = m - 1, younger = 12 - m;
+  return h("div", {class: "card pad"},
+    h("p", null, "Nasceu em " + MESX[d.getMonth()] + ". Nas categorias por ano de nascimento (como na ITF), " +
+      (older ? "colegas nascidas antes, no mesmo ano, têm até " + older + (older > 1 ? " meses" : " mês") + " a mais" : "quase todas as colegas são mais novas") +
+      (younger ? (older ? ", e as nascidas depois têm até " : "; as nascidas depois têm até ") + younger + (younger > 1 ? " meses" : " mês") + " a menos." : ".")),
+    h("p", {class: "muted small", style: "margin:0"}, "No tênis juvenil, quem nasce no começo do ano aparece mais entre os melhores. Lembre disso ao comparar resultados. Força da evidência: moderada (vários países e categorias)."));
+}
+
+/* ---------- Carreira ---------- */
+function carreira(a){
+  const t = today();
+  const all = a.tours.slice().sort((x, y) => (y.start || "").localeCompare(x.start || ""));
+  const next = all.filter(x => !x.singles && !x.doubles && (x.end || x.start || "") >= t).reverse();
+  const past = all.filter(x => !next.includes(x));
+  const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
+  return [
+    h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios planejados e resultados, organizados por ano."),
+    sec("Próximos torneios", h("div", {class: "list"}, next.length ? next.map(x => tourRow(a, x)) : row({ic: "cal", t1: "Nenhum torneio planejado", t2: "Estadual, nacional, sul-americano ou internacional", fn: () => tourForm(a)}))),
+    years.length ? years.map(y => sec(y === "Sem data" ? y : "Resultados de " + y, h("div", {class: "list"}, past.filter(x => ((x.start || "").slice(0, 4) || "Sem data") === y).map(x => tourRow(a, x)))))
+      : sec("Resultados", h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Ao registrar um torneio, escreva o resultado e uma descrição curta. Isso vai montar o currículo.")))
+  ];
+}
+function tourRow(a, x){
+  const res = [x.singles ? "Simples: " + resLabel(a, x.singles) : null, x.doubles ? "Duplas: " + resLabel(a, x.doubles) : null].filter(Boolean);
+  return row({ic: x.singles === "champ" || x.doubles === "champ" ? "trophy" : "flag", t1: x.name,
+    t2: [x.level, x.cat, x.city, x.start ? fmtDs(x.start) : null].filter(Boolean).join(" · "),
+    t3: res.length ? res.join(" · ") : ((x.end || x.start || "") < today() ? "Sem resultado registrado" : null), fn: () => tourForm(a, x)});
+}
+function tourForm(a, x){
+  const isNew = !x; x = x || {};
+  sheet("Torneio", (el, close) => {
+    const name = inp({value: x.name || "", placeholder: "Ex.: Copa Estadual Infantojuvenil", autocomplete: "off"});
+    const level = choice(LEVELS.map(l => [l, l]), x.level || null, true);
+    const cat = inp({value: x.cat || "", placeholder: "Ex.: 12 anos feminino", autocomplete: "off"});
+    const city = inp({value: x.city || "", placeholder: "Ex.: Curitiba, PR", autocomplete: "off"});
+    const start = inp({type: "date", value: x.start || "", max: "2100-12-31"}), end = inp({type: "date", value: x.end || "", max: "2100-12-31"});
+    const surf = choice(SURFACES.map(s => [s, s]), x.surface || null, true);
+    const ropts = RESULTS.map(r => [r[0], resLabel(a, r[0])]);
+    const sing = choice(ropts, x.singles || null, true), dbl = choice(ropts, x.doubles || null, true);
+    const partner = inp({value: x.partner || "", placeholder: "Nome", autocomplete: "off"});
+    const scores = ta(x.scores, "Ex.: 1ª rodada 6/2 6/1 · quartas 7/5 6/4 ...");
+    const desc = ta(x.desc, "Ex.: 32 jogadoras na chave, organizado pela federação estadual");
+    const slot = h("div");
+    el.append(h("h2", null, isNew ? "Torneio" : "Editar torneio"), h("p", {class: "sh-sub"}, "Planejado ou já jogado. O resultado pode ser escrito depois."),
+      fld("Nome do torneio", name), group("Nível", level, true), fld("Categoria", cat, null, true), fld("Cidade e país", city, null, true),
+      h("div", {class: "two"}, fld("Início", start), fld("Fim", end, null, true)), group("Piso", surf, true),
+      h("h2", {class: "sec-t"}, "Resultado"), group("Simples", sing, true), group("Duplas", dbl, true), fld("Dupla com", partner, null, true),
+      fld("Placares", scores, null, true), fld("Descrição", desc, "Ajuda a montar o currículo depois.", true),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        if (!clean(name.value)) { toast("Escreva o nome do torneio"); name.focus(); return; }
+        if (end.value && start.value && end.value < start.value) { toast("O fim está antes do início"); return; }
+        const before = snap();
+        Object.assign(x, {name: clean(name.value), level: level.get(), cat: clean(cat.value), city: clean(city.value), start: start.value || null, end: end.value || null, surface: surf.get(),
+          singles: sing.get(), doubles: dbl.get(), partner: clean(partner.value), scores: clean(scores.value), desc: clean(desc.value)});
+        if (isNew) { x.id = uid(); a.tours.push(x); }
+        if (!save()) return; close(); if (isNew) view.tab = "carreira"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este torneio?" + (a.entries.some(e => e.tid === x.id) ? " Os jogos ligados a ele continuam no Diário." : ""), "Apagar", () => {
+          const before = snap(); a.tours = a.tours.filter(t => t !== x); a.entries.forEach(e => { if (e.tid === x.id) e.tid = null; }); save(); close(); render(); toast("Torneio apagado", () => undoTo(before)); })}, "Apagar torneio") : null),
+      slot);
+  });
+}
+
+/* ---------- Guia ---------- */
+const EV = {forte: "Forte", moderada: "Moderada", fraca: "Fraca", consenso: "Consenso de especialistas", regra: "Regra oficial"};
+const ev = (k, label) => h("span", {class: "ev " + k}, h("i"), label || EV[k]);
+function gcard(title, body, evs, pop, src){
+  return h("div", {class: "card g-card"}, h("h3", null, title), body, h("div", {class: "g-meta"}, evs, pop ? h("span", {class: "ev"}, pop) : null), src ? h("div", {class: "g-src"}, "Fonte: " + src) : null);
+}
+function guia(a){
+  const age = ageAt(a.birth), cb = curBall(a);
+  const ul = (...li) => h("ul", null, li.map(x => h("li", null, x)));
+  return [
+    h("h1", {class: "page-h"}, "Guia"),
+    h("p", {class: "page-sub"}, "Recomendações gerais baseadas em ciência, com a força de cada evidência. Revisado em novembro de 2026."),
+    h("div", {class: "g-meta", style: "margin-top:-6px"}, ev("forte"), ev("moderada"), ev("fraca"), ev("consenso"), ev("regra")),
+    sec("Bolas e quadras",
+      gcard("Bola por idade e desenvoltura",
+        [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Idade (ITF)"), h("th", null, "Velocidade"))),
+          h("tbody", null, BALLS.map(b => h("tr", {class: b.k === cb ? "me" : null}, h("td", null, h("span", {class: "ball b-" + b.k, style: "margin-right:6px"}), b.n), h("td", null, b.age), h("td", null, b.speed))))),
+         h("p", {class: "small muted", style: "margin-top:8px"}, "Desde 2012, as regras da ITF proíbem a bola amarela em competição de 10 anos ou menos. Quem começa com 9 anos ou mais também deve começar pela vermelha."),
+         cb ? h("p", {class: "small"}, "Hoje: bola " + ballOf(cb).n.toLowerCase() + (age != null ? ", aos " + age + " anos." : ".")) : null],
+        [ev("regra"), ev("consenso", "Consenso da ITF")], null, "ITF, manual Tennis10s e Regras do Tênis"),
+      gcard("Quando mudar de bola",
+        [h("p", null, "A ITF avalia na bola atual: saque e devolução, troca de bolas, rede, placar e, principalmente, se compete com confiança e alegria e quer ir para a próxima."),
+         ul("Transição de 6 a 10 semanas, usando as duas bolas.", "Mudar cedo demais pode tirar confiança, motivação e diversão, e prejudicar a técnica.", "Não existe estudo que preveja a data certa: a data é decidida pela família e pelo treinador.")],
+        [ev("consenso", "Consenso da ITF")], null, "ITF, manual Tennis10s (competências para progressão)"),
+      gcard("Por que bola mais lenta e quadra menor",
+        h("p", null, "Com bola mais lenta, quadra menor e raquete menor, a criança acerta mais, bate na altura certa e prefere jogar assim. Por isso a ITF usa as bolas coloridas."),
+        [ev("moderada")], "Estudos em crianças", "Buszard e colaboradores, 2016 (25 estudos, 989 crianças); revisão de 2025 com 35 estudos de tênis")),
+    sec("Raquete",
+      gcard("Tamanho por etapa e altura",
+        [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Raquete (ITF)"))),
+          h("tbody", null, BALLS.map(b => h("tr", {class: b.k === cb ? "me" : null}, h("td", null, b.n), h("td", null, b.racket))))),
+         h("p", {class: "small", style: "margin-top:8px"}, h("b", null, "Teste da altura: "), "em pé, segurando a raquete apontada para o chão, a ponta deve ficar a uns 3 cm do chão. Se tocar o chão, está grande."),
+         h("p", {class: "small muted"}, "Raquete grande demais pode diminuir a diversão, atrapalhar o controle e sobrecarregar braços em crescimento. Tabelas de altura dos fabricantes não são estudo científico.")],
+        [ev("consenso", "Consenso da ITF")], null, "ITF, manual Tennis10s"),
+      gcard("Cordas e tensão",
+        h("p", null, "Em estudos, só 27% dos jogadores avançados e 11% dos jogadores de elite perceberam uma diferença de cerca de 5 kg na tensão. Por isso o app só registra corda e tensão, sem recomendar."),
+        [ev("fraca", "Fraca para crianças")], "Estudos em adultos", "Bower e Cross, 2003 e 2008")),
+    sec("Carga, descanso e sono",
+      gcard("Horas por semana",
+        [ul("Horas de esporte organizado por semana não maiores que a idade (ex.: 10 anos, até 10 h). Quem passou disso teve cerca de 70% mais chance de lesão grave por excesso de uso.",
+          "Esporte organizado até o dobro do tempo de brincadeira livre.",
+          age != null && age >= 8 && age <= 18 ? "Na idade de hoje (" + age + " anos): até " + age + " h por semana, somando todos os esportes." : null),
+         h("p", {class: "small muted"}, "Estudos observacionais com atletas de 8 a 18 anos: mostram associação, não provam causa.")],
+        [ev("moderada")], "Estudos em crianças e adolescentes", "Jayanthi e colaboradores, 2015 (1.206 atletas)"),
+      gcard("Por objetivo e por nível",
+        h("p", null, "Não existe estudo que diga quantas horas treinar para virar profissional ou para cada nível. O que há é opinião de treinadores e federações. O app não inventa esse número: o plano é da família com o treinador, dentro dos limites de segurança acima."),
+        [ev("fraca", "Sem evidência")], null, null),
+      gcard("Descanso e especialização",
+        ul("1 a 2 dias por semana sem treino nem jogo do esporte, e alguns meses por ano longe do esporte específico.",
+          "Especializar cedo em um só esporte: risco de lesão por excesso de uso 1,81 vez maior (alta especialização comparada com baixa).",
+          "A ITF sugere especializar no tênis por volta dos 11 a 13 anos nas meninas e dos 12 a 14 nos meninos, com vários esportes antes."),
+        [ev("moderada"), ev("consenso")], "Crianças e adolescentes", "Academia Americana de Pediatria, 2024; Bell e colaboradores, 2018 (meta-análise); ITF"),
+      gcard("Sono",
+        ul("6 a 12 anos: 9 a 12 horas por dia.", "13 a 18 anos: 8 a 10 horas por dia."),
+        [ev("consenso", "Consenso forte")], "Crianças e adolescentes", "Academia Americana de Medicina do Sono, 2016")),
+    sec("Metas, motivação e pais",
+      gcard("Metas de processo",
+        [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco da semana."),
+         h("p", {class: "small muted"}, "Efeitos: processo d = 1,36; desempenho d = 0,44; resultado d = 0,09. Muitos estudos foram em laboratório, com amostras pequenas, e não são específicos de crianças.")],
+        [ev("moderada")], "Estudos em atletas, a maioria adultos", "Williamson e colaboradores, International Review of Sport and Exercise Psychology (27 estudos)"),
+      gcard("Elogiar o que está bom primeiro",
+        h("p", null, "Em crianças, receber retorno depois das tentativas boas melhorou o aprendizado e a motivação. Por isso \"O que está bom\" vem antes de \"Para melhorar\"."),
+        [ev("moderada")], "Estudos em crianças e adultos", "Frontiers in Psychology, 2012"),
+      gcard("Clima de esforço e diversão",
+        h("p", null, "Um ambiente que valoriza esforço e melhora pessoal (e não a comparação) está ligado a mais diversão, sensação de competência e autoestima."),
+        [ev("moderada")], "Crianças, jovens e adultos", "Harwood e colaboradores, 2015 (revisão sistemática)"),
+      gcard("Depois do jogo",
+        h("p", null, "Jovens tenistas preferem que os pais não deem conselhos técnicos logo depois do jogo. Valorizam apoio, foco no esforço e na atitude, e ajuda prática."),
+        [ev("moderada", "Moderada (estudos qualitativos)")], "Jovens tenistas", "Harwood e Knight; Knight e Holt (ITF Coaching Review)"),
+      gcard("Deixar a criança escolher o que treinar",
+        h("p", null, "Ouvir a atleta ajuda a motivação. Mas, depois de corrigir o viés de publicação, deixar a criança escolher não mostrou ganho claro de aprendizagem."),
+        [ev("fraca")], null, "McKay e colaboradores, 2022")),
+    sec("Resultados e idade",
+      gcard("Resultados no infantil",
+        h("p", null, "Vencer é legítimo, e os resultados são registrados na Carreira. Mas o resultado até os 14 anos indica o futuro só um pouco (correlação de cerca de 0,21 nos meninos e 0,30 nas meninas com o ranking profissional). Por isso o dia a dia do app foca no processo."),
+        [ev("moderada")], null, "Brouwers e colaboradores, 2012; Grove e Jetter, 2014"),
+      gcard("Mês de nascimento",
+        h("p", null, "No tênis juvenil, quem nasce no começo do ano aparece mais entre os melhores, em vários países e categorias. Ajuda a não julgar cedo demais quem nasceu no fim do ano."),
+        [ev("moderada")], "Juniores de tênis", "Estudos de efeito da idade relativa (PLOS ONE, 2023 e 2024, e outros)")),
+    sec("Referências", h("div", {class: "card pad refs"}, REFS.map(([t, u, d]) => h("a", {href: u, target: "_blank", rel: "noopener"}, t, h("span", null, d))))),
+    h("p", {class: "small faint", style: "margin-top:18px"}, "O Briceno Tennis não substitui o treinador, o pediatra ou o nutricionista, e não faz diagnóstico.")
+  ];
+}
+const REFS = [
+  ["ITF · Manual Tennis10s", "http://s3.amazonaws.com/ustaassets/assets/935/15/tennis10s_manual_eng.pdf", "Bolas, quadras, raquetes, idades e competências · consenso e regra"],
+  ["ITF · Regras do Tênis", "https://www.itftennis.com/media/4421/2021-rules-of-tennis-english.pdf", "Competição de 10 anos ou menos · regra oficial"],
+  ["Buszard e colaboradores, 2016 · Sports Medicine", "https://vu-9.eprints-hosting.org/32149/2/Buszard%20et%20al.%20%28Sports%20Medicine%29%20accepted%20version.pdf", "Equipamento adaptado em crianças · moderada"],
+  ["Revisão de 2025 · Frontiers in Psychology", "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1536427/full", "Equipamento adaptado no tênis · moderada"],
+  ["Jayanthi e colaboradores, 2015", "https://discover.luc.edu/works/21122", "Treino intenso, especialização e lesão · moderada"],
+  ["Bell e colaboradores, 2018 · Pediatrics", "https://pubmed.ncbi.nlm.nih.gov/30135085", "Especialização e lesão, meta-análise · moderada"],
+  ["Academia Americana de Pediatria, 2024", "https://cm.healio.com/news/primary-care/20240201/aap-calls-attention-to-athletic-burnout-recovery-among-children", "Excesso de uso, excesso de treino e esgotamento · consenso"],
+  ["Academia Americana de Medicina do Sono, 2016", "https://pmc.ncbi.nlm.nih.gov/articles/PMC5078711", "Horas de sono por idade · consenso"],
+  ["Williamson e colaboradores · IRSEP", "https://www.tandfonline.com/doi/full/10.1080/1750984X.2022.2116723", "Metas no esporte, meta-análise · moderada"],
+  ["Retorno depois de acertos · Frontiers in Psychology, 2012", "https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00323/full", "Retorno depois de acertos · moderada"],
+  ["Harwood e colaboradores, 2015", "https://researchportal.bath.ac.uk/en/publications/a-systematic-review-of-the-intrapersonal-correlates-of-motivation/", "Clima motivacional, revisão sistemática · moderada"],
+  ["Harwood e Knight, 2012", "https://cronfa.swan.ac.uk/Record/cronfa14909", "Pais no tênis · moderada"],
+  ["Knight e Holt · ITF Coaching Review", "https://itfcoachingreview.com/index.php/journal/article/view/410", "Recomendações a pais e treinadores · moderada"],
+  ["McKay e colaboradores, 2022 · Meta-Psychology", "https://conferences.lnu.se/index.php/metapsychology/article/view/2803", "Escolha da criança no treino · fraca"],
+  ["Brouwers e colaboradores, 2012", "https://ideas.repec.org/a/taf/rsmrxx/v15y2012i4p461-475.html", "Resultados juvenis e sucesso profissional · moderada"],
+  ["Grove e Jetter, 2014 · IZA", "https://www.iza.org/publications/dp/8103", "Rankings de 14 e 16 anos · moderada"],
+  ["Bower e Cross, 2008", "https://link.springer.com/article/10.1007/s12283-008-0006-z", "Percepção da tensão das cordas · adultos"],
+  ["Idade relativa no tênis juvenil · PLOS ONE, 2023", "https://ideas.repec.org/a/plo/pone00/0292443.html", "Mês de nascimento · moderada"],
+  ["Esforço percebido em crianças e adolescentes, 2023", "https://link.springer.com/content/pdf/10.1186/s13102-023-00712-5.pdf", "Esforço da sessão (0 a 10) · preliminar em jovens"]
+];
+
+/* ---------- atleta, backup e Face ID ---------- */
+function athleteSheet(){
+  const a = active();
+  sheet("Atleta", (el, close) => {
+    const later = fn => () => { close(); setTimeout(fn, 150); };
+    const lb = S.meta.lastBackup;
+    el.append(h("h2", null, "Atletas"), h("div", {style: "height:8px"}),
+      h("div", {class: "list"}, S.athletes.map(x => row({ic: h("span", {class: "ball b-" + (curBall(x) || "red")}), t1: x.name, t2: [ageAt(x.birth) != null ? ageAt(x.birth) + " anos" : null, curBall(x) ? "bola " + ballOf(curBall(x)).n.toLowerCase() : null].filter(Boolean).join(" · "),
+        rv: x.id === S.activeId ? "Atual" : null, fn: () => { S.activeId = x.id; save(); close(); render(); window.scrollTo(0, 0); }})),
+        row({ic: "plus", t1: "Nova atleta", fn: later(() => athleteForm(null))})),
+      h("h2", {class: "sec-t"}, "Ajustes"),
+      h("div", {class: "list"},
+        a ? row({ic: "person", t1: "Dados de " + a.name, t2: "Nome, nascimento, início no tênis e mão", fn: later(() => athleteForm(a))}) : null,
+        row({ic: "save", t1: "Backup", t2: lb ? "Último: " + fmtD(lb) : "Nenhum backup feito ainda", fn: later(backupSheet)}),
+        row({ic: "faceid", t1: "Abrir com Face ID", t2: lockCfg() ? "Ligado" : "Desligado", fn: later(lockSheet)})));
+  });
+}
+function athleteForm(a){
+  const isNew = !a; a = a || {};
+  sheet("Atleta", (el, close) => {
+    const name = inp({value: a.name || "", placeholder: "Nome ou apelido", autocomplete: "off", autocapitalize: "words"});
+    const sex = choice([["f", "Feminina"], ["m", "Masculina"]], a.sex || "f", false);
+    const birth = inp({type: "date", value: a.birth || "", max: today()}), start = inp({type: "date", value: a.start || "", max: today()});
+    const hand = choice([["d", "Destra"], ["c", "Canhota"]], a.hand || null, true);
+    const ball = choice(BALLS.map(b => [b.k, b.n]), null, true), since = inp({type: "date", value: today(), max: today()});
+    const slot = h("div");
+    el.append(h("h2", null, isNew ? "Nova atleta" : "Dados da atleta"), h("p", {class: "sh-sub"}, "Fica só neste aparelho."),
+      fld("Nome", name), group("Categoria", sex), fld("Data de nascimento", birth), fld("Começou no tênis em", start, "Pode ser aproximado (o primeiro dia do mês).", true), group("Mão dominante", hand, true),
+      isNew ? [group("Bola atual", ball, true), fld("Na bola atual desde", since, null, true)] : null,
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        if (!clean(name.value)) { toast("Escreva o nome"); name.focus(); return; }
+        if (birth.value && start.value && start.value < birth.value) { toast("O início no tênis está antes do nascimento"); return; }
+        const before = snap();
+        Object.assign(a, {name: clean(name.value), sex: sex.get(), birth: birth.value || null, start: start.value || null, hand: hand.get()});
+        if (isNew) { a.id = uid(); normAthlete(a); if (ball.get()) a.balls[ball.get()] = since.value || today(); S.athletes.push(a); S.activeId = a.id; view.tab = "diario"; }
+        if (!save()) return; close(); render(); toast(isNew ? "Atleta cadastrada" : "Dados salvos", () => undoTo(before)); })}, "Salvar"),
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar " + a.name + " e todos os registros " + gx(a, "dela", "dele") + " deste aparelho?", "Apagar", () => {
+          const before = snap(); S.athletes = S.athletes.filter(x => x !== a); S.activeId = S.athletes[0] ? S.athletes[0].id : null; save(); close(); render(); toast("Atleta apagada", () => undoTo(before)); })}, "Apagar atleta") : null),
+      slot);
+  });
+}
+function backupText(){ return JSON.stringify({app: "briceno-tennis", version: VERSION, exportedAt: new Date().toISOString(), data: S}, null, 1); }
+async function doBackup(){
+  const name = "briceno-tennis-backup-" + today() + ".json", text = backupText();
+  let ok = false;
+  try {
+    const file = new File([text], name, {type: "application/json"});
+    if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], title: "Backup do Briceno Tennis"}); ok = true; }
+  } catch (e) { if (e && e.name === "AbortError") return false; }
+  if (!ok) { const url = URL.createObjectURL(new Blob([text], {type: "application/json"})), link = h("a", {href: url, download: name}); document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); ok = true; }
+  if (ok) { S.meta.lastBackup = today(); save(); }
+  return ok;
+}
+function backupSheet(){
+  sheet("Backup", (el, close) => {
+    const lb = S.meta.lastBackup;
+    el.append(h("h2", null, "Backup"), h("p", {class: "sh-sub"}, lb ? "Último backup: " + fmtD(lb) + "." : "Nenhum backup feito ainda."),
+      h("div", {class: "note"}, "Os dados ficam só neste aparelho. No iPhone, apagar o ícone do app apaga os dados: faça o backup antes e guarde o arquivo no app Arquivos ou envie para você mesmo."),
+      h("div", {class: "stack"},
+        h("button", {type: "button", class: "btn primary block", onclick: once(async () => { if (await doBackup()) { close(); toast("Backup salvo"); render(); } }, 1500)}, "Fazer backup agora"),
+        h("button", {type: "button", class: "btn ghost block", onclick: once(() => { close(); setTimeout(restoreSheet, 150); })}, "Restaurar de um arquivo")));
+  });
+}
+function restoreSheet(){
+  sheet("Restaurar", (el, close) => {
+    const status = h("p", {class: "small muted", role: "status"}), slot = h("div");
+    const file = h("input", {type: "file", accept: "application/json,.json", hidden: true});
+    file.addEventListener("change", async () => {
+      const f = file.files && file.files[0]; if (!f) return;
+      let d; try { d = JSON.parse(await f.text()); } catch (e) { status.textContent = "Este arquivo não é um backup válido."; return; }
+      const data = d && d.app === "briceno-tennis" && d.data && Array.isArray(d.data.athletes) ? d.data : null;
+      if (!data) { status.textContent = "Este arquivo não é um backup do Briceno Tennis."; return; }
+      const n = data.athletes.length;
+      ask(slot, "Restaurar o backup de " + (d.exportedAt ? fmtD(d.exportedAt.slice(0, 10)) : "data desconhecida") + " com " + n + (n === 1 ? " atleta" : " atletas") + "? Os dados atuais deste aparelho serão substituídos.", "Restaurar", () => {
+        const before = snap(); S = data; S.athletes = S.athletes.filter(x => x && typeof x === "object").map(normAthlete); S.meta = S.meta || {lastBackup: null};
+        if (!S.athletes.some(x => x.id === S.activeId)) S.activeId = S.athletes[0] ? S.athletes[0].id : null;
+        if (!save()) return; close(); render(); toast("Backup restaurado", () => undoTo(before));
+      });
+    });
+    el.append(h("h2", null, "Restaurar backup"), h("p", {class: "sh-sub"}, "Escolha o arquivo .json salvo antes. Antes de substituir, o app pede confirmação, e dá para desfazer."),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: () => file.click()}, "Escolher arquivo")), file, status, slot);
+  });
+}
+
+/* Face ID opcional (mesmo padrão do Briceno Life): passkey deste aparelho com verificação do usuário.
+   É uma tranca na entrada do app, não criptografia. A configuração fica numa chave à parte e não vai no backup. */
+const LOCK_KEY = KEY + ".lock";
+const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY)); return c && c.on && c.id && c.rec ? c : null; } catch (e) { return null; } };
+const lockSave = c => { try { if (c) localStorage.setItem(LOCK_KEY, JSON.stringify(c)); else localStorage.removeItem(LOCK_KEY); return true; } catch (e) { return false; } };
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const unb64u = s => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)), c => c.charCodeAt(0));
+const rnd = n => crypto.getRandomValues(new Uint8Array(n));
+const recNorm = s => String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+const recHash = async s => b64u(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("briceno-tennis:" + recNorm(s))));
+function recNew(){ const A = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", r = rnd(8); let c = ""; for (let i = 0; i < 8; i++) c += A[r[i] % A.length]; return c.slice(0, 4) + "-" + c.slice(4); }
+async function faceOK(){ try { return !!(window.PublicKeyCredential && window.isSecureContext && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) { return false; } }
+async function faceCreate(){
+  const cred = await navigator.credentials.create({publicKey: {challenge: rnd(32), rp: {name: "Briceno Tennis"}, user: {id: rnd(16), name: "Briceno Tennis", displayName: "Briceno Tennis"},
+    pubKeyCredParams: [{type: "public-key", alg: -7}, {type: "public-key", alg: -257}], timeout: 60000, attestation: "none",
+    authenticatorSelection: {authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred"}}});
+  return b64u(cred.rawId);
+}
+async function faceCheck(id){
+  const ch = rnd(32);
+  const r = await navigator.credentials.get({publicKey: {challenge: ch, allowCredentials: [{type: "public-key", id: unb64u(id)}], userVerification: "required", timeout: 60000}});
+  const cd = JSON.parse(new TextDecoder().decode(r.response.clientDataJSON)), ad = new Uint8Array(r.response.authenticatorData);
+  return cd.type === "webauthn.get" && cd.challenge === b64u(ch) && ad.length > 32 && (ad[32] & 4) === 4 && b64u(r.rawId) === id;
+}
+const boot = $("#boot"), bootCtl = boot.querySelector(".bt-ctl");
+let locked = false, lockBusy = false, hiddenAt = 0, appShown = false;
+function bootDone(){ if (locked) return; boot.classList.remove("lock", "busy"); boot.classList.add("out"); boot.setAttribute("aria-hidden", "true"); boot.removeAttribute("role"); }
+function bootCover(cls){ boot.classList.add("inst", cls); boot.classList.remove("out"); requestAnimationFrame(() => requestAnimationFrame(() => boot.classList.remove("inst"))); }
+function paintLock(mode){
+  boot.classList.toggle("busy", mode === "busy");
+  if (mode === "busy") return;
+  const msg = h("p", {class: "bt-msg", role: "alert"});
+  if (mode === "rec") {
+    const code = h("input", {class: "input", placeholder: "XXXX-XXXX", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", "aria-label": "Código de recuperação", style: "width:160px"});
+    const goRec = async () => { const c = lockCfg(); if (c && recNorm(code.value).length === 8 && await recHash(code.value) === c.rec) { code.blur(); lockOff(); } else msg.textContent = "Código não confere."; };
+    code.addEventListener("keydown", e => { if (e.key === "Enter") goRec(); });
+    put(bootCtl, h("div", {class: "bt-form"}, code, h("button", {class: "btn primary", type: "button", onclick: goRec}, "Entrar")), msg, h("button", {class: "bt-rec", type: "button", onclick: () => paintLock("idle")}, "Voltar ao Face ID"));
+    setTimeout(() => code.focus(), 50); return;
+  }
+  put(bootCtl, h("button", {class: "bt-face", type: "button", onclick: () => unlock()}, svg("faceid"), "Desbloquear"), h("button", {class: "bt-rec", type: "button", onclick: () => paintLock("rec")}, "Usar código de recuperação"));
+}
+function lockShow(){ locked = true; bootCover("lock"); boot.setAttribute("aria-hidden", "false"); boot.setAttribute("role", "dialog"); boot.setAttribute("aria-label", "Briceno Tennis bloqueado"); paintLock("idle"); unlock(); }
+async function unlock(){
+  const c = lockCfg(); if (!c) { lockOff(); return; }
+  if (lockBusy) return; lockBusy = true; paintLock("busy");
+  let ok = false; try { ok = await faceCheck(c.id); } catch (e) {}
+  lockBusy = false;
+  if (ok) lockOff(); else if (locked) paintLock("idle");
+}
+function lockOff(){ locked = false; if (!appShown) { appShown = true; render(); } bootDone(); }
+document.addEventListener("visibilitychange", () => {
+  const c = lockCfg(); if (!c) return;
+  if (document.hidden) { if (!locked) { hiddenAt = Date.now(); bootCover("veil"); } return; }
+  if (locked) { if (!lockBusy) unlock(); return; }
+  if (Date.now() - hiddenAt >= (c.after || 0) * 60e3) lockShow(); else bootDone();
+});
+function lockSheet(){
+  sheet("Abrir com Face ID", (el, close) => {
+    const body = h("div"); el.append(body);
+    const AFTER = [[0, "Na hora"], [1, "1 min"], [5, "5 min"]];
+    async function paint(step, code){
+      const c = lockCfg();
+      if (step === "code") return put(body, h("h2", null, "Código de recuperação"),
+        h("p", {class: "sh-sub"}, "Abre o app se o Face ID deixar de funcionar. Guarde em um lugar seguro: ele aparece só agora."),
+        h("div", {class: "card pad serif", style: "font-size:1.6rem;text-align:center;letter-spacing:.08em;user-select:all;-webkit-user-select:all"}, code),
+        h("div", {class: "stack"}, h("button", {class: "btn primary block", type: "button", onclick: once(async () => { const ok = lockSave({on: true, id: paint.id, rec: await recHash(code), after: 0, at: Date.now()}); close(); render(); toast(ok ? "Face ID ativado" : "Não foi possível salvar neste aparelho"); })}, "Guardei o código")));
+      if (c) return put(body, h("h2", null, "Abrir com Face ID"), h("p", {class: "sh-sub"}, "Ligado neste aparelho. Ao abrir o app, o iPhone confirma que é você."),
+        group("Travar ao sair do app", h("div", {class: "seg", role: "radiogroup"}, AFTER.map(([v, l]) => h("button", {type: "button", role: "radio", class: (c.after || 0) === v ? "on" : "", "aria-checked": String((c.after || 0) === v),
+          onclick: () => { c.after = v; lockSave(c); paint(); }}, l)))),
+        h("div", {class: "stack"}, h("button", {class: "btn ghost block danger", type: "button", onclick: once(async () => { let ok = false; try { ok = await faceCheck(c.id); } catch (e) {}
+          if (!ok) { toast("Não confirmado"); return; } lockSave(null); close(); render(); toast("Face ID desligado"); }, 1500)}, "Desligar")));
+      if (!await faceOK()) return put(body, h("h2", null, "Abrir com Face ID"), h("p", {class: "sh-sub"}, "Este aparelho ou navegador não oferece Face ID para apps da web. No iPhone, abra o Briceno Tennis pelo ícone na tela de início."));
+      put(body, h("h2", null, "Abrir com Face ID"), h("p", {class: "sh-sub"}, "Ao abrir o app, o iPhone confirma que é você. Se o rosto não for reconhecido, vale o código do iPhone."),
+        h("p", {class: "small muted"}, "É uma tranca na entrada do app: os dados continuam só neste aparelho."),
+        h("div", {class: "stack"}, h("button", {class: "btn primary block", type: "button", onclick: once(async () => {
+          try { paint.id = await faceCreate(); } catch (e) { toast("Face ID não ativado"); return; }
+          paint("code", recNew()); }, 1500)}, "Ativar")));
+    }
+    put(body, h("h2", null, "Abrir com Face ID")); paint();
+  });
+}
+
+/* ---------- início ---------- */
+(() => {   // tamanho de texto do iPhone, com limite para o layout não quebrar
+  const pr = document.createElement("span"); pr.style.font = "-apple-system-body"; pr.textContent = "a"; document.body.append(pr);
+  const px = pr.style.font ? parseFloat(getComputedStyle(pr).fontSize) : 0; pr.remove();
+  if (px) document.documentElement.style.fontSize = Math.min(24, Math.max(15, px)) + "px";
+  document.documentElement.classList.toggle("big-text", px >= 21);
+})();
+load();
+try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
+if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, 350))); }
+
+</script>
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(() => {});
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+</script>
+</body>
+</html>
