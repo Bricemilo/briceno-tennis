@@ -2,12 +2,22 @@
 
 Mesmo sistema do Briceno Life (BRICEÑO Digital Jewelry, ver `DESIGN-SYSTEM.md` do repositório `Bricemilo/nutri-pratico`), com a identidade do tênis.
 
+## Cores com sentido no tênis
+Cada material vem de uma quadra ou de um objeto do jogo. As telas mostram só as cores, sem nomes nem marcas de torneios.
+
+| Material | Inspiração | Sentido | Onde |
+|---|---|---|---|
+| `saibro` | Quadras de saibro (Roland Garros e a maioria dos clubes do Brasil) | Construir o jogo, paciência, o treino de cada dia | Tênis na semana, Treino, Raquete |
+| `bola` | A bola amarela oficial | Foco: olho na bola | Foco da semana, Golpes |
+| `noite` | Quadras duras nas sessões noturnas (US Open) | Competição e intensidade | Carga da semana, Jogo |
+| `celeste` | Quadra dura azul-clara de verão (Australian Open, o primeiro Grand Slam do ano) | Recomeço e recuperação | Descanso, referência de horas |
+| `grama` | Grama com o roxo da tradição (Wimbledon) | Conquista e história | Próximo torneio, Torneio |
+| `b-red` … `b-yellow` | Bolas da ITF | Progressão por etapas | Bola atual e próxima |
+
+O cobre continua como a assinatura da família Briceno: "+", aba ativa, seletor do topo e botões principais.
+
 ## Três materiais
 - **A · Cartões-joia (`.hc`, `jewelCard`)**: só a informação principal de cada tela. Construção da Home v35 do Briceno Life: base escura do material, luz no alto à esquerda, brilho embaixo à direita, lâmina de luz vetorial (`JEWEL`) e aro de 1 px aceso.
-  - Diário: Foco da semana (`prio`), Tênis (`clay`), Descanso (`sleep`), Carga (`wb`), Registros (`move`).
-  - Evolução: Bola atual e Próxima, no material da cor da bola (`b-red`, `b-orange`, `b-green`, `b-yellow`).
-  - Carreira: Próximo torneio (`champ`).
-  - Registrar (+): Treino (`clay`), Jogo (`move`), Golpes (`prio`), Torneio (`champ`).
 - **B · Vidro (`.dj-glass` + tom `t-*`)**: referências, notas e cartões do Guia.
 - **C · Discreto (`.list`, `.card`)**: listas, formulários e informação secundária.
 

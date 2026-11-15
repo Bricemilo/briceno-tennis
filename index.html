@@ -130,29 +130,32 @@ b,strong{font-weight:650}
 .hc-s{margin-top:4px;font-size:var(--t-cap);font-weight:450;letter-spacing:-.01em;color:rgba(255,255,255,.86);line-height:1.3}
 .hc-v,.hc-s{text-shadow:0 0 2px var(--gd),0 0 7px color-mix(in srgb,var(--gd) 80%,transparent)}
 .hc.wide{min-height:0}
+.hgrid > .hc.wide{grid-column:1 / -1}
 .hc.wide .hc-v{padding-top:12px}
-/* materiais (valores da Home v35 do Briceno Life) */
-.hc.clay{--g:#EE8644;--gd:#1F0B02;--gt:#8F421B;--gb:#A04B21;--gr:#DE7E43;--gh:#FFD9A8}
-.hc.prio{--g:#E8A25B;--gd:#251608;--gt:#B87D42;--gb:#A86F3A;--gr:#C38A51;--gh:#FFE7B4}
-.hc.move{--g:#3FCDB8;--gd:#01120F;--gt:#165447;--gb:#175A4F;--gr:#3E9C90;--gh:#A6F4EC}
-.hc.sleep{--g:#B784D6;--gd:#150A1B;--gt:#52305F;--gb:#7E4C87;--gr:#9A6CA8;--gh:#E6B9EE}
-.hc.wb{--g:#EE7D84;--gd:#2E1015;--gt:#AA4950;--gb:#A6464F;--gr:#D56E74;--gh:#F6AEB0}
-.hc.water{--g:#4EC3E2;--gd:#00111B;--gt:#16586F;--gb:#19637C;--gr:#3E9DBB;--gh:#A8F0F8}
-.hc.agenda{--g:#7EA5E0;--gd:#060D1A;--gt:#46689D;--gb:#2E4570;--gr:#5677A8;--gh:#BFE2FF}
-.hc.champ{--g:#D7B378;--gd:#19130B;--gt:#7A6236;--gb:#806838;--gr:#B39762;--gh:#F6E2B8}
+/* materiais do tênis (mesma construção da Home v35 do Briceno Life; cada cor vem de uma quadra ou de um objeto do jogo, ver fonte/DESIGN.md)
+   saibro: terracota das quadras de saibro · bola: amarelo da bola oficial · noite: azul das quadras duras nas sessões noturnas
+   celeste: azul-claro da quadra dura de verão · grama: verde da grama com o roxo da tradição */
+.hc.saibro,.sw.saibro{--g:#E07A4C;--gd:#1E0A04;--gt:#8A3A1C;--gb:#9A4322;--gr:#C9693F;--gh:#FFC9A6}
+.hc.bola,.sw.bola{--g:#D8E25C;--gd:#121404;--gt:#666D1E;--gb:#6E7522;--gr:#A6AE3E;--gh:#F4FAB0}
+.hc.noite,.sw.noite{--g:#5E92DA;--gd:#030A19;--gt:#1C3762;--gb:#22447A;--gr:#4A73AE;--gh:#BCD6FF}
+.hc.celeste,.sw.celeste{--g:#42B6EA;--gd:#01111B;--gt:#11556F;--gb:#15617F;--gr:#3A9CC6;--gh:#B4ECFF}
+.hc.grama,.sw.grama{--g:#55B56E;--gd:#03120A;--gt:#1C4A2B;--gb:#5A2F86;--gr:#4E9A64;--gh:#D2F2D9}
 /* bolas: material na cor da bola */
 .hc.b-red{--g:#F07462;--gd:#2A0B07;--gt:#9C3A2C;--gb:#A63E30;--gr:#D9624F;--gh:#FFC2B6}
 .hc.b-orange{--g:#F29A4C;--gd:#221004;--gt:#9A5420;--gb:#A85C24;--gr:#E08A44;--gh:#FFDDB0}
 .hc.b-green{--g:#9FD25E;--gd:#0C1505;--gt:#3F5E1F;--gb:#486A24;--gr:#7FA84C;--gh:#E0F8B4}
 .hc.b-yellow{--g:#DDD068;--gd:#151505;--gt:#7A712B;--gb:#766F2B;--gr:#A99B4C;--gh:#F3EA92}
 
+.sw{width:30px;height:30px;flex:0 0 30px;border-radius:9px;margin-top:2px;background:radial-gradient(circle at 32% 28%,var(--gh),var(--g) 42%,var(--gr) 70%,var(--gd) 120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 10px -4px var(--g)}
+.sw-balls{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:30px;flex:0 0 30px;margin-top:2px}
+.sw-balls .ball{width:13px;height:13px}
 /* ---------- B · Precision Glass ---------- */
 .dj-glass{--tint:var(--clay);border:1px solid transparent;border-radius:var(--dj-r-panel);
   background:radial-gradient(130% 110% at 0% 0%,color-mix(in srgb,var(--tint) 10%,transparent),transparent 58%) padding-box,var(--dj-glass-base) padding-box,
     linear-gradient(165deg,color-mix(in srgb,var(--tint) 36%,rgba(255,255,255,.08)),rgba(255,255,255,.055) 32%,rgba(255,255,255,.035) 72%,color-mix(in srgb,var(--tint) 14%,rgba(255,255,255,.03))) border-box;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 18px 32px -26px rgba(0,0,0,.9)}
 .dj-glass.pad{padding:16px}
-.t-clay{--tint:#E08C4E} .t-move{--tint:#3FBFA0} .t-champ{--tint:#D7B378} .t-sapph{--tint:#35A9E0} .t-ruby{--tint:#E66F8E} .t-amet{--tint:#9F86EA}
+.t-saibro{--tint:#E07A4C} .t-bola{--tint:#D8E25C} .t-noite{--tint:#5E92DA} .t-celeste{--tint:#42B6EA} .t-grama{--tint:#55B56E} .t-orange{--tint:#F29A4C} .t-clay{--tint:#E08C4E}
 .card{background:var(--dj-quiet);border:1px solid var(--dj-quiet-line);border-radius:var(--dj-r-panel)}
 .card.pad{padding:16px}
 .card + .card,.dj-glass + .dj-glass{margin-top:10px}
@@ -391,14 +394,11 @@ const ICON = {
 const JEWEL = (() => {
   const B = {v35: 1, ex: 186, n: 7, ox: 1.5, oy: -2.6, pk: .76, fill: 0.3, glow: 0.58};
   const M = {
-    clay: {c: "#F2924E", hi: "#FFE6C4", sx: 66, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
-    prio: {c: "#F4B06A", hi: "#FFF1CE", sx: 72, ey: 38, c1: [120, 112], c2: [160, 82], n: 9, glow: 0.62},
-    move: {c: "#46D6C0", hi: "#DEFFF8", sx: 72, ey: 38, c1: [126, 114], c2: [164, 84], glow: 0.56},
-    sleep: {c: "#C590E4", hi: "#F7E6FF", sx: 80, ey: 42, c1: [130, 114], c2: [166, 86]},
-    wb: {c: "#F88E92", hi: "#FFE4E2", sx: 70, ey: 30, c1: [124, 110], c2: [162, 78], glow: 0.56},
-    water: {c: "#5CD0EE", hi: "#E2FAFF", sx: 104, ey: 36, c1: [140, 112], c2: [168, 82]},
-    agenda: {c: "#8AB2EE", hi: "#E6F2FF", sx: 84, ey: 38, c1: [134, 114], c2: [166, 84], glow: 0.56},
-    champ: {c: "#E6C489", hi: "#FFF0D2", sx: 80, ey: 36, c1: [128, 114], c2: [164, 84], n: 9, glow: 0.56},
+    saibro: {c: "#F08A5C", hi: "#FFDCC4", sx: 66, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
+    bola: {c: "#E6EE70", hi: "#FBFFD4", sx: 72, ey: 44, c1: [126, 116], c2: [164, 88], n: 8, glow: 0.64},
+    noite: {c: "#80AEF0", hi: "#E2EEFF", sx: 80, ey: 38, c1: [132, 114], c2: [166, 84], glow: 0.58},
+    celeste: {c: "#66CEF4", hi: "#E0F8FF", sx: 96, ey: 36, c1: [138, 112], c2: [168, 82], glow: 0.58},
+    grama: {c: "#86D99A", hi: "#E8FFEC", sx: 76, ey: 40, c1: [128, 116], c2: [164, 86], n: 8, glow: 0.56},
     "b-red": {c: "#FF8A78", hi: "#FFE2DA", sx: 70, ey: 32, c1: [124, 110], c2: [162, 78], glow: 0.58},
     "b-orange": {c: "#FFAA5E", hi: "#FFEACB", sx: 68, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
     "b-green": {c: "#B4E772", hi: "#F1FFD6", sx: 72, ey: 40, c1: [126, 116], c2: [164, 86], n: 8, glow: 0.6},
@@ -643,7 +643,7 @@ function weekStats(a){
   const min = es.reduce((s, e) => s + (e.min || 0), 0);
   const load = es.reduce((s, e) => s + (e.min && e.rpe != null ? e.min * e.rpe : 0), 0);
   const days = new Set(es.map(e => e.date));
-  return {es, min, load, rest: 7 - days.size, withLoad: es.some(e => e.min && e.rpe != null)};
+  return {es, min, load, rest: 7 - days.size, withLoad: es.some(e => e.min && e.rpe != null), nT: es.filter(e => e.type !== "jogo").length, nJ: es.filter(e => e.type === "jogo").length};
 }
 function entryTitle(a, e){
   if (e.type === "jogo") return "Jogo" + (e.opp ? " · " + e.opp : "");
@@ -664,15 +664,14 @@ function diario(a){
   const nPrio = openPrio(a).length;
   return [
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
-    jewelCard({cls: "prio", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
+    jewelCard({cls: "bola", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
       sub: top ? "Prioridade 1 de " + nPrio + ". Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo.", fn: () => prioSheet(a)}),
-    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-ruby note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
+    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
     a.entries.length ? sec("Últimos 7 dias",
       h("div", {class: "hgrid"},
-        jewelCard({cls: "clay", icon: "train", title: "Tênis", value: hm(ws.min), sub: "registrado na semana", fn: () => weekSheet(a)}),
-        jewelCard({cls: "sleep", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
-        jewelCard({cls: "wb", icon: "pulse", title: "Carga", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos" : "Registre duração e esforço", fn: () => weekSheet(a)}),
-        jewelCard({cls: "move", icon: "diary", title: "Registros", value: ws.es.length, sub: "treinos, jogos e golpes", fn: () => weekSheet(a)})),
+        jewelCard({cls: "saibro", icon: "train", title: "Tênis", value: hm(ws.min), sub: [ws.nT ? ws.nT + (ws.nT > 1 ? " treinos" : " treino") : null, ws.nJ ? ws.nJ + (ws.nJ > 1 ? " jogos" : " jogo") : null].filter(Boolean).join(" · ") || "registrado na semana", fn: () => weekSheet(a)}),
+        jewelCard({cls: "celeste", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
+        jewelCard({cls: "noite", wide: true, icon: "pulse", title: "Carga da semana", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos, somando as sessões" : "Registre duração e esforço para ver a carga", fn: () => weekSheet(a)})),
       weekRef(a)) : null,
     sec("Registros",
       shown.length ? h("div", {class: "list"}, shown.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
@@ -685,10 +684,10 @@ function weekSheet(a){
   const ws = weekStats(a), age = ageAt(a.birth);
   sheet("Últimos 7 dias", (el, close) => {
     el.append(h("h2", null, "Últimos 7 dias"), h("p", {class: "sh-sub"}, "Somente o que foi registrado no app, de " + fmtDs(daysAgo(6)) + " até hoje."),
-      h("div", {class: "dj-glass t-clay g-card"}, h("p", null, h("b", null, hm(ws.min)), " de tênis em " + ws.es.length + (ws.es.length === 1 ? " registro" : " registros") + "."),
+      h("div", {class: "dj-glass t-noite g-card"}, h("p", null, h("b", null, hm(ws.min)), " de tênis em " + ws.es.length + (ws.es.length === 1 ? " registro" : " registros") + "."),
         h("p", null, h("b", null, String(ws.rest)), (ws.rest === 1 ? " dia" : " dias") + " sem tênis registrado."),
         ws.withLoad ? h("p", null, h("b", null, ws.load.toLocaleString("pt-BR")), " de carga: a soma de esforço (0 a 10) × minutos de cada sessão. Serve para comparar uma semana com outra da mesma atleta, não com outras pessoas.") : null),
-      h("div", {class: "dj-glass t-move g-card", style: "margin-top:10px"},
+      h("div", {class: "dj-glass t-celeste g-card", style: "margin-top:10px"},
         age != null && age >= 8 && age <= 18 ? h("p", null, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso.") : h("p", null, "A referência de horas foi estudada dos 8 aos 18 anos."),
         h("div", {class: "g-meta"}, ev("moderada"), h("span", {class: "ev"}, "Estudos em crianças e adolescentes")),
         h("div", {class: "g-src"}, "Fonte: Jayanthi e colaboradores, 2015; Academia Americana de Pediatria, 2024. Detalhes no Guia.")),
@@ -699,8 +698,8 @@ function weekSheet(a){
 function weekRef(a){
   const age = ageAt(a.birth);
   if (age == null) return null;
-  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-move"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
-  return h("div", {class: "ref dj-glass t-move"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
+  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-celeste"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Fonte e força da evidência no Guia.");
+  return h("div", {class: "ref dj-glass t-celeste"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Veja o Guia.");
 }
 
 /* ---------- Registrar ---------- */
@@ -710,10 +709,10 @@ function quickSheet(){
     const go = fn => () => { close(); setTimeout(fn, 120); };
     el.append(h("h2", null, "Registrar"), h("div", {style: "height:8px"}),
       h("div", {class: "qgrid"},
-        jewelCard({cls: "clay", icon: "train", title: "Treino", sub: "Tempo, esforço e anotações", fn: go(() => entryForm(a, "treino"))}),
-        jewelCard({cls: "move", icon: "match", title: "Jogo", sub: "Placar e anotações", fn: go(() => entryForm(a, "jogo"))}),
-        jewelCard({cls: "prio", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))}),
-        jewelCard({cls: "champ", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))})));
+        jewelCard({cls: "saibro", icon: "train", title: "Treino", sub: "Tempo, esforço e anotações", fn: go(() => entryForm(a, "treino"))}),
+        jewelCard({cls: "noite", icon: "match", title: "Jogo", sub: "Placar e anotações", fn: go(() => entryForm(a, "jogo"))}),
+        jewelCard({cls: "bola", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))}),
+        jewelCard({cls: "grama", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))})));
   });
 }
 function entryForm(a, type, e, preset){
@@ -776,7 +775,7 @@ function evolucao(a){
         sub: cb && a.balls[cb] ? "há " + dur(monthsBetween(a.balls[cb])) : "Toque para registrar", fn: () => ballsSheet(a)}),
       nb ? jewelCard({cls: "b-" + nb, icon: h("span", {class: "ball b-" + nb}), title: "Próxima", value: ballOf(nb).n, word: true,
         sub: a.nextPlan ? "Previsão: " + fmtMY(a.nextPlan) : (NEXT_AGE[nb] ? "ITF: " + NEXT_AGE[nb][0] + " a " + NEXT_AGE[nb][1] + " anos" : "Primeira etapa"), fn: () => nb !== "red" ? compSheet(a) : ballsSheet(a)})
-        : jewelCard({cls: "clay", icon: "racket", title: "Raquete", value: curRacket(a) && curRacket(a).size ? curRacket(a).size + "\"" : null, sub: curRacket(a) ? [curRacket(a).brand, curRacket(a).model].filter(Boolean).join(" ") || "Atual" : "Registrar a atual", fn: () => racketsSheet(a)})),
+        : jewelCard({cls: "saibro", icon: "racket", title: "Raquete", value: curRacket(a) && curRacket(a).size ? curRacket(a).size + "\"" : null, sub: curRacket(a) ? [curRacket(a).brand, curRacket(a).model].filter(Boolean).join(" ") || "Atual" : "Registrar a atual", fn: () => racketsSheet(a)})),
     sec("Linha do tempo das bolas", h("button", {type: "button", class: "list", style: "display:block;width:100%;text-align:left", onclick: once(() => ballsSheet(a)), "aria-label": "Etapas da bola. Toque para editar"},
       h("div", {class: "tl"}, BALLS.map((b, i) => {
         const from = a.balls[b.k], nxt = BALLS.slice(i + 1).map(x => a.balls[x.k]).find(Boolean);
@@ -990,7 +989,7 @@ function stringForm(a, s){
 function relAge(a){
   const d = parseD(a.birth); if (!d) return null;
   const m = d.getMonth() + 1, older = m - 1, younger = 12 - m;
-  return h("div", {class: "dj-glass t-amet g-card"},
+  return h("div", {class: "dj-glass t-orange g-card"},
     h("p", null, "Nasceu em " + MESX[d.getMonth()] + ". Nas categorias por ano de nascimento (como na ITF), " +
       (older ? "colegas nascidas antes, no mesmo ano, têm até " + older + (older > 1 ? " meses" : " mês") + " a mais" : "quase todas as colegas são mais novas") +
       (younger ? (older ? ", e as nascidas depois têm até " : "; as nascidas depois têm até ") + younger + (younger > 1 ? " meses" : " mês") + " a menos." : ".")),
@@ -1006,9 +1005,9 @@ function carreira(a){
   const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
   return [
     h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios planejados e resultados, organizados por ano."),
-    next.length ? jewelCard({cls: "champ", wide: true, icon: "flag", title: "Próximo torneio", value: next[0].name, txt: true,
+    next.length ? jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: next[0].name, txt: true,
       sub: [next[0].start ? fmtD(next[0].start) + inDays(next[0].start) : null, next[0].level, next[0].city].filter(Boolean).join(" · "), fn: () => tourForm(a, next[0])})
-      : jewelCard({cls: "champ", wide: true, icon: "flag", title: "Próximo torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar o próximo torneio.", fn: () => tourForm(a)}),
+      : jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar o próximo torneio.", fn: () => tourForm(a)}),
     next.length > 1 ? sec("Depois", h("div", {class: "list"}, next.slice(1).map(x => tourRow(a, x)))) : null,
     years.length ? years.map(y => sec(y === "Sem data" ? y : "Resultados de " + y, h("div", {class: "list"}, past.filter(x => ((x.start || "").slice(0, 4) || "Sem data") === y).map(x => tourRow(a, x)))))
       : sec("Resultados", h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Ao registrar um torneio, escreva o resultado e uma descrição curta. Isso vai montar o currículo.")))
@@ -1068,7 +1067,7 @@ function guia(a){
     h("h1", {class: "page-h"}, "Guia"),
     h("p", {class: "page-sub"}, "Recomendações gerais baseadas em ciência, com a força de cada evidência. Revisado em novembro de 2026."),
     h("div", {class: "g-meta", style: "margin-top:-6px"}, ev("forte"), ev("moderada"), ev("fraca"), ev("consenso"), ev("regra")),
-    (gcard.tint = "t-clay", null),
+    (gcard.tint = "t-orange", null),
     sec("Bolas e quadras",
       gcard("Bola por idade e desenvoltura",
         [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Idade (ITF)"), h("th", null, "Velocidade"))),
@@ -1083,7 +1082,7 @@ function guia(a){
       gcard("Por que bola mais lenta e quadra menor",
         h("p", null, "Com bola mais lenta, quadra menor e raquete menor, a criança acerta mais, bate na altura certa e prefere jogar assim. Por isso a ITF usa as bolas coloridas."),
         [ev("moderada")], "Estudos em crianças", "Buszard e colaboradores, 2016 (25 estudos, 989 crianças); revisão de 2025 com 35 estudos de tênis")),
-    (gcard.tint = "t-clay", null),
+    (gcard.tint = "t-saibro", null),
     sec("Raquete",
       gcard("Tamanho por etapa e altura",
         [h("table", {class: "tbl"}, h("thead", null, h("tr", null, h("th", null, "Bola"), h("th", null, "Raquete (ITF)"))),
@@ -1094,7 +1093,7 @@ function guia(a){
       gcard("Cordas e tensão",
         h("p", null, "Em estudos, só 27% dos jogadores avançados e 11% dos jogadores de elite perceberam uma diferença de cerca de 5 kg na tensão. Por isso o app só registra corda e tensão, sem recomendar."),
         [ev("fraca", "Fraca para crianças")], "Estudos em adultos", "Bower e Cross, 2003 e 2008")),
-    (gcard.tint = "t-move", null),
+    (gcard.tint = "t-noite", null),
     sec("Carga, descanso e sono",
       gcard("Horas por semana",
         [ul("Horas de esporte organizado por semana não maiores que a idade (ex.: 10 anos, até 10 h). Quem passou disso teve cerca de 70% mais chance de lesão grave por excesso de uso.",
@@ -1113,7 +1112,7 @@ function guia(a){
       gcard("Sono",
         ul("6 a 12 anos: 9 a 12 horas por dia.", "13 a 18 anos: 8 a 10 horas por dia."),
         [ev("consenso", "Consenso forte")], "Crianças e adolescentes", "Academia Americana de Medicina do Sono, 2016")),
-    (gcard.tint = "t-amet", null),
+    (gcard.tint = "t-bola", null),
     sec("Metas, motivação e pais",
       gcard("Metas de processo",
         [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco da semana."),
@@ -1131,7 +1130,7 @@ function guia(a){
       gcard("Deixar a criança escolher o que treinar",
         h("p", null, "Ouvir a atleta ajuda a motivação. Mas, depois de corrigir o viés de publicação, deixar a criança escolher não mostrou ganho claro de aprendizagem."),
         [ev("fraca")], null, "McKay e colaboradores, 2022")),
-    (gcard.tint = "t-champ", null),
+    (gcard.tint = "t-grama", null),
     sec("Resultados e idade",
       gcard("Resultados no infantil",
         h("p", null, "Vencer é legítimo, e os resultados são registrados na Carreira. Mas o resultado até os 14 anos indica o futuro só um pouco (correlação de cerca de 0,21 nos meninos e 0,30 nas meninas com o ranking profissional). Por isso o dia a dia do app foca no processo."),
@@ -1139,10 +1138,20 @@ function guia(a){
       gcard("Mês de nascimento",
         h("p", null, "No tênis juvenil, quem nasce no começo do ano aparece mais entre os melhores, em vários países e categorias. Ajuda a não julgar cedo demais quem nasceu no fim do ano."),
         [ev("moderada")], "Juniores de tênis", "Estudos de efeito da idade relativa (PLOS ONE, 2023 e 2024, e outros)")),
+    sec("As cores do app", h("div", {class: "list"}, CORES.map(([cls, t, d]) => h("div", {class: "row"}, (cls === "b-red" ? h("span", {class: "sw-balls", "aria-hidden": "true"}, BALLS.map(b => h("span", {class: "ball b-" + b.k}))) : h("span", {class: "sw " + cls, "aria-hidden": "true"})), h("span", {class: "bd"}, h("div", {class: "t1"}, t), h("div", {class: "t2"}, d)))))),
     sec("Referências", h("div", {class: "list refs", style: "padding:4px 16px"}, REFS.map(([t, u, d]) => h("a", {href: u, target: "_blank", rel: "noopener"}, t, h("span", null, d))))),
     h("p", {class: "small faint", style: "margin-top:18px"}, "O Briceno Tennis não substitui o treinador, o pediatra ou o nutricionista, e não faz diagnóstico.")
   ];
 }
+// cada material tem um motivo no tênis
+const CORES = [
+  ["saibro", "Saibro", "A quadra onde se constrói o jogo, com paciência. A mais comum nos clubes do Brasil. É a cor do treino."],
+  ["bola", "Bola amarela", "Olho na bola: a cor do foco da semana e dos golpes."],
+  ["noite", "Azul-noite", "As quadras duras nos jogos à noite: competição e intensidade. É a cor dos jogos e da carga."],
+  ["celeste", "Azul-celeste", "A quadra dura do verão, onde a temporada recomeça. É a cor do descanso e da recuperação."],
+  ["grama", "Grama", "A superfície mais tradicional, com o roxo da história. É a cor da carreira e dos torneios."],
+  ["b-red", "Bolas da ITF", "Vermelha, laranja, verde e amarela: as etapas de quem está aprendendo."]
+];
 const REFS = [
   ["ITF · Manual Tennis10s", "http://s3.amazonaws.com/ustaassets/assets/935/15/tennis10s_manual_eng.pdf", "Bolas, quadras, raquetes, idades e competências · consenso e regra"],
   ["ITF · Regras do Tênis", "https://www.itftennis.com/media/4421/2021-rules-of-tennis-english.pdf", "Competição de 10 anos ou menos · regra oficial"],
