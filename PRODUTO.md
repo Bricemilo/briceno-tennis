@@ -3,6 +3,34 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v3 · Diário completo e sequência de cores (publicada em 15/11/2026, aprovada pelo Camilo com "Ok")
+
+### O que mudou
+- **Diário sempre completo, mesmo vazio.** Cada cartão vazio é um convite com ação, nunca uma cobrança. Ordem:
+  1. Foco da semana.
+  2. Próximo torneio | Golpe em vídeo (o "melhor golpe" ou o último vídeo, com miniatura).
+  3. Depois do jogo (só quando houve jogo).
+  4. Últimos 7 dias: Tênis | Descanso, mais a Carga. Sem treino na semana, aparece o convite "Nenhum treino ainda".
+  5. Registros (só quando existem).
+- **Sem ranking na tela inicial.** Resultados ficam em Torneios.
+- **Sequência de cores:**
+  - cada cor uma vez por tela;
+  - quente e frio alternados, como na Home do Briceno Life;
+  - da luz (âmbar) para a profundidade (azul-noite).
+  - Foco da semana passou para âmbar, a mesma cor das Prioridades no Briceno Life, e a bola amarela ficou para golpes e vídeos.
+  - No "+": Treino | Jogo · Torneio | Golpes.
+  - "As cores do app" no Guia segue a ordem da tela.
+
+### Evidência
+| Decisão | Base | Força |
+|---|---|---|
+| Cartões vazios com convite e caminho direto | Nielsen Norman Group, telas vazias em aplicativos (3 diretrizes) | Consenso de especialistas |
+| Mostrar e registrar o progresso | Harkin e colaboradores, 2016 (meta-análise, 138 estudos, d = 0,40; maior quando registrado) | Moderada a forte (maioria adultos) |
+| Sem ranking, foco no processo e em si mesma | Harwood e colaboradores, 2015; Williamson e colaboradores; ITF (12 anos ou menos sem ranking) | Moderada |
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px: Diário vazio e em uso, "+", cores no Guia, fluxo completo (incluindo vídeos e backup completo), sem erros.
+
 ## v2 · Aba Golpes com fotos e vídeos (publicada em 15/11/2026, aprovada pelo Camilo com "Publica")
 
 ### O que mudou
