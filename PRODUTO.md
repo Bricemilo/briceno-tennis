@@ -3,6 +3,47 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v2 · Aba Golpes com fotos e vídeos (publicada em 15/11/2026, aprovada pelo Camilo com "Publica")
+
+### O que mudou
+- **Abas:** Diário · Golpes · + · Torneios · Evolução, por ordem de uso no dia a dia. O **Guia** saiu da barra e abre pelo nome no topo ("Guia e referências"), com "‹ Voltar". É o mesmo padrão do Briceno Life, em que o Perfil fica no seletor do topo.
+- **Aba Golpes:** golpe preferido em destaque e os 7 golpes, cada um com miniatura, contagem de vídeos, fotos e anotações e a data do último registro.
+- **Página do golpe:**
+  - fotos e vídeos (câmera, galeria ou arquivos);
+  - recorte de 5 s;
+  - câmera lenta (½ e ¼);
+  - "Melhor golpe" (um por golpe);
+  - "Comparar antes e agora", lado a lado e sincronizado, com o intervalo entre as datas;
+  - anotações do golpe.
+- **Registrar → Golpes:** foto ou vídeo opcional na própria anotação.
+- **Backup e espaço:**
+  - mostra quanto ocupam os registros e a mídia;
+  - backup dos registros (.json) e backup completo com fotos e vídeos (.btbackup);
+  - "Liberar espaço": guarda um por mês por golpe, mais os marcados como melhor golpe;
+  - restauração dos dois formatos.
+
+### Decisões de memória (custo zero, sem nuvem)
+- A mídia fica num banco separado do aparelho (IndexedDB `bricenotennis-midia`). Os registros continuam na chave `bricenotennis.v1`, que não mudou. Nenhum dado foi apagado nem migrado.
+- O app guarda cópias leves: vídeo de até 5 s em 720p (cerca de 2 MB) e foto com até 1600 px (cerca de 0,3 MB). O original continua no app Fotos do iPhone.
+- Arquivo apagado só sai de verdade depois do prazo do "Desfazer". Arquivos de backups antigos nunca são apagados automaticamente.
+- O backup completo é montado e lido por partes, sem carregar todos os vídeos na memória de uma vez.
+- Estimativa: cerca de 170 MB por ano por atleta, com um vídeo por golpe por mês.
+
+### Evidência
+| Recurso | Base | Força |
+|---|---|---|
+| Vídeo do próprio movimento | Mödinger, Woll e Wagner, 2021 (revisão sistemática, 11 estudos, educação física) | Moderada |
+| Visual comparado com verbal | Zhou, Shao e Wang, 2021 (revisão sistemática) | Limitada |
+| "Melhor golpe" (rever os próprios acertos) | Estudos de auto-observação positiva (resultados mistos; mais motivação em crianças em alguns) | Fraca a moderada |
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px:
+  - vídeo de 7 s recortado para 5 s;
+  - foto, câmera lenta, "melhor golpe" e comparação com os dois vídeos tocando;
+  - backup completo restaurado em outro perfil de navegador, com as 3 mídias recuperadas;
+  - abre sem internet, sem erros no console.
+- **Ainda não testado no iPhone**: filmar pelo app, vídeo .mov da galeria, tempo de preparo, salvar o .btbackup no app Arquivos.
+
 ## v1 · Fase 1 (publicada em 15/11/2026, aprovada pelo Camilo com "Publica")
 
 ### O que tem
