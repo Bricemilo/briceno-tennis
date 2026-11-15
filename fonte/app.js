@@ -153,6 +153,7 @@ function sheet(label, build){
   let closed = false;
   function close(){ if (closed) return; closed = true; el.classList.remove("on"); scrim.classList.remove("on"); setTimeout(() => { el.remove(); scrim.remove(); }, 280); }
   const add0 = el.append.bind(el); el.append = (...k) => add0(...k.flat(Infinity).filter(x => x != null && x !== false));
+  { const t = $("#toast"); clearTimeout(toast.t); t.classList.remove("on", "act"); }   // ao abrir outra folha, o aviso anterior sai
   scrim.addEventListener("click", close);
   el.append(h("button", {class: "sh-x", type: "button", "aria-label": "Fechar", onclick: close}, svg("x")));
   build(el, close);
