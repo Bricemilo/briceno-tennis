@@ -358,7 +358,7 @@ function hoje(a){
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
     jewelCard({cls: "ambar", wide: true, icon: "target", title: "Foco atual", value: f ? f.top.text : "Escolher o foco", txt: true,
       sub: f ? [f.top.area ? areaOf(f.top.area)[1] : null, sinceTxt(f.since), "prioridade 1 de " + f.n].filter(Boolean).join(" · ").replace(/^./, c => c.toUpperCase()) : "Uma prioridade de melhoria, escrita como processo", fn: () => prioSheet(a)}),
-    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
+    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, strokeCard(a), nextTourCard(a)),   // processo antes de resultado
     lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
     h("div", {style: "height:var(--hm-row)"}), weekCard(a)
   ];

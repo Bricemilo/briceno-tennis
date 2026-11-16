@@ -20,7 +20,7 @@ Cada material vem de uma quadra ou de um objeto do jogo. As telas mostram só as
 - Vizinhos alternam quente e frio, como num tabuleiro.
 - A tela vai da luz para a profundidade.
 
-Hoje: Foco atual (âmbar) · Torneio (grama) | Golpe (bola) · Semana com mini-gráfico (saibro) · Corpo (celeste). Cartões com tamanho fixo: título em uma linha, valor em até duas, legenda em uma, com "…".
+Hoje: Foco atual (âmbar) · Golpe (bola) | Torneio (grama), processo antes de resultado · Semana com mini-gráfico (saibro) · Corpo (celeste). Cartões com tamanho fixo: título em uma linha, valor em até duas, legenda em uma, com "…".
 Torneios: Torneio (grama) | Currículo (âmbar).
 Evolução: Linha do tempo (grama) · Técnica (bola) | Tática (noite) · Física (celeste) | Mental (âmbar). As 4 áreas do tenista (ITF e USPTA).
 A lâmina de luz dos cartões é ~50% mais suave desde a v4.
