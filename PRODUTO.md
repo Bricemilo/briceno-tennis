@@ -3,6 +3,15 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v5.1 · Hoje mais leve e ícone de Torneios (publicada em 16/11/2026, aprovada pelo Camilo com "Publicar")
+
+### O que mudou
+- **Hoje sem o cartão Corpo:** ficam Foco atual, Torneio | Golpe e Semana, e a tela cabe sem rolar. A pergunta semanal sobre dor foi para o topo de Treinos (abaixo do gráfico) e continua na área Física.
+- **Ícone de Torneios:** a chave do torneio (linhas que se juntam até a final) no lugar da bandeira, na barra, nos cartões, no "+" e na lista. O troféu fica só nos títulos.
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px: fluxo completo sem erros.
+
 ## v5 · Evolução pelas 4 áreas do tenista (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
 
 ### O que mudou
