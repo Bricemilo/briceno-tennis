@@ -97,7 +97,7 @@ b,strong{font-weight:650}
 .hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--hm-row) var(--hm-col)}
 .hgrid + .hgrid,.hc + .hgrid,.hgrid + .hc{margin-top:var(--hm-row)}
 .hc{--g:#EE8644;--gd:#1F0B02;--gt:#8F421B;--gb:#A04B21;--gr:#DE7E43;--gh:#FFD9A8;
-  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;min-height:108px;text-align:left;color:#fff;
+  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;height:var(--hc-h,7.5rem);text-align:left;color:#fff;
   padding:var(--hm-pt) var(--hm-pad) var(--hm-pb);border-radius:var(--hm-r);border:1px solid transparent;
   background:
     radial-gradient(50% 62% at 100% 52%,color-mix(in srgb,var(--g) 24%,transparent),transparent 72%) padding-box,
@@ -124,15 +124,18 @@ b,strong{font-weight:650}
 .hc-i .ball{width:14px;height:14px}
 .hc-i .mth.sm{width:100%;height:100%;border-radius:8px;border:0}
 .hc-i:has(.mth){padding:0;overflow:hidden}
-.hc-t{flex:1;min-width:0;font-size:var(--t-sm);font-weight:640;letter-spacing:-.012em;color:#fff;line-height:1.25}
+.hc-t{flex:1;min-width:0;font-size:var(--t-sm);font-weight:640;letter-spacing:-.012em;color:#fff;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-r{flex:none;font-size:var(--t-cap);font-weight:500;color:rgba(255,255,255,.72)}
 .hc-v{display:block;margin-top:auto;padding-top:10px;min-width:0}
 .hc-v b{font-size:var(--t-num);font-weight:700;letter-spacing:-.02em;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
-.hc-v b.txt{display:block;font-size:var(--t-sec);font-weight:680;letter-spacing:-.015em;line-height:1.25;overflow-wrap:anywhere}
+.hc-v b.txt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:var(--t-sec);font-weight:680;letter-spacing:-.015em;line-height:1.25;overflow-wrap:anywhere}
 .hc-v b.word{font-size:1.294rem;letter-spacing:-.015em}
 .hc-v small{font-size:var(--t-sm);font-weight:500;color:rgba(255,255,255,.74)}
-.hc-s{margin-top:4px;font-size:var(--t-cap);font-weight:450;letter-spacing:-.01em;color:rgba(255,255,255,.86);line-height:1.3}
+.hc-s{display:block;margin-top:4px;font-size:var(--t-cap);font-weight:450;letter-spacing:-.01em;color:rgba(255,255,255,.86);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qgrid .hc-s{white-space:normal}
 .hc-v,.hc-s{text-shadow:0 0 2px var(--gd),0 0 7px color-mix(in srgb,var(--gd) 80%,transparent)}
 .hc.wide{min-height:0}
+.qgrid .hc{height:auto;min-height:104px}
 .hgrid > .hc.wide{grid-column:1 / -1}
 .hc.wide .hc-v{padding-top:12px}
 /* materiais do tênis (mesma construção da Home v35 do Briceno Life; cada cor vem de uma quadra ou de um objeto do jogo, ver fonte/DESIGN.md)
@@ -153,6 +156,50 @@ b,strong{font-weight:650}
 .sw{width:30px;height:30px;flex:0 0 30px;border-radius:9px;margin-top:2px;background:radial-gradient(circle at 32% 28%,var(--gh),var(--g) 42%,var(--gr) 70%,var(--gd) 120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 10px -4px var(--g)}
 .sw-balls{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:30px;flex:0 0 30px;margin-top:2px}
 .sw-balls .ball{width:13px;height:13px}
+/* semana: cartão com mini-gráfico e gráfico grande da aba Treinos */
+.hc.wk{height:auto;min-height:8.6rem}
+.wk-b{display:flex;align-items:flex-end;gap:14px;margin-top:auto;padding-top:10px;min-width:0}
+.wk-b .hc-v{flex:1;min-width:0;padding-top:0;margin-top:0}
+.wk-b .hc-s{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wbars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:44%;flex:none;height:3.6rem}
+.wb{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.wcol{position:relative;flex:1;width:100%;max-width:14px}
+.wfill{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column-reverse;border-radius:4px;overflow:hidden;box-shadow:0 0 8px -2px rgba(255,255,255,.25)}
+.wfill i{display:block;min-height:2px}
+.wzero{position:absolute;left:15%;right:15%;bottom:0;height:2px;border-radius:2px;background:rgba(255,255,255,.22)}
+.wb b{font-size:.62rem;font-weight:600;color:rgba(255,255,255,.62);line-height:1}
+.wb.now b{color:#fff}
+.wb.fut{opacity:.4}
+.wbars.big{width:100%;height:10rem;gap:8px;margin-top:6px}
+.wbars.big .wcol{max-width:30px}
+.wbars.big .wb b{font-size:var(--t-cap);color:var(--muted)}
+.wbars.big .wb.now b{color:var(--dj-signal)}
+.wbars.big em{font-style:normal;font-size:.68rem;color:var(--ink-2);min-height:1em;line-height:1}
+.wbars.big .wzero{background:rgba(255,255,255,.14)}
+.wchart{padding:14px 16px 16px}
+.wnav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wnav b{font-weight:650}
+.wnav .mv{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);background:var(--dj-tile);border:1px solid var(--dj-tile-line)}
+.wnav .mv svg{width:18px;height:18px}
+.wnav .mv:disabled{opacity:.3}
+.wleg{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:var(--t-cap);color:var(--muted)}
+.wleg span{display:inline-flex;align-items:center;gap:6px}
+.wleg i{width:9px;height:9px;border-radius:3px}
+.wstats{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--dj-quiet-rule);font-size:var(--t-sm);color:var(--muted)}
+.wstats b{display:block;font-size:var(--t-lg);font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+/* foto da atleta */
+.av{display:grid;place-items:center;border-radius:50%;overflow:hidden;font-weight:700;color:#F3A564;border:1px solid transparent;
+  background:radial-gradient(circle at 35% 28%,#4A230A,#2A1203 72%) padding-box,linear-gradient(150deg,#F2A766,#8E4A1C 60%,#C7783D) border-box}
+.av img{display:block;width:100%;height:100%;object-fit:cover}
+.row .ic .av{width:32px;height:32px;font-size:var(--t-sm)}
+.row .ic:has(.av){padding:0;background:none;border:0;border-radius:50%}
+.av.lg{width:88px;height:88px;font-size:2rem}
+.pf-h{display:flex;align-items:center;gap:16px;margin-top:10px}
+.pf-ph{position:relative;flex:none;border-radius:50%}
+.pf-cam{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#140903;background:linear-gradient(180deg,var(--hm-copper-hi),var(--hm-copper-lo));box-shadow:0 0 0 3px var(--bg)}
+.pf-cam svg{width:16px;height:16px}
+/* currículo */
+.cvprev img{display:block;width:100%;border-radius:10px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.45);margin-bottom:12px}
 /* ---------- B · Precision Glass ---------- */
 .dj-glass{--tint:var(--clay);border:1px solid transparent;border-radius:var(--dj-r-panel);
   background:radial-gradient(130% 110% at 0% 0%,color-mix(in srgb,var(--tint) 10%,transparent),transparent 58%) padding-box,var(--dj-glass-base) padding-box,
@@ -284,7 +331,7 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 .qgrid .hc{min-height:104px}
 
 /* guia */
-.ev{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-cap);font-weight:620;padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--line2);color:var(--muted);white-space:nowrap;background:rgba(255,255,255,.02)}
+.ev{display:inline-flex;align-items:center;gap:6px;max-width:100%;font-size:var(--t-cap);font-weight:620;padding:3px 10px;border-radius:14px;border:1px solid var(--line2);color:var(--muted);background:rgba(255,255,255,.02)}
 .ev i{width:7px;height:7px;border-radius:50%;background:currentColor}
 .ev.forte{color:var(--ok)} .ev.moderada{color:#D7B378} .ev.fraca{color:var(--faint)} .ev.consenso{color:var(--dj-signal)} .ev.regra{color:#7EA5E0}
 .g-card{padding:16px}
@@ -298,6 +345,9 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 .tbl th{text-align:left;font-weight:620;color:var(--muted);padding:6px 6px 6px 0;border-bottom:1px solid var(--line2)}
 .tbl td{padding:8px 6px 8px 0;border-bottom:1px solid var(--dj-quiet-rule);vertical-align:top;color:var(--ink-2)}
 .tbl td:first-child{white-space:nowrap}
+.big-text .tbl td:first-child{white-space:normal}
+.big-text .tbl{table-layout:fixed}
+.tbl td,.tbl th{overflow-wrap:anywhere}
 .tbl tr.me td{color:var(--dj-signal);font-weight:650}
 .refs a{display:block;padding:12px 0;border-top:1px solid var(--dj-quiet-rule);text-decoration:none;color:var(--text);font-size:var(--t-sm);font-weight:600}
 .refs a:first-child{border-top:0}
@@ -435,6 +485,8 @@ const ICON = {
   target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>',
   moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z"/></svg>',
   pulse:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5Z"/></svg>',
   back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>',
   ball:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 6.5c3 2 4 3.6 4 5.5s-1 3.5-4 5.5M18.5 6.5c-3 2-4 3.6-4 5.5s1 3.5 4 5.5"/></svg>'
@@ -443,7 +495,7 @@ const ICON = {
 /* ---------- cartões-joia (mesma construção do Briceno Life, Home v35) ----------
    JEWEL(cls): lâmina de luz vetorial que nasce na base e sobe em curva até a borda direita, com estrias e ponto quente. */
 const JEWEL = (() => {
-  const B = {v35: 1, ex: 186, n: 7, ox: 1.5, oy: -2.6, pk: .76, fill: 0.3, glow: 0.58};
+  const B = {v35: 1, ex: 186, n: 6, ox: 1.5, oy: -2.6, pk: .76, fill: 0.3, glow: 0.58}, SOFT = .5;   // v4: luz ~50% mais suave
   const M = {
     ambar: {c: "#F4B06A", hi: "#FFF1CE", sx: 72, ey: 38, c1: [120, 112], c2: [160, 82], n: 9, glow: 0.62},
     saibro: {c: "#F08A5C", hi: "#FFDCC4", sx: 66, ey: 34, c1: [122, 112], c2: [162, 80], n: 9, glow: 0.62},
@@ -472,13 +524,14 @@ const JEWEL = (() => {
     s += `<path d="${d(main)}" stroke="url(#${id}s)" stroke-width="14" opacity="${f(o.glow * 16) / 100}"/><path d="${d(main)}" stroke="url(#${id}s)" stroke-width="6" opacity="${f(o.glow * 36) / 100}"/><path d="${d(main)}" stroke="url(#${id}s)" stroke-width="2.4" opacity="${o.glow}"/>`;
     const grp = [[], [], []]; for (let i = 0; i < n; i++) grp[Math.min(2, Math.floor(3 * Math.abs(Math.sin(i * 1.7 + 0.6))))].push(d(curve(o, i * o.ox, i * o.oy)));
     grp.forEach((gg, j) => { if (gg.length) s += `<path d="${gg.join("")}" stroke="url(#${id}s)" stroke-width=".5" opacity="${[.12, .2, .3][j]}"/>`; });
-    s += `<path d="${d(main)}" stroke="url(#${id}s)" stroke-width="1.5"/><circle cx="${f(hot[0])}" cy="${f(hot[1])}" r="22" fill="url(#${id}h)"/>`;
+    s += `<path d="${d(main)}" stroke="url(#${id}s)" stroke-width="1"/><circle cx="${f(hot[0])}" cy="${f(hot[1])}" r="16" fill="url(#${id}h)" opacity=".6"/>`;
     return `<defs>${g}</defs><g>${s}</g>`;
   }
   return k => {
     const o = M[k]; if (!o) return null;
     if (!cache[k]) { const t = document.createElement("template");
-      t.innerHTML = `<svg viewBox="0 0 180 120" preserveAspectRatio="xMaxYMax slice" fill="none" stroke-linecap="round" aria-hidden="true">${ribbon(Object.assign({}, B, o), "j" + k.replace(/\W/g, ""))}</svg>`; cache[k] = t.content.firstChild; }
+      const oo = Object.assign({}, B, o); oo.glow *= SOFT; oo.fill *= SOFT; oo.n = Math.min(oo.n, 6);
+      t.innerHTML = `<svg viewBox="0 0 180 120" preserveAspectRatio="xMaxYMax slice" fill="none" stroke-linecap="round" aria-hidden="true" style="opacity:.78">${ribbon(oo, "j" + k.replace(/\W/g, ""))}</svg>`; cache[k] = t.content.firstChild; }
     return cache[k].cloneNode(true);
   };
 })();
@@ -552,7 +605,7 @@ let S;
 const blank = () => ({app: "briceno-tennis", version: VERSION, athletes: [], activeId: null, meta: {lastBackup: null}});
 function normAthlete(a){
   a.balls = a.balls || {}; a.comp = a.comp || {}; a.rackets = a.rackets || []; a.strings = a.strings || [];
-  a.prefs = a.prefs || []; a.prio = a.prio || []; a.entries = a.entries || []; a.tours = a.tours || []; a.media = a.media || [];
+  a.prefs = a.prefs || []; a.prio = a.prio || []; a.entries = a.entries || []; a.tours = a.tours || []; a.media = a.media || []; a.health = a.health || [];
   return a;
 }
 function load(){
@@ -638,9 +691,9 @@ function rpePick(value){
 const numOrNull = s => { const n = parseFloat(String(s).replace(",", ".")); return isFinite(n) && n >= 0 ? n : null; };
 
 /* ---------- navegação ---------- */
-const TABS = [["diario", "Diário", "diary"], ["golpes", "Golpes", "stroke"], ["torneios", "Torneios", "flag"], ["evolucao", "Evolução", "growth"]];
-const PAGES = ["guia"];   // telas abertas pelo topo, sem aba na barra
-let view = {tab: "diario", more: 30};
+const TABS = [["hoje", "Hoje", "home"], ["treinos", "Treinos", "train"], ["golpes", "Golpes", "stroke"], ["carreira", "Carreira", "flag"]];
+const PAGES = ["guia", "perfil", "curriculo"];   // telas abertas sem aba na barra (pelo topo ou por um cartão)
+let view = {tab: "hoje", more: 30};
 function paintTabs(){
   const nav = $("#tabs"), a = active();
   nav.hidden = !a;
@@ -653,21 +706,21 @@ function paintTabs(){
   }
   nav.querySelectorAll(".tab").forEach(t => { const on = t.dataset.k === view.tab; t.classList.toggle("on", on); on ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current"); });
 }
-function go(tab){ if (view.tab === tab) { window.scrollTo({top: 0, behavior: "smooth"}); return; } if (!PAGES.includes(view.tab)) view.prev = view.tab; view.tab = tab; view.more = 30; render(); window.scrollTo(0, 0); }
+function go(tab){ if (view.tab === tab) { window.scrollTo({top: 0, behavior: "smooth"}); return; } if (!PAGES.includes(view.tab)) view.prev = view.tab; if (tab !== "treinos") view.week = null; view.tab = tab; view.more = 30; render(); window.scrollTo(0, 0); }
 function render(){
   const app = $("#app"), a = active();
   try { sessionStorage.setItem(KEY + ".view", JSON.stringify({tab: view.tab})); } catch (e) {}
   paintTabs();
   if (!a) { put(app, welcome()); return; }
-  const scr = {diario: diario, golpes: golpes, torneios: carreira, evolucao: evolucao, guia: guia}[view.tab] || diario;
-  const backTo = PAGES.includes(view.tab) ? (TABS.find(t => t[0] === view.prev) || TABS[0]) : null;
+  const scr = {hoje, treinos, golpes, carreira, perfil, curriculo, guia}[view.tab] || hoje;
+  const backTo = PAGES.includes(view.tab) ? (view.tab === "curriculo" ? TABS[3] : TABS.find(t => t[0] === view.prev) || TABS[0]) : null;
   put(app, topBar(a), backTo ? h("button", {type: "button", class: "backlink", onclick: () => go(backTo[0])}, svg("back"), backTo[1]) : null, scr(a));
 }
 function topBar(a){
   const cb = curBall(a);
   return h("div", {class: "top"},
     h("button", {type: "button", class: "who", "aria-label": "Atleta: " + a.name + ". Trocar de atleta, dados, backup e Face ID", onclick: once(() => athleteSheet())},
-      h("span", {class: "av", style: cb ? "--ballc:var(--b-" + cb + ")" : null}, (a.name || "?").trim().charAt(0).toUpperCase()),
+      avatar(a),
       h("span", {class: "nm"}, a.name), svg("down")));
 }
 function welcome(){
@@ -690,14 +743,113 @@ function row(o){
     o.fn ? h("span", {class: "chev"}, svg("chev")) : null);
 }
 
-/* ---------- Diário ---------- */
-function weekStats(a){
-  const from = daysAgo(6), t = today();
-  const es = a.entries.filter(e => e.date >= from && e.date <= t);
-  const min = es.reduce((s, e) => s + (e.min || 0), 0);
+/* ---------- semana (segunda a domingo, como no Briceno Life) ---------- */
+function weekStart(d){ const x = d ? parseD(d) : new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return iso(x); }
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return iso(d); };
+const DIAS = ["S", "T", "Q", "Q", "S", "S", "D"], DIASX = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
+const TYPE_COL = {treino: "#E07A4C", golpes: "#D8E25C", jogo: "#5E92DA"};
+function weekStats(a, w0){
+  w0 = w0 || weekStart(); const end = addDays(w0, 6), t = today();
+  const es = a.entries.filter(e => e.date >= w0 && e.date <= end);
+  const days = Array.from({length: 7}, (_, i) => { const d = addDays(w0, i), x = es.filter(e => e.date === d);
+    return {d, n: x.length, min: x.reduce((s, e) => s + (e.min || 0), 0), by: ["treino", "golpes", "jogo"].map(k => [k, x.filter(e => e.type === k).reduce((s, e) => s + (e.min || 0), 0), x.filter(e => e.type === k).length])}; });
+  const past = days.filter(x => x.d <= t);
   const load = es.reduce((s, e) => s + (e.min && e.rpe != null ? e.min * e.rpe : 0), 0);
-  const days = new Set(es.map(e => e.date));
-  return {es, min, load, rest: 7 - days.size, withLoad: es.some(e => e.min && e.rpe != null), nT: es.filter(e => e.type !== "jogo").length, nJ: es.filter(e => e.type === "jogo").length};
+  return {w0, end, es, days, min: es.reduce((s, e) => s + (e.min || 0), 0), load, withLoad: es.some(e => e.min && e.rpe != null),
+    rest: past.filter(x => !x.n).length, pastN: past.length, nT: es.filter(e => e.type !== "jogo").length, nJ: es.filter(e => e.type === "jogo").length};
+}
+const weekLabel = w0 => { const a = parseD(w0), b = parseD(addDays(w0, 6)); return a.getMonth() === b.getMonth() ? a.getDate() + " a " + b.getDate() + " " + MES[b.getMonth()] : a.getDate() + " " + MES[a.getMonth()] + " a " + b.getDate() + " " + MES[b.getMonth()]; };
+// barras de segunda a domingo: altura pelos minutos (ou pela sessão, se não tiver duração), cor pelo tipo
+function weekBars(st, big){
+  const t = today(), max = Math.max(60, ...st.days.map(x => x.min || (x.n ? 45 : 0)));
+  return h("div", {class: "wbars" + (big ? " big" : ""), role: "img", "aria-label": st.days.map((x, i) => DIASX[i] + ": " + (x.n ? (x.min ? hm(x.min) : x.n + (x.n > 1 ? " sessões" : " sessão")) : "sem tênis")).join("; ")},
+    st.days.map((x, i) => {
+      const tot = x.min || (x.n ? 45 : 0), hgt = tot ? Math.max(10, Math.round(tot / max * 100)) : 0;
+      const segs = x.min ? x.by.filter(b => b[1]).map(b => h("i", {style: "flex:" + b[1] + ";background:" + TYPE_COL[b[0]]})) : x.by.filter(b => b[2]).map(b => h("i", {style: "flex:1;background:" + TYPE_COL[b[0]]}));
+      return h("span", {class: "wb" + (x.d === t ? " now" : "") + (x.d > t ? " fut" : "")},
+        big ? h("em", null, x.min ? (x.min >= 60 ? Math.floor(x.min / 60) + "h" + (x.min % 60 ? pad2(x.min % 60) : "") : x.min + "′") : "") : null,
+        h("span", {class: "wcol"}, hgt ? h("span", {class: "wfill", style: "height:" + hgt + "%"}, segs) : h("span", {class: "wzero"})),
+        h("b", null, DIAS[i]));
+    }));
+}
+function sinceTxt(d){ const n = Math.round((parseD(today()) - parseD(d)) / 864e5); return n <= 0 ? "desde hoje" : n === 1 ? "desde ontem" : n < 14 ? "há " + n + " dias" : n < 60 ? "há " + Math.floor(n / 7) + " semanas" : "há " + dur(monthsBetween(d)); }
+function focusInfo(a){
+  const op = openPrio(a), top = op[0]; if (!top) return null;
+  if (!a.focus || a.focus.id !== top.id) { a.focus = {id: top.id, since: a.focus ? today() : (top.at || today())}; save(); }
+  return {top, n: op.length, since: a.focus.since};
+}
+
+/* ---------- Hoje: painel fixo, não cresce com os registros ---------- */
+function hoje(a){
+  const age = ageAt(a.birth), cb = curBall(a), f = focusInfo(a);
+  const sub = [age != null ? age + " anos" : null, cb ? "bola " + ballOf(cb).n.toLowerCase() + (a.balls[cb] ? " desde " + fmtMY(a.balls[cb]) : "") : null].filter(Boolean).join(" · ");
+  const lastGame = a.entries.filter(e => e.type === "jogo").sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
+  return [
+    h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
+    jewelCard({cls: "ambar", wide: true, icon: "target", title: "Foco atual", value: f ? f.top.text : "Escolher o foco", txt: true,
+      sub: f ? sinceTxt(f.since).replace(/^d/, "D").replace(/^h/, "H") + " · prioridade 1 de " + f.n : "Uma prioridade de melhoria, escrita como processo", fn: () => prioSheet(a)}),
+    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
+    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
+    h("div", {style: "height:var(--hm-row)"}), weekCard(a),
+    h("div", {style: "height:var(--hm-row)"}), corpoCard(a)
+  ];
+}
+function weekCard(a){
+  const st = weekStats(a), has = st.es.length;
+  const val = !has ? "Nenhum treino ainda" : st.min ? hm(st.min) : st.es.length + (st.es.length > 1 ? " sessões" : " sessão");
+  const sub = !has ? "Toque para registrar o treino de hoje" : [st.nT ? st.nT + (st.nT > 1 ? " treinos" : " treino") : null, st.nJ ? st.nJ + (st.nJ > 1 ? " jogos" : " jogo") : null, st.rest + (st.rest === 1 ? " dia" : " dias") + " de descanso", st.withLoad ? "carga " + st.load.toLocaleString("pt-BR") : null].filter(Boolean).join(" · ");
+  return h("button", {type: "button", class: "hc saibro wide wk", onclick: once(() => has ? go("treinos") : entryForm(a, "treino")), "aria-label": "Semana: " + val + ". " + sub},
+    h("span", {class: "hc-fx", "aria-hidden": "true"}, JEWEL("saibro")),
+    h("span", {class: "hc-h"}, h("span", {class: "hc-i"}, svg("train")), h("span", {class: "hc-t"}, "Semana"), h("span", {class: "hc-r"}, weekLabel(st.w0))),
+    h("span", {class: "wk-b"}, h("span", {class: "hc-v"}, h("b", {class: "txt"}, val), h("span", {class: "hc-s"}, sub)), weekBars(st)));
+}
+function nextTourCard(a){
+  const t = today(), x = a.tours.filter(v => !v.singles && !v.doubles && (v.end || v.start || "") >= t).sort((p, q) => (p.start || "").localeCompare(q.start || ""))[0];
+  return x ? jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: x.name, txt: true, sub: x.start ? fmtDs(x.start) + inDays(x.start) : (x.level || ""), aria: "Próximo torneio: " + x.name, fn: () => tourForm(a, x)})
+    : jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
+}
+function strokeCard(a){
+  const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
+  const m = vs.find(v => v.best) || vs[0];
+  return m ? jewelCard({cls: "bola", icon: thumb(m, "sm"), title: m.best ? "Melhor golpe" : "Golpe", value: m.stroke, txt: true, sub: fmtDs(m.date) + (m.kind === "video" ? " · vídeo" : " · foto"), fn: () => mediaViewer(a, m)})
+    : jewelCard({cls: "bola", icon: "stroke", title: "Golpe", value: "Grave 5 s", txt: true, sub: "Toque para começar", fn: () => go("golpes")});
+}
+
+/* ---------- Treinos: gráfico da semana e histórico ---------- */
+function treinos(a){
+  const w0 = view.week || weekStart(), cur = weekStart(), st = weekStats(a, w0);
+  const nav = d => () => { view.week = addDays(w0, 7 * d); if (view.week >= cur) view.week = null; render(); };
+  const weeks = [...new Set(a.entries.map(e => weekStart(e.date)))].filter(w => w !== w0).sort().reverse().slice(0, 12);
+  const list = st.es.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
+  return [
+    h("h1", {class: "page-h"}, "Treinos"), h("p", {class: "page-sub"}, "Semana de " + weekLabel(w0) + (w0 === cur ? " · esta semana" : "") + "."),
+    h("div", {class: "dj-glass t-saibro wchart"},
+      h("div", {class: "wnav"}, h("button", {type: "button", class: "mv", "aria-label": "Semana anterior", onclick: nav(-1)}, svg("back")),
+        h("b", null, weekLabel(w0)), h("button", {type: "button", class: "mv", "aria-label": "Próxima semana", disabled: w0 >= cur ? true : null, onclick: nav(1)}, svg("chev"))),
+      weekBars(st, true),
+      h("div", {class: "wleg"}, [["treino", "Treino"], ["golpes", "Golpes"], ["jogo", "Jogo"]].map(([k, l]) => h("span", null, h("i", {style: "background:" + TYPE_COL[k]}), l))),
+      h("div", {class: "wstats"},
+        h("span", null, h("b", null, st.min ? hm(st.min) : "—"), "de tênis"),
+        h("span", null, h("b", null, String(st.es.length)), st.es.length === 1 ? "sessão" : "sessões"),
+        h("span", null, h("b", null, w0 > cur ? "—" : String(st.rest)), st.rest === 1 ? "dia de descanso" : "dias de descanso"),
+        h("span", null, h("b", null, st.withLoad ? st.load.toLocaleString("pt-BR") : "—"), "de carga"))),
+    weekRef(a),
+    sec(w0 === cur ? "Registros desta semana" : "Registros da semana",
+      list.length ? h("div", {class: "list"}, list.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
+        t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, e.type, e)})))
+        : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum registro nesta semana"), "Toque no + para registrar um treino, um jogo ou golpes."))),
+    sec("Corpo", h("div", {class: "list"}, corpoRow(a))),
+    weeks.length ? sec("Semanas anteriores", h("div", {class: "list"}, weeks.map(w => { const s = weekStats(a, w);
+      return row({t1: weekLabel(w), t2: [s.min ? hm(s.min) : null, s.nT ? s.nT + (s.nT > 1 ? " treinos" : " treino") : null, s.nJ ? s.nJ + (s.nJ > 1 ? " jogos" : " jogo") : null, s.withLoad ? "carga " + s.load.toLocaleString("pt-BR") : null].filter(Boolean).join(" · "),
+        fn: () => { view.week = w; render(); window.scrollTo({top: 0, behavior: "smooth"}); }}); }))) : null
+  ];
+}
+function weekRef(a){
+  const age = ageAt(a.birth);
+  if (age == null) return null;
+  const body = age >= 8 && age <= 18 ? [h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso."]
+    : ["A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso."];
+  return h("button", {type: "button", class: "ref dj-glass t-celeste", style: "display:block;width:100%;text-align:left", onclick: () => go("guia")}, body, h("span", {class: "g-src", style: "display:block"}, "Moderada · Jayanthi, 2015; Academia Americana de Pediatria, 2024 · toque para o Guia"));
 }
 function entryTitle(a, e){
   if (e.type === "jogo") return "Jogo" + (e.opp ? " · " + e.opp : "");
@@ -708,66 +860,82 @@ function entrySub(a, e){
   const t = a.tours.find(x => x.id === e.tid);
   return [fmtDs(e.date), e.type === "jogo" && e.score ? e.score : null, t ? t.name : null, e.min ? hm(e.min) : null, e.rpe != null ? "esforço " + e.rpe : null].filter(Boolean).join(" · ");
 }
-function diario(a){
-  const age = ageAt(a.birth), cb = curBall(a), top = openPrio(a)[0];
-  const sub = [age != null ? age + " anos" : null, cb ? "bola " + ballOf(cb).n.toLowerCase() + (a.balls[cb] ? " desde " + fmtMY(a.balls[cb]) : "") : null].filter(Boolean).join(" · ");
-  const ws = weekStats(a);
-  const lastGame = a.entries.filter(e => e.type === "jogo").sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
-  const entries = a.entries.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
-  const shown = entries.slice(0, view.more);
-  const nPrio = openPrio(a).length;
-  return [
-    h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
-    jewelCard({cls: "ambar", wide: true, icon: "target", title: "Foco da semana", value: top ? top.text : "Escolher o foco da semana", txt: true,
-      sub: top ? "Prioridade 1 de " + nPrio + ". Toque para ver a ordem." : "Uma prioridade de melhoria, escrita como processo.", fn: () => prioSheet(a)}),
-    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
-    lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
-    sec("Últimos 7 dias", ws.es.length
-      ? [h("div", {class: "hgrid"},
-          jewelCard({cls: "saibro", icon: "train", title: "Tênis", value: hm(ws.min), sub: [ws.nT ? ws.nT + (ws.nT > 1 ? " treinos" : " treino") : null, ws.nJ ? ws.nJ + (ws.nJ > 1 ? " jogos" : " jogo") : null].filter(Boolean).join(" · ") || "registrado na semana", fn: () => weekSheet(a)}),
-          jewelCard({cls: "celeste", icon: "moon", title: "Descanso", value: ws.rest, unit: ws.rest === 1 ? "dia" : "dias", sub: "sem tênis registrado", fn: () => weekSheet(a)}),
-          jewelCard({cls: "noite", wide: true, icon: "pulse", title: "Carga da semana", value: ws.withLoad ? ws.load.toLocaleString("pt-BR") : null, sub: ws.withLoad ? "esforço × minutos, somando as sessões" : "Registre duração e esforço para ver a carga", fn: () => weekSheet(a)})),
-        weekRef(a)]
-      : jewelCard({cls: "saibro", wide: true, icon: "train", title: "Esta semana", value: "Nenhum treino ainda", txt: true, sub: "Toque para registrar o treino de hoje. Tempo, esforço e o que está bom.", fn: () => entryForm(a, "treino")})),
-    !shown.length ? null : sec("Registros",
-      shown.length ? h("div", {class: "list"}, shown.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
-        t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, e.type, e)})))
-      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum registro ainda"), "Toque no + para registrar o primeiro treino ou jogo.")),
-      entries.length > shown.length ? h("div", {class: "stack"}, h("button", {type: "button", class: "btn ghost block", onclick: () => { view.more += 30; render(); }}, "Ver registros mais antigos")) : null)
-  ];
+
+/* ---------- Corpo: dores e desconfortos ----------
+   Pergunta semanal de um toque (método do questionário OSTRC: perguntar toda semana capta muito mais problemas de excesso de uso).
+   Sem contador de "dias sem dor": contador vira meta e pode levar a criança a esconder a dor. A data do último registro aparece só como informação. */
+const LOCAIS = ["Ombro", "Cotovelo", "Punho", "Mão", "Costas", "Quadril", "Coxa", "Joelho", "Tornozelo", "Pé", "Outro"];
+const IMPACTO = [["normal", "Treinou normal"], ["menos", "Treinou menos"], ["parou", "Não treinou"]];
+const DOR = {0: "Sem dor", 1: "Muito leve", 2: "Leve", 4: "Moderada", 6: "Forte", 8: "Muito forte", 10: "A pior possível"};
+const dorLabel = v => { let k = v; while (!(k in DOR)) k--; return DOR[k]; };
+function corpoState(a){
+  const w0 = weekStart(), hs = (a.health || []).slice().sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
+  return {answered: hs.some(x => x.date >= w0), open: hs.filter(x => x.kind === "dor" && !x.resolved), last: hs.find(x => x.kind === "dor"), hs};
 }
-function nextTourCard(a){
-  const t = today(), x = a.tours.filter(v => !v.singles && !v.doubles && (v.end || v.start || "") >= t).sort((p, q) => (p.start || "").localeCompare(q.start || ""))[0];
-  return x ? jewelCard({cls: "grama", icon: "flag", title: "Próximo torneio", value: x.name, txt: true, sub: x.start ? fmtDs(x.start) + inDays(x.start) : (x.level || ""), fn: () => tourForm(a, x)})
-    : jewelCard({cls: "grama", icon: "flag", title: "Próximo torneio", value: "Nenhum", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
+const dorTitle = d => [d.local, d.lado].filter(Boolean).join(" ") + (d.int != null ? " · " + d.int + "/10" : "");
+function corpoCard(a){
+  const c = corpoState(a), o = c.open[0];
+  if (o) return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: dorTitle(o) + (c.open.length > 1 ? " e mais " + (c.open.length - 1) : ""), txt: true,
+    sub: "Desde " + fmtDs(o.date) + " · " + (IMPACTO.find(x => x[0] === o.impact) || ["", "sem registro do treino"])[1].toLowerCase() + " · toque para atualizar", fn: () => corpoSheet(a)});
+  if (!c.answered) return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: "Teve dor nesta semana?", txt: true, sub: "Um toque para responder. Cuidar cedo evita parar depois.", fn: () => corpoCheck(a)});
+  return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: "Sem desconforto nesta semana", txt: true,
+    sub: c.last ? "Último registro: " + fmtDs(c.last.date) + ", " + c.last.local.toLowerCase() + (c.last.resolved ? ", resolvido" : "") : "Nenhum desconforto registrado", fn: () => corpoSheet(a)});
 }
-function strokeCard(a){
-  const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
-  const m = vs.find(v => v.best) || vs[0];
-  return m ? jewelCard({cls: "bola", icon: thumb(m, "sm"), title: m.best ? "Melhor golpe" : (m.kind === "video" ? "Último vídeo" : "Última foto"), value: m.stroke, txt: true, sub: fmtDs(m.date) + (m.kind === "video" ? " · toque para ver" : ""), fn: () => mediaViewer(a, m)})
-    : jewelCard({cls: "bola", icon: "stroke", title: "Golpes em vídeo", value: "Grave 5 s", txt: true, sub: "Toque para começar", fn: () => go("golpes")});
+function corpoRow(a){
+  const c = corpoState(a), o = c.open[0];
+  return row({ic: "heart", t1: o ? dorTitle(o) : c.answered ? "Sem desconforto nesta semana" : "Teve dor nesta semana?",
+    t2: o ? "Em acompanhamento desde " + fmtDs(o.date) : c.last ? "Último registro: " + fmtDs(c.last.date) + ", " + c.last.local.toLowerCase() : "Dores, desconfortos e lesões", fn: () => (!o && !c.answered) ? corpoCheck(a) : corpoSheet(a)});
 }
-function weekSheet(a){
-  const ws = weekStats(a), age = ageAt(a.birth);
-  sheet("Últimos 7 dias", (el, close) => {
-    el.append(h("h2", null, "Últimos 7 dias"), h("p", {class: "sh-sub"}, "Somente o que foi registrado no app, de " + fmtDs(daysAgo(6)) + " até hoje."),
-      h("div", {class: "dj-glass t-noite g-card"}, h("p", null, h("b", null, hm(ws.min)), " de tênis em " + ws.es.length + (ws.es.length === 1 ? " registro" : " registros") + "."),
-        h("p", null, h("b", null, String(ws.rest)), (ws.rest === 1 ? " dia" : " dias") + " sem tênis registrado."),
-        ws.withLoad ? h("p", null, h("b", null, ws.load.toLocaleString("pt-BR")), " de carga: a soma de esforço (0 a 10) × minutos de cada sessão. Serve para comparar uma semana com outra da mesma atleta, não com outras pessoas.") : null),
-      h("div", {class: "dj-glass t-celeste g-card", style: "margin-top:10px"},
-        age != null && age >= 8 && age <= 18 ? h("p", null, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso.") : h("p", null, "A referência de horas foi estudada dos 8 aos 18 anos."),
-        h("div", {class: "g-meta"}, ev("moderada"), h("span", {class: "ev"}, "Estudos em crianças e adolescentes")),
-        h("div", {class: "g-src"}, "Fonte: Jayanthi e colaboradores, 2015; Academia Americana de Pediatria, 2024."),
-        h("button", {type: "button", class: "btn ghost block", style: "margin-top:12px", onclick: () => { close(); go("guia"); }}, svg("book"), "Abrir o Guia")),
-      ws.es.length ? [h("h2", {class: "sec-t"}, "Registros da semana"), h("div", {class: "list"}, ws.es.slice().sort((x, y) => (y.date || "").localeCompare(x.date || "")).map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
-        t1: entryTitle(a, e), t2: entrySub(a, e), fn: () => { close(); setTimeout(() => entryForm(a, e.type, e), 150); }})))] : null);
+function corpoCheck(a){
+  sheet("Corpo", (el, close) => {
+    el.append(h("h2", null, "Nesta semana, " + gx(a, "ela", "ele") + " teve dor ou desconforto no corpo?"), h("p", {class: "sh-sub"}, "Qualquer incômodo conta, mesmo que tenha treinado normal. Pergunte a " + gx(a, "ela", "ele") + "."),
+      h("div", {class: "qgrid"},
+        h("button", {type: "button", class: "btn ghost", style: "min-height:64px", onclick: once(() => { const before = snap(); (a.health ||= []).push({id: uid(), date: today(), kind: "ok", at: Date.now()}); save(); close(); render(); toast("Registrado: sem desconforto", () => undoTo(before)); })}, "Não"),
+        h("button", {type: "button", class: "btn primary", style: "min-height:64px", onclick: once(() => { close(); setTimeout(() => dorForm(a, null), 150); })}, "Sim")));
   });
 }
-function weekRef(a){
-  const age = ageAt(a.birth);
-  if (age == null) return null;
-  if (age >= 8 && age <= 18) return h("div", {class: "ref dj-glass t-celeste"}, h("b", null, "Referência para " + age + " anos: "), "até " + age + " h por semana de esporte organizado, somando todos os esportes, e 1 a 2 dias de descanso. Toque em Carga para ver a fonte.");
-  return h("div", {class: "ref dj-glass t-celeste"}, "A referência de horas por semana foi estudada dos 8 aos 18 anos. Para a idade " + gx(a, "dela", "dele") + ", vale priorizar brincadeira livre, vários esportes e descanso. Detalhes no Guia (toque no nome, no topo).");
+function dorForm(a, d){
+  const isNew = !d; d = d || {};
+  sheet("Desconforto", (el, close) => {
+    const date = inp({type: "date", value: d.date || today(), max: "2100-12-31"});
+    const local = choice(LOCAIS.map(l => [l, l]), d.local || null, false), lado = choice([["direito", "Direito"], ["esquerdo", "Esquerdo"]], d.lado || null, true);
+    let iv = d.int == null ? null : d.int; const lab = h("div", {class: "rpe-l"}), grid = h("div", {class: "rpe", role: "radiogroup", "aria-label": "Intensidade de 0 a 10"});
+    const paint = () => { put(grid, Array.from({length: 11}, (_, i) => h("button", {type: "button", role: "radio", class: iv === i ? "on" : "", "aria-checked": String(iv === i), "aria-label": i + ", " + dorLabel(i), onclick: () => { iv = i; paint(); }}, String(i)))); lab.textContent = iv == null ? "Peça para " + gx(a, "ela", "ele") + " escolher o número." : iv + " · " + dorLabel(iv); };
+    paint();
+    const imp = choice(IMPACTO, d.impact || null, true), note = ta(d.note, "Ex.: dói no fim do treino, quando saca"), res = inp({type: "date", value: d.resolved || "", max: "2100-12-31"});
+    const slot = h("div");
+    el.append(h("h2", null, isNew ? "Registrar desconforto" : "Desconforto"), h("p", {class: "sh-sub"}, "O app não faz diagnóstico. Serve para acompanhar e conversar com o treinador e o médico."),
+      fld("Desde", date), group("Onde", local), group("Lado", lado, true), group("Intensidade de 0 a 10", h("div", null, grid, lab), true),
+      group("No tênis", imp, true), fld("Observação", note, null, true), !isNew ? fld("Resolvido em", res, "Preencha quando passar.", true) : null,
+      h("div", {class: "dj-glass t-celeste note", style: "margin:4px 0 0"}, h("b", null, "Procure o pediatra ou o médico do esporte "), "se a dor durar mais de alguns dias, piorar, acordar " + gx(a, "a", "o") + " atleta à noite, vier com inchaço ou fizer mudar o golpe."),
+      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => {
+        if (!local.get()) { toast("Escolha onde dói"); return; }
+        if (res.value && res.value < date.value) { toast("A data de resolvido está antes do início"); return; }
+        const before = snap();
+        Object.assign(d, {kind: "dor", date: date.value || today(), local: local.get(), lado: lado.get(), int: iv, impact: imp.get(), note: clean(note.value), resolved: res.value || null});
+        if (isNew) { d.id = uid(); d.at = Date.now(); (a.health ||= []).push(d); }
+        if (!save()) return; close(); render(); toast(isNew ? "Desconforto registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        !isNew && !d.resolved ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const before = snap(); d.resolved = today(); save(); close(); render(); toast("Marcado como resolvido", () => undoTo(before)); })}, "Melhorou: resolvido hoje") : null,
+        !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este registro?", "Apagar", () => { const before = snap(); a.health = a.health.filter(x => x !== d); save(); close(); render(); toast("Apagado", () => undoTo(before)); })}, "Apagar") : null),
+      slot);
+  });
+}
+function corpoSheet(a){
+  sheet("Corpo", (el, close) => {
+    const c = corpoState(a), dores = c.hs.filter(x => x.kind === "dor"), later = fn => () => { close(); setTimeout(fn, 150); };
+    const months = [...new Set(dores.map(x => x.date.slice(0, 7)))];
+    el.append(h("h2", null, "Corpo"), h("p", {class: "sh-sub"}, "Dores, desconfortos e lesões, para cuidar cedo. Uma pergunta por semana basta."),
+      !c.answered ? h("button", {type: "button", class: "btn ghost block", style: "margin-bottom:10px", onclick: later(() => corpoCheck(a))}, "Responder a pergunta desta semana") : null,
+      h("button", {type: "button", class: "btn primary block", onclick: later(() => dorForm(a, null))}, svg("plus"), "Registrar desconforto"),
+      c.open.length ? [h("h2", {class: "sec-t"}, "Em acompanhamento"), h("div", {class: "list"}, c.open.map(d => row({ic: "heart", t1: dorTitle(d), t2: "Desde " + fmtD(d.date) + " · " + sinceTxt(d.date).replace("desde ", ""), t3: d.note || null, fn: later(() => dorForm(a, d))})))] : null,
+      months.length ? months.map(mo => [h("h2", {class: "sec-t"}, MESX[+mo.slice(5) - 1] + " de " + mo.slice(0, 4)), h("div", {class: "list"}, dores.filter(x => x.date.startsWith(mo)).map(d => row({t1: dorTitle(d),
+        t2: fmtD(d.date) + (d.resolved ? " a " + fmtD(d.resolved) + " · " + Math.max(1, Math.round((parseD(d.resolved) - parseD(d.date)) / 864e5)) + " dias" : " · em acompanhamento"), t3: (IMPACTO.find(x => x[0] === d.impact) || [])[1] || null, fn: later(() => dorForm(a, d))})))])
+        : h("div", {class: "list", style: "margin-top:14px"}, h("div", {class: "empty"}, h("b", null, "Nenhum desconforto registrado"), "Se aparecer, registre no mesmo dia: onde, quanto dói e se atrapalhou o tênis.")),
+      h("div", {class: "dj-glass t-celeste g-card", style: "margin-top:16px"},
+        h("p", null, h("b", null, "Quando procurar ajuda: "), "dor que dura mais de alguns dias, piora, acorda à noite, vem com inchaço ou muda o golpe. Treinar com dor que muda o movimento sobrecarrega outras partes do corpo."),
+        h("p", {class: "small muted"}, "Em juniores de tênis de 11 a 14 anos, cerca de 1 em cada 5 tem algum problema de saúde a cada semana, a maioria por excesso de uso. Perguntar toda semana encontra muito mais desses problemas do que esperar a lesão."),
+        h("div", {class: "g-meta"}, ev("moderada"), ev("consenso")), h("div", {class: "g-src"}, "Fonte: Clarsen e colaboradores, 2013 (OSTRC); Pluim e colaboradores, 2016; Academia Americana de Pediatria, 2024")));
+  });
 }
 
 /* ---------- Registrar ---------- */
@@ -844,6 +1012,7 @@ function golpes(a){
     h("p", {class: "page-sub"}, all.length ? [nv ? nv + (nv > 1 ? " vídeos" : " vídeo") : null, nf ? nf + (nf > 1 ? " fotos" : " foto") : null].filter(Boolean).join(" e ") + ". Toque num golpe para ver a evolução." : "Anotações, fotos e vídeos curtos de cada golpe."),
     jewelCard({cls: "bola", wide: true, icon: "heart", title: "Golpe preferido", value: p && p.likes ? p.likes : (p ? "—" : "Perguntar " + gx(a, "a ela", "a ele")), txt: true,
       sub: p ? [p.dislikes ? "Menos gosta: " + p.dislikes : null, "na voz " + gx(a, "dela", "dele") + ", em " + fmtDs(p.date)].filter(Boolean).join(" · ") : "O que mais gosta e o que menos gosta, com a data.", fn: () => prefSheet(a)}),
+    sec("Prioridades de melhoria", prioList(a)),
     sec("Os 7 golpes", h("div", {class: "list"}, STROKES.map(s => {
       const ms = strokeMedia(a, s), ns = strokeNotes(a, s), v = ms.filter(m => m.kind === "video").length;
       const parts = [v ? v + (v > 1 ? " vídeos" : " vídeo") : null, ms.length - v ? (ms.length - v) + (ms.length - v > 1 ? " fotos" : " foto") : null, ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") : null].filter(Boolean);
@@ -854,12 +1023,13 @@ function golpes(a){
 }
 
 /* ---------- Evolução ---------- */
-function evolucao(a){
+function perfil(a){
   const age0 = a.birth && a.start ? ageAt(a.birth, a.start) : null;
   const cb = curBall(a), nb = nextBall(a);
   return [
-    h("h1", {class: "page-h"}, "Evolução"),
-    h("p", {class: "page-sub"}, a.start ? "Começou no tênis em " + fmtMY(a.start) + (age0 != null ? ", aos " + age0 + " anos" : "") + " · há " + dur(monthsBetween(a.start)) + "." : "Registre quando começou no tênis em Dados da atleta (toque no nome, no topo)."),
+    h("div", {class: "pf-h"}, h("button", {type: "button", class: "pf-ph", "aria-label": a.photo ? "Trocar foto" : "Adicionar foto", onclick: once(() => setPhoto(a))}, avatar(a, "lg"), h("span", {class: "pf-cam"}, svg("plus"))),
+      h("div", null, h("h1", {class: "page-h", style: "margin:0"}, a.name), h("p", {class: "page-sub", style: "margin:4px 0 0"}, [ageAt(a.birth) != null ? ageAt(a.birth) + " anos" : null, a.hand === "c" ? gx(a, "canhota", "canhoto") : a.hand === "d" ? gx(a, "destra", "destro") : null].filter(Boolean).join(" · ")))),
+    h("p", {class: "page-sub", style: "margin-top:14px"}, a.start ? "Começou no tênis em " + fmtMY(a.start) + (age0 != null ? ", aos " + age0 + " anos" : "") + " · há " + dur(monthsBetween(a.start)) + "." : "Registre quando começou no tênis em Dados da atleta, abaixo."),
     h("div", {class: "hgrid"},
       jewelCard({cls: "b-" + (cb || "red"), icon: h("span", {class: "ball b-" + (cb || "red")}), title: "Bola atual", value: cb ? ballOf(cb).n : "Registrar", word: true,
         sub: cb && a.balls[cb] ? "há " + dur(monthsBetween(a.balls[cb])) : "Toque para registrar", fn: () => ballsSheet(a)}),
@@ -876,9 +1046,13 @@ function evolucao(a){
         return h("div", {class: "tl-i" + (from ? "" : " off") + (b.k === cb ? " now" : "")}, h("span", {class: "ball b-" + b.k}), h("div", {class: "bd"}, h("div", {class: "t1"}, b.n), h("div", {class: "t2"}, t2)));
       }))),
       nb && nb !== "red" ? h("div", {class: "list", style: "margin-top:10px"}, row({ic: "list", t1: "Pronta para a " + ballOf(nb).n.toLowerCase() + "?", t2: "Competências da ITF, marcadas pela família e pelo treinador", fn: () => compSheet(a)})) : null),
-    sec("Prioridades de melhoria", prioList(a)),
     sec("Equipamento", h("div", {class: "list"}, racketRow(a), stringRow(a))),
-    a.birth ? sec("Mês de nascimento", relAge(a)) : null
+    a.birth ? sec("Mês de nascimento", relAge(a)) : null,
+    sec("Dados e ajustes", h("div", {class: "list"},
+      row({ic: "person", t1: "Dados de " + a.name, t2: "Nome, nascimento, início no tênis e mão", fn: () => athleteForm(a)}),
+      row({ic: "book", t1: "Guia e referências", t2: "Recomendações da ciência e as fontes do app", fn: () => go("guia")}),
+      row({ic: "save", t1: "Backup e espaço", t2: S.meta.lastBackup ? "Último backup: " + fmtD(S.meta.lastBackup) : "Nenhum backup feito ainda", fn: () => backupSheet()}),
+      row({ic: "faceid", t1: "Abrir com Face ID", t2: lockCfg() ? "Ligado" : "Desligado", fn: () => lockSheet()})))
   ];
 }
 function nextRange(a, k){
@@ -942,9 +1116,9 @@ function prefSheet(a){
 function prioList(a){
   const op = openPrio(a);
   return h("div", {class: "list"}, op.length
-    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {style: "font-weight:700;font-size:var(--t-body)"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco da semana" : null, fn: () => prioSheet(a)})),
+    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {style: "font-weight:700;font-size:var(--t-body)"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco atual" : null, fn: () => prioSheet(a)})),
        op.length > 5 ? row({t1: "Mais " + (op.length - 5) + (op.length - 5 > 1 ? " prioridades" : " prioridade"), fn: () => prioSheet(a)}) : null]
-    : row({ic: "list", t1: "Adicionar prioridades", t2: "Em ordem. A primeira vira o foco da semana.", fn: () => prioSheet(a)}));
+    : row({ic: "list", t1: "Adicionar prioridades", t2: "Em ordem. A primeira vira o foco atual.", fn: () => prioSheet(a)}));
 }
 function prioSheet(a){
   sheet("Prioridades", (el, close) => {
@@ -966,7 +1140,7 @@ function prioSheet(a){
     }
     paint();
     el.append(h("h2", null, "Prioridades de melhoria"),
-      h("p", {class: "sh-sub"}, "Em ordem. A primeira vira o foco da semana. Escreva como processo (\"o que fazer\"), não como resultado (\"ganhar o torneio\"): metas de processo têm o maior efeito no desempenho."),
+      h("p", {class: "sh-sub"}, "Em ordem. A primeira vira o foco atual. Escreva como processo (\"o que fazer\"), não como resultado (\"ganhar o torneio\"): metas de processo têm o maior efeito no desempenho."),
       h("div", {class: "fld"}, h("div", {style: "display:flex;gap:8px"}, txt, h("button", {type: "button", class: "btn primary", "aria-label": "Adicionar prioridade", onclick: once(add)}, svg("plus")))),
       box);
   });
@@ -978,7 +1152,7 @@ function prioMenu(a, p, repaint){
     el.append(h("h2", null, "Prioridade"), fld("Texto", txt),
       h("div", {class: "stack"},
         h("button", {type: "button", class: "btn primary block", onclick: once(() => { const t = clean(txt.value); if (t) p.text = t; after(); })}, "Salvar"),
-        !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const op = openPrio(a); a.prio = [p, ...a.prio.filter(x => x !== p)]; void op; after(); toast("Agora é o foco da semana"); })}, "Tornar o foco da semana") : null,
+        !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const op = openPrio(a); a.prio = [p, ...a.prio.filter(x => x !== p)]; void op; after(); toast("Agora é o foco atual"); })}, "Tornar o foco atual") : null,
         !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const before = snap(); p.done = today(); after(); toast("Marcada como alcançada", () => undoTo(before)); })}, "Marcar como alcançada")
           : h("button", {type: "button", class: "btn ghost block", onclick: once(() => { p.done = null; after(); })}, "Voltar para a lista"),
         h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar esta prioridade?", "Apagar", () => { const before = snap(); a.prio = a.prio.filter(x => x !== p); after(); toast("Prioridade apagada", () => undoTo(before)); })}, "Apagar")),
@@ -1081,10 +1255,11 @@ function carreira(a){
   const past = all.filter(x => !next.includes(x));
   const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
   return [
-    h("h1", {class: "page-h"}, "Torneios"), h("p", {class: "page-sub"}, "Planejados e resultados, organizados por ano."),
-    next.length ? jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: next[0].name, txt: true,
-      sub: [next[0].start ? fmtD(next[0].start) + inDays(next[0].start) : null, next[0].level, next[0].city].filter(Boolean).join(" · "), fn: () => tourForm(a, next[0])})
-      : jewelCard({cls: "grama", wide: true, icon: "flag", title: "Próximo torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar o próximo torneio.", fn: () => tourForm(a)}),
+    h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios, resultados e currículo."),
+    h("div", {class: "hgrid"},
+      next.length ? jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: next[0].name, txt: true, sub: next[0].start ? fmtDs(next[0].start) + inDays(next[0].start) : (next[0].level || ""), aria: "Próximo torneio: " + next[0].name, fn: () => tourForm(a, next[0])})
+        : jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)}),
+      jewelCard({cls: "ambar", icon: "doc", title: "Currículo", value: (CV_TPL.find(t => t[0] === ((a.cv || {}).tpl || "completo")) || CV_TPL[0])[1], txt: true, sub: "Editar e gerar PDF", fn: () => go("curriculo")})),
     next.length > 1 ? sec("Depois", h("div", {class: "list"}, next.slice(1).map(x => tourRow(a, x)))) : null,
     years.length ? years.map(y => sec(y === "Sem data" ? y : "Resultados de " + y, h("div", {class: "list"}, past.filter(x => ((x.start || "").slice(0, 4) || "Sem data") === y).map(x => tourRow(a, x)))))
       : sec("Resultados", h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Ao registrar um torneio, escreva o resultado e uma descrição curta. Isso vai montar o currículo.")))
@@ -1124,7 +1299,7 @@ function tourForm(a, x){
         Object.assign(x, {name: clean(name.value), level: level.get(), cat: clean(cat.value), city: clean(city.value), start: start.value || null, end: end.value || null, surface: surf.get(),
           singles: sing.get(), doubles: dbl.get(), partner: clean(partner.value), scores: clean(scores.value), desc: clean(desc.value)});
         if (isNew) { x.id = uid(); a.tours.push(x); }
-        if (!save()) return; close(); if (isNew) view.tab = "torneios"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        if (!save()) return; close(); if (isNew) view.tab = "carreira"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
         !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este torneio?" + (a.entries.some(e => e.tid === x.id) ? " Os jogos ligados a ele continuam no Diário." : ""), "Apagar", () => {
           const before = snap(); a.tours = a.tours.filter(t => t !== x); a.entries.forEach(e => { if (e.tid === x.id) e.tid = null; }); save(); close(); render(); toast("Torneio apagado", () => undoTo(before)); })}, "Apagar torneio") : null),
       slot);
@@ -1321,6 +1496,153 @@ function compareSheet(a, s, idA, idB){
   });
 }
 
+/* ---------- foto da atleta (fica no banco de mídia, como os vídeos) ---------- */
+function avatar(a, cls){
+  const box = h("span", {class: "av " + (cls || "")}, (a.name || "?").trim().charAt(0).toUpperCase());
+  if (a.photo) mediaURL(a.photo).then(u => { if (u) put(box, h("img", {src: u, alt: ""})); });
+  return box;
+}
+function setPhoto(a){
+  pickMedia(async f => {
+    if (!/^image\//.test(f.type)) { toast("Escolha uma foto"); return; }
+    try { const p = await prepPhoto(f), id = uid(); await mput(id, {blob: p.blob, thumb: p.thumb, type: p.blob.type}); const old = a.photo; a.photo = id; save(); if (old) dropLater([old]); render(); toast("Foto salva"); }
+    catch (e) { toast("Não foi possível usar esta foto"); }
+  });
+}
+
+/* ---------- Currículo: 3 modelos, editável, PDF gerado no próprio aparelho ----------
+   As páginas são desenhadas num canvas (A4) e viram um PDF simples com uma imagem por página. Nada sai do aparelho. */
+const CV_TPL = [["completo", "Completo"], ["uma", "Uma página"], ["eua", "Universidade EUA"]];
+const RES_EN = {champ: "Champion", vice: "Finalist", semi: "Semifinalist", quartas: "Quarterfinalist", oitavas: "Round of 16", r2: "Second round", r1: "First round", grupos: "Group stage"};
+const LVL_EN = {Clube: "Club", Estadual: "State", Nacional: "National", "Sul-americano": "South American", Internacional: "International"};
+const RES_ORDER = ["champ", "vice", "semi", "quartas", "oitavas", "r2", "r1", "grupos"];
+const bestRes = x => [x.singles, x.doubles].filter(Boolean).sort((p, q) => RES_ORDER.indexOf(p) - RES_ORDER.indexOf(q))[0] || null;
+function cvPicked(a, x){ const c = a.cv || {}; if (c.pick && x.id in c.pick) return c.pick[x.id]; const r = bestRes(x); return r === "champ" || r === "vice" || r === "semi"; }
+function cvDefaultBio(a, en){
+  const age = ageAt(a.birth), cb = curBall(a), y = a.start ? parseD(a.start).getFullYear() : null, hand = a.hand === "c" ? (en ? "left-handed" : gx(a, "canhota", "canhoto")) : a.hand === "d" ? (en ? "right-handed" : gx(a, "destra", "destro")) : null;
+  if (en) return [age != null ? age + "-year-old" : null, hand, "tennis player"].filter(Boolean).join(" ") + (y ? ", playing since " + y : "") + "." + (cb && cb !== "yellow" ? " Currently competing in the " + {red: "red", orange: "orange", green: "green"}[cb] + " ball stage (ITF Tennis10s)." : "");
+  return gx(a, "Tenista", "Tenista") + (age != null ? " de " + age + " anos" : "") + (hand ? ", " + hand : "") + (y ? ", joga desde " + y : "") + "." + (cb ? " Hoje na etapa da bola " + ballOf(cb).n.toLowerCase() + "." : "");
+}
+function curriculo(a){
+  const c = a.cv = a.cv || {}, tpl = c.tpl || "completo", en = tpl === "eua";
+  const tours = a.tours.filter(x => x.singles || x.doubles).sort((p, q) => (q.start || "").localeCompare(p.start || ""));
+  const saveCv = () => save();
+  const tplSeg = h("div", {class: "seg", role: "radiogroup", "aria-label": "Modelo"}, CV_TPL.map(([k, l]) => h("button", {type: "button", role: "radio", class: tpl === k ? "on" : "", "aria-checked": String(tpl === k), onclick: () => { c.tpl = k; saveCv(); render(); }}, l)));
+  const kb = en ? "bioEn" : "bio", kg = en ? "goalsEn" : "goals";
+  const bio = ta(c[kb] || "", cvDefaultBio(a, en)); bio.addEventListener("input", () => { c[kb] = bio.value; saveCv(); });
+  const goals = ta(c[kg] || "", en ? "Ex.: Looking for a college program that combines academics and competitive tennis." : "Ex.: Evoluir na bola verde e disputar o circuito estadual."); goals.addEventListener("input", () => { c[kg] = goals.value; saveCv(); });
+  const ct = c.contact = c.contact || {};
+  const cin = (k, ph, type) => { const x = inp({value: ct[k] || "", placeholder: ph, autocomplete: "off", type: type || "text"}); x.addEventListener("input", () => { ct[k] = x.value; saveCv(); }); return x; };
+  const chip = (k, label, def) => { const on = k in c ? c[k] : def; return h("button", {type: "button", class: "chip" + (on ? " on" : ""), "aria-pressed": String(!!on), onclick: () => { c[k] = !on; saveCv(); render(); }}, label); };
+  return [
+    h("h1", {class: "page-h"}, "Currículo"), h("p", {class: "page-sub"}, "Puxa os dados do app. Tudo pode ser editado. O PDF é gerado aqui no iPhone."),
+    group("Modelo", tplSeg),
+    h("div", {class: "chips", style: "margin:-4px 0 16px"}, a.photo ? chip("photo", en ? "Photo" : "Foto", true) : h("button", {type: "button", class: "chip", onclick: () => setPhoto(a)}, "+ Foto da atleta"), chip("gear", en ? "Equipment" : "Raquete", tpl !== "uma"), chip("path", en ? "Ball stages" : "Etapas das bolas", tpl === "completo")),
+    fld(en ? "About · em inglês" : "Apresentação", bio, "Em branco, o app usa o texto sugerido." + (en ? " O modelo em inglês tem textos próprios." : ""), true),
+    fld(en ? "Goals · em inglês" : "Objetivos", goals, null, true),
+    h("h2", {class: "sec-t"}, "Resultados no currículo"),
+    tours.length ? h("div", {class: "card", style: "padding:2px 16px"}, tours.map(x => { const on = cvPicked(a, x);
+      return h("button", {type: "button", class: "chk" + (on ? " on" : ""), "aria-pressed": String(on), onclick: () => { (c.pick ||= {})[x.id] = !on; saveCv(); render(); }},
+        h("span", {class: "bx"}, on ? svg("check") : null), h("span", null, h("b", null, x.name), h("span", {class: "muted small", style: "display:block"}, [resLabel(a, bestRes(x)), x.level, x.start ? fmtMY(x.start) : null].filter(Boolean).join(" · ")))); }))
+      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Registre torneios com resultado em Carreira.")),
+    h("h2", {class: "sec-t"}, en ? "Contato do responsável" : "Contato do responsável"),
+    h("p", {class: "small muted", style: "margin-top:-4px"}, "Opcional. Aparece só no PDF que você gerar e compartilhar."),
+    fld("Nome", cin("name", "Ex.: Camilo Briceño")), h("div", {class: "two"}, fld("Telefone", cin("phone", "Ex.: +55 41 9…", "tel")), fld("E-mail", cin("email", "nome@email.com", "email"))),
+    h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => cvPreview(a), 1500)}, "Visualizar e gerar PDF"))
+  ];
+}
+// ---- desenho das páginas (A4, 1240 × 1754 px ≈ 150 dpi) ----
+const A4 = {w: 1240, h: 1754, m: 96};
+async function cvPages(a){
+  const c = a.cv || {}, tpl = c.tpl || "completo", en = tpl === "eua", one = tpl === "uma";
+  const font = (w, s) => w + " " + s + "px -apple-system, 'SF Pro Text', system-ui, 'Helvetica Neue', Arial, sans-serif";
+  const INK = "#1C1714", MUTED = "#6B5F55", ACC = "#B8642F", LINE = "#E6DDD3";
+  const pages = []; let cv, x, y;
+  const newPage = () => { cv = document.createElement("canvas"); cv.width = A4.w; cv.height = A4.h; x = cv.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, A4.w, A4.h); x.textBaseline = "top"; pages.push(cv); y = A4.m; };
+  const wrap = (t, maxW) => { const out = []; for (const para of String(t).split("\n")) { let line = ""; for (const w of para.split(/\s+/)) { const tryL = line ? line + " " + w : w; if (x.measureText(tryL).width > maxW && line) { out.push(line); line = w; } else line = tryL; } out.push(line); } return out; };
+  const need = hh => { if (y + hh > A4.h - A4.m - 40) { if (one) return false; footer(); newPage(); } return true; };
+  const text = (t, f, col, lh, indent) => { x.font = f; x.fillStyle = col; for (const l of wrap(t, A4.w - 2 * A4.m - (indent || 0))) { if (!need(lh)) return; x.fillText(l, A4.m + (indent || 0), y); y += lh; } };
+  const section = t => { if (!need(110)) return false; y += 26; x.font = font(700, 22); x.fillStyle = ACC; x.fillText(t.toUpperCase().split("").join(String.fromCharCode(8202)), A4.m, y); y += 36; x.fillStyle = LINE; x.fillRect(A4.m, y, A4.w - 2 * A4.m, 2); y += 22; return true; };
+  const footer = () => { x.font = font(400, 18); x.fillStyle = MUTED; x.fillText((en ? "Generated with Briceno Tennis · " : "Gerado no Briceno Tennis · ") + fmtD(today()), A4.m, A4.h - A4.m + 10); };
+  newPage();
+  // cabeçalho
+  const showPhoto = a.photo && (c.photo !== false);
+  let photoImg = null;
+  if (showPhoto) { const u = await mediaURL(a.photo, true); if (u) photoImg = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = u; }); }
+  const ph = 200, tx = A4.m + (photoImg ? ph + 44 : 0);
+  if (photoImg) { x.save(); x.beginPath(); x.arc(A4.m + ph / 2, y + ph / 2, ph / 2, 0, 7); x.clip(); const s = Math.max(ph / photoImg.width, ph / photoImg.height); x.drawImage(photoImg, A4.m + ph / 2 - photoImg.width * s / 2, y + ph / 2 - photoImg.height * s / 2, photoImg.width * s, photoImg.height * s); x.restore(); x.strokeStyle = ACC; x.lineWidth = 4; x.beginPath(); x.arc(A4.m + ph / 2, y + ph / 2, ph / 2, 0, 7); x.stroke(); }
+  const y0 = y;
+  x.font = font(800, 64); x.fillStyle = INK; x.fillText(a.name, tx, y + 18);
+  const age = ageAt(a.birth), cb = curBall(a);
+  const line1 = en ? [age != null ? age + " years old" : null, a.hand === "c" ? "Left-handed" : a.hand === "d" ? "Right-handed" : null, a.sex === "m" ? "Boys" : "Girls"].filter(Boolean).join(" · ")
+    : [age != null ? age + " anos" : null, a.hand === "c" ? gx(a, "Canhota", "Canhoto") : a.hand === "d" ? gx(a, "Destra", "Destro") : null, a.sex === "m" ? "Masculino" : "Feminino"].filter(Boolean).join(" · ");
+  const hw = A4.w - A4.m - tx; let hy = y + 102;
+  x.font = font(500, 28); x.fillStyle = MUTED; for (const l of wrap(line1, hw)) { x.fillText(l, tx, hy); hy += 38; }
+  const line2 = en ? [a.start ? "Playing since " + parseD(a.start).getFullYear() : null, cb ? "Current stage: " + {red: "red", orange: "orange", green: "green", yellow: "yellow (full court)"}[cb] + " ball" : null, a.birth ? "Born " + parseD(a.birth).getFullYear() : null].filter(Boolean).join(" · ")
+    : [a.start ? "Joga desde " + fmtMY(a.start) : null, cb ? "Etapa atual: bola " + ballOf(cb).n.toLowerCase() : null, a.birth ? "Nascimento: " + fmtD(a.birth) : null].filter(Boolean).join(" · ");
+  hy += 6; x.font = font(500, 26); x.fillStyle = ACC; for (const l of wrap(line2, hw)) { x.fillText(l, tx, hy); hy += 36; }
+  y = Math.max(y0 + (photoImg ? ph : 170), hy) + 10;
+  // apresentação e objetivos
+  const bioT = clean(en ? c.bioEn : c.bio), goalsT = clean(en ? c.goalsEn : c.goals);
+  section(en ? "About" : "Apresentação"); text(bioT || cvDefaultBio(a, en), font(400, 28), INK, 42);
+  if (goalsT) { section(en ? "Goals" : "Objetivos"); text(goalsT, font(400, 28), INK, 42); }
+  // títulos e resultados
+  const picked = a.tours.filter(t => (t.singles || t.doubles) && cvPicked(a, t)).sort((p, q) => RES_ORDER.indexOf(bestRes(p)) - RES_ORDER.indexOf(bestRes(q)) || (q.start || "").localeCompare(p.start || ""));
+  const lab = k => en ? RES_EN[k] : resLabel(a, k);
+  const titles = picked.filter(t => bestRes(t) === "champ" || bestRes(t) === "vice");
+  if (titles.length) { if (section(en ? "Titles" : "Títulos")) for (const t of titles.slice(0, one ? 6 : 99)) { if (!need(80)) break;
+    x.font = font(700, 28); x.fillStyle = INK; x.fillText(lab(bestRes(t)) + " · " + t.name, A4.m, y); y += 40;
+    text([en ? LVL_EN[t.level] || t.level : t.level, t.cat, t.city, t.start ? fmtMY(t.start) : null].filter(Boolean).join(" · "), font(400, 24), MUTED, 34); y += 10; } }
+  const others = picked.filter(t => !titles.includes(t));
+  if (others.length) { if (section(en ? "Selected results" : "Principais resultados")) for (const t of others.slice(0, one ? 6 : 99)) { if (!need(80)) break;
+    x.font = font(600, 26); x.fillStyle = INK; x.fillText(t.name, A4.m, y); x.font = font(600, 24); x.fillStyle = ACC; const r = lab(bestRes(t)); x.fillText(r, A4.w - A4.m - x.measureText(r).width, y + 2); y += 38;
+    text([en ? LVL_EN[t.level] || t.level : t.level, t.cat, t.city, t.start ? fmtMY(t.start) : null, !one && t.desc ? t.desc : null].filter(Boolean).join(" · "), font(400, 23), MUTED, 33); y += 8; } }
+  // trajetória e equipamento
+  if (("path" in c ? c.path : tpl === "completo") && BALLS.some(b => a.balls[b.k])) { if (section(en ? "ITF stages" : "Etapas da ITF")) BALLS.filter(b => a.balls[b.k]).forEach((b, i, arr) => { const nx = arr[i + 1];
+    text((en ? {red: "Red", orange: "Orange", green: "Green", yellow: "Yellow"}[b.k] : b.n) + ": " + fmtMY(a.balls[b.k]) + (nx ? (en ? " to " : " a ") + fmtMY(a.balls[nx.k]) : (en ? " to present" : " até hoje")), font(400, 26), INK, 38); }); }
+  const r = curRacket(a), s = curString(a);
+  if (("gear" in c ? c.gear : tpl !== "uma") && (r || s)) { if (section(en ? "Equipment" : "Equipamento")) { if (r) text([r.brand, r.model].filter(Boolean).join(" ") + (r.size ? " · " + r.size + "\"" : ""), font(400, 26), INK, 38); if (s) text(strDesc(s), font(400, 24), MUTED, 34); } }
+  // contato
+  const ct = c.contact || {};
+  if (clean(ct.name) || clean(ct.phone) || clean(ct.email)) { if (section(en ? "Parent contact" : "Contato do responsável")) text([clean(ct.name), clean(ct.phone), clean(ct.email)].filter(Boolean).join(" · "), font(500, 26), INK, 38); }
+  footer();
+  return pages;
+}
+// PDF mínimo: uma imagem JPEG por página (A4 em pontos: 595,28 × 841,89)
+async function pagesToPdf(pages){
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const add = p => { const b = typeof p === "string" ? enc.encode(p) : p; parts.push(b); len += b.length; };
+  const obj = (n, body) => { offs[n] = len; add(n + " 0 obj\n"); body(); add("\nendobj\n"); };
+  add("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
+  const n = pages.length, kids = pages.map((_, i) => (3 + i * 3) + " 0 R").join(" ");
+  obj(1, () => add("<< /Type /Catalog /Pages 2 0 R >>"));
+  obj(2, () => add("<< /Type /Pages /Kids [" + kids + "] /Count " + n + " >>"));
+  for (let i = 0; i < n; i++) {
+    const jpg = new Uint8Array(await (await canvasBlob(pages[i], "image/jpeg", .9)).arrayBuffer()), p = 3 + i * 3;
+    obj(p, () => add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im" + i + " " + (p + 1) + " 0 R >> >> /Contents " + (p + 2) + " 0 R >>"));
+    obj(p + 1, () => { add("<< /Type /XObject /Subtype /Image /Width " + pages[i].width + " /Height " + pages[i].height + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + jpg.length + " >>\nstream\n"); add(jpg); add("\nendstream"); });
+    const cs = "q 595.28 0 0 841.89 0 0 cm /Im" + i + " Do Q";
+    obj(p + 2, () => add("<< /Length " + cs.length + " >>\nstream\n" + cs + "\nendstream"));
+  }
+  const xref = len, total = 3 + n * 3;
+  add("xref\n0 " + total + "\n0000000000 65535 f \n" + Array.from({length: total - 1}, (_, i) => String(offs[i + 1]).padStart(10, "0") + " 00000 n \n").join(""));
+  add("trailer\n<< /Size " + total + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF");
+  return new Blob(parts, {type: "application/pdf"});
+}
+function cvPreview(a){
+  sheet("Currículo", async (el, close) => {
+    const box = h("div", {class: "cvprev"}, h("p", {class: "small muted"}, "Montando…"));
+    const go = h("button", {type: "button", class: "btn primary block", disabled: true}, "Compartilhar PDF");
+    el.append(h("h2", null, "Visualizar"), h("p", {class: "sh-sub"}, "Confira antes de enviar. Para mudar algo, feche e edite."), box, h("div", {class: "stack"}, go));
+    try {
+      const pages = await cvPages(a);
+      put(box, pages.map(p => h("img", {src: p.toDataURL("image/jpeg", .82), alt: "Página do currículo"})));
+      const pdf = await pagesToPdf(pages), name = "curriculo-" + (a.name || "atleta").toLowerCase().normalize("NFD").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "") + (a.cv && a.cv.tpl === "eua" ? "-en" : "") + ".pdf";
+      go.disabled = false; go.onclick = once(async () => { if (await shareOrDownload(pdf, name, "Currículo de " + a.name)) toast("PDF pronto · " + fmtMB(pdf.size)); }, 1500);
+    } catch (e) { put(box, h("p", {class: "small", style: "color:var(--danger)"}, "Não foi possível montar o currículo neste aparelho.")); }
+  });
+}
+
 /* ---------- Guia ---------- */
 const EV = {forte: "Forte", moderada: "Moderada", fraca: "Fraca", consenso: "Consenso de especialistas", regra: "Regra oficial"};
 const ev = (k, label) => h("span", {class: "ev " + k}, h("i"), label || EV[k]);
@@ -1376,15 +1698,22 @@ function guia(a){
           "Especializar cedo em um só esporte: risco de lesão por excesso de uso 1,81 vez maior (alta especialização comparada com baixa).",
           "A ITF sugere especializar no tênis por volta dos 11 a 13 anos nas meninas e dos 12 a 14 nos meninos, com vários esportes antes."),
         [ev("moderada"), ev("consenso")], "Crianças e adolescentes", "Academia Americana de Pediatria, 2024; Bell e colaboradores, 2018 (meta-análise); ITF"),
+      gcard("Dores e desconfortos",
+        [h("p", null, "Perguntar toda semana se houve dor ou desconforto encontrou cerca de 10 vezes mais problemas de excesso de uso do que esperar a lesão aparecer. Em juniores de tênis de 11 a 14 anos, cerca de 1 em cada 5 tinha algum problema de saúde a cada semana."),
+         h("p", {class: "small muted"}, "Por isso o app faz uma pergunta por semana e guarda o histórico, sem contador de dias sem dor (contador pode levar a esconder a dor). Não faz diagnóstico.")],
+        [ev("moderada")], "Atletas jovens e adultos; juniores de tênis", "Clarsen e colaboradores, 2013 (OSTRC); Pluim e colaboradores, 2016"),
       gcard("Sono",
         ul("6 a 12 anos: 9 a 12 horas por dia.", "13 a 18 anos: 8 a 10 horas por dia."),
         [ev("consenso", "Consenso forte")], "Crianças e adolescentes", "Academia Americana de Medicina do Sono, 2016")),
     (gcard.tint = "t-bola", null),
     sec("Metas, motivação e pais",
       gcard("Metas de processo",
-        [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco da semana."),
+        [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco atual."),
          h("p", {class: "small muted"}, "Efeitos: processo d = 1,36; desempenho d = 0,44; resultado d = 0,09. Muitos estudos foram em laboratório, com amostras pequenas, e não são específicos de crianças.")],
         [ev("moderada")], "Estudos em atletas, a maioria adultos", "Williamson e colaboradores, International Review of Sport and Exercise Psychology (27 estudos)"),
+      gcard("Foco atual, não da semana",
+        h("p", null, "Corrigir um golpe leva semanas ou meses. Metas próximas e claras, revistas com frequência, geraram mais confiança e interesse em crianças do que metas distantes. Por isso o foco mostra há quanto tempo está em trabalho e só muda quando vocês decidem."),
+        [ev("moderada")], "Crianças", "Bandura e Schunk, 1981"),
       gcard("Elogiar o que está bom primeiro",
         h("p", null, "Em crianças, receber retorno depois das tentativas boas melhorou o aprendizado e a motivação. Por isso \"O que está bom\" vem antes de \"Para melhorar\"."),
         [ev("moderada")], "Estudos em crianças e adultos", "Frontiers in Psychology, 2012"),
@@ -1416,7 +1745,7 @@ function guia(a){
 }
 // cada material tem um motivo no tênis
 const CORES = [
-  ["ambar", "Âmbar", "A cor das prioridades, a mesma do Briceno Life. É a cor do foco da semana."],
+  ["ambar", "Âmbar", "A cor das prioridades, a mesma do Briceno Life. É a cor do foco atual."],
   ["grama", "Grama", "A superfície mais tradicional, com o roxo da história. É a cor da carreira e dos torneios."],
   ["bola", "Bola amarela", "Olho na bola: a cor dos golpes e dos vídeos."],
   ["saibro", "Saibro", "A quadra onde se constrói o jogo, com paciência. A mais comum nos clubes do Brasil. É a cor do treino e do tempo de tênis."],
@@ -1441,6 +1770,10 @@ const REFS = [
   ["Mödinger, Woll e Wagner, 2021 · German Journal of Exercise and Sport Research", "https://link.springer.com/10.1007/s12662-021-00782-y", "Vídeo do movimento em educação física, revisão sistemática · moderada"],
   ["Zhou, Shao e Wang, 2021 · IJERPH", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8296044/", "Retorno ao aluno em educação física, revisão sistemática · moderada"],
   ["Auto-observação positiva no esporte · Frontiers, 2011", "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2011.00155/full", "Rever os próprios melhores movimentos · fraca a moderada"],
+  ["Clarsen e colaboradores, 2013 · questionário OSTRC", "https://www.qxmd.com/r/23038786", "Excesso de uso: pergunta semanal · moderada a forte"],
+  ["Pluim e colaboradores, 2016 · juniores de tênis", "https://www.pubmed.gov/25944058/", "Lesões e doenças em juniores de elite · moderada"],
+  ["Bandura e Schunk, 1981", "https://uploads-ssl.webflow.com/59faaf5b01b9500001e95457/5bc552d85141987915dab842_Bandura%20&%20Schunk,%201981.pdf", "Metas próximas em crianças · moderada"],
+  ["Harkin e colaboradores, 2016 · Psychological Bulletin", "https://eprints.whiterose.ac.uk/id/eprint/91437/", "Registrar o progresso ajuda a alcançar metas · moderada a forte"],
   ["McKay e colaboradores, 2022 · Meta-Psychology", "https://conferences.lnu.se/index.php/metapsychology/article/view/2803", "Escolha da criança no treino · fraca"],
   ["Brouwers e colaboradores, 2012", "https://ideas.repec.org/a/taf/rsmrxx/v15y2012i4p461-475.html", "Resultados juvenis e sucesso profissional · moderada"],
   ["Grove e Jetter, 2014 · IZA", "https://www.iza.org/publications/dp/8103", "Rankings de 14 e 16 anos · moderada"],
@@ -1461,7 +1794,7 @@ function athleteSheet(){
         row({ic: "plus", t1: "Nova atleta", fn: later(() => athleteForm(null))})),
       h("h2", {class: "sec-t"}, "Ajustes"),
       h("div", {class: "list"},
-        a ? row({ic: "person", t1: "Dados de " + a.name, t2: "Nome, nascimento, início no tênis e mão", fn: later(() => athleteForm(a))}) : null,
+        a ? row({ic: avatar(a), t1: "Perfil de " + a.name, t2: "Foto, bolas, equipamento e dados", fn: () => { close(); go("perfil"); }}) : null,
         row({ic: "book", t1: "Guia e referências", t2: "Recomendações da ciência e as fontes do app", fn: () => { close(); go("guia"); }}),
         row({ic: "save", t1: "Backup e espaço", t2: lb ? "Último backup: " + fmtD(lb) : "Nenhum backup feito ainda", fn: later(backupSheet)}),
         row({ic: "faceid", t1: "Abrir com Face ID", t2: lockCfg() ? "Ligado" : "Desligado", fn: later(lockSheet)})));
@@ -1484,7 +1817,7 @@ function athleteForm(a){
         if (birth.value && start.value && start.value < birth.value) { toast("O início no tênis está antes do nascimento"); return; }
         const before = snap();
         Object.assign(a, {name: clean(name.value), sex: sex.get(), birth: birth.value || null, start: start.value || null, hand: hand.get()});
-        if (isNew) { a.id = uid(); normAthlete(a); if (ball.get()) a.balls[ball.get()] = since.value || today(); S.athletes.push(a); S.activeId = a.id; view.tab = "diario"; }
+        if (isNew) { a.id = uid(); normAthlete(a); if (ball.get()) a.balls[ball.get()] = since.value || today(); S.athletes.push(a); S.activeId = a.id; view.tab = "hoje"; }
         if (!save()) return; close(); render(); toast(isNew ? "Atleta cadastrada" : "Dados salvos", () => undoTo(before)); })}, "Salvar"),
         !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar " + a.name + " e todos os registros " + gx(a, "dela", "dele") + " deste aparelho?", "Apagar", () => {
           const before = snap(); S.athletes = S.athletes.filter(x => x !== a); S.activeId = S.athletes[0] ? S.athletes[0].id : null; save(); close(); render(); dropLater((a.media || []).map(m => m.id)); toast("Atleta apagada", () => undoTo(before)); })}, "Apagar atleta") : null),
@@ -1664,7 +1997,7 @@ function lockSheet(){
   document.documentElement.classList.toggle("big-text", px >= 21);
 })();
 load();
-try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v && v.tab === "carreira") v.tab = "torneios"; if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
+try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v) v.tab = {diario: "hoje", torneios: "carreira", evolucao: "hoje"}[v.tab] || v.tab; if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
 if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 650))); }
 
 </script>

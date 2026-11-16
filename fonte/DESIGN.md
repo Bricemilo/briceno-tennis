@@ -20,7 +20,9 @@ Cada material vem de uma quadra ou de um objeto do jogo. As telas mostram só as
 - Vizinhos alternam quente e frio, como num tabuleiro.
 - A tela vai da luz para a profundidade.
 
-Diário: Foco (âmbar) · Próximo torneio (grama) | Golpe em vídeo (bola) · Tênis (saibro) | Descanso (celeste) · Carga (noite).
+Hoje: Foco atual (âmbar) · Torneio (grama) | Golpe (bola) · Semana com mini-gráfico (saibro) · Corpo (celeste). Cartões com tamanho fixo: título em uma linha, valor em até duas, legenda em uma, com "…".
+Carreira: Torneio (grama) | Currículo (âmbar).
+A lâmina de luz dos cartões é ~50% mais suave desde a v4.
 "+": Treino (saibro) | Jogo (noite) · Torneio (grama) | Golpes (bola).
 
 O cobre continua como a assinatura da família Briceno: "+", aba ativa, seletor do topo e botões principais.

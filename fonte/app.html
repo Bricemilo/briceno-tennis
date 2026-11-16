@@ -97,7 +97,7 @@ b,strong{font-weight:650}
 .hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--hm-row) var(--hm-col)}
 .hgrid + .hgrid,.hc + .hgrid,.hgrid + .hc{margin-top:var(--hm-row)}
 .hc{--g:#EE8644;--gd:#1F0B02;--gt:#8F421B;--gb:#A04B21;--gr:#DE7E43;--gh:#FFD9A8;
-  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;min-height:108px;text-align:left;color:#fff;
+  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;height:var(--hc-h,7.5rem);text-align:left;color:#fff;
   padding:var(--hm-pt) var(--hm-pad) var(--hm-pb);border-radius:var(--hm-r);border:1px solid transparent;
   background:
     radial-gradient(50% 62% at 100% 52%,color-mix(in srgb,var(--g) 24%,transparent),transparent 72%) padding-box,
@@ -124,15 +124,18 @@ b,strong{font-weight:650}
 .hc-i .ball{width:14px;height:14px}
 .hc-i .mth.sm{width:100%;height:100%;border-radius:8px;border:0}
 .hc-i:has(.mth){padding:0;overflow:hidden}
-.hc-t{flex:1;min-width:0;font-size:var(--t-sm);font-weight:640;letter-spacing:-.012em;color:#fff;line-height:1.25}
+.hc-t{flex:1;min-width:0;font-size:var(--t-sm);font-weight:640;letter-spacing:-.012em;color:#fff;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-r{flex:none;font-size:var(--t-cap);font-weight:500;color:rgba(255,255,255,.72)}
 .hc-v{display:block;margin-top:auto;padding-top:10px;min-width:0}
 .hc-v b{font-size:var(--t-num);font-weight:700;letter-spacing:-.02em;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
-.hc-v b.txt{display:block;font-size:var(--t-sec);font-weight:680;letter-spacing:-.015em;line-height:1.25;overflow-wrap:anywhere}
+.hc-v b.txt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:var(--t-sec);font-weight:680;letter-spacing:-.015em;line-height:1.25;overflow-wrap:anywhere}
 .hc-v b.word{font-size:1.294rem;letter-spacing:-.015em}
 .hc-v small{font-size:var(--t-sm);font-weight:500;color:rgba(255,255,255,.74)}
-.hc-s{margin-top:4px;font-size:var(--t-cap);font-weight:450;letter-spacing:-.01em;color:rgba(255,255,255,.86);line-height:1.3}
+.hc-s{display:block;margin-top:4px;font-size:var(--t-cap);font-weight:450;letter-spacing:-.01em;color:rgba(255,255,255,.86);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qgrid .hc-s{white-space:normal}
 .hc-v,.hc-s{text-shadow:0 0 2px var(--gd),0 0 7px color-mix(in srgb,var(--gd) 80%,transparent)}
 .hc.wide{min-height:0}
+.qgrid .hc{height:auto;min-height:104px}
 .hgrid > .hc.wide{grid-column:1 / -1}
 .hc.wide .hc-v{padding-top:12px}
 /* materiais do tênis (mesma construção da Home v35 do Briceno Life; cada cor vem de uma quadra ou de um objeto do jogo, ver fonte/DESIGN.md)
@@ -153,6 +156,50 @@ b,strong{font-weight:650}
 .sw{width:30px;height:30px;flex:0 0 30px;border-radius:9px;margin-top:2px;background:radial-gradient(circle at 32% 28%,var(--gh),var(--g) 42%,var(--gr) 70%,var(--gd) 120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 10px -4px var(--g)}
 .sw-balls{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:30px;flex:0 0 30px;margin-top:2px}
 .sw-balls .ball{width:13px;height:13px}
+/* semana: cartão com mini-gráfico e gráfico grande da aba Treinos */
+.hc.wk{height:auto;min-height:8.6rem}
+.wk-b{display:flex;align-items:flex-end;gap:14px;margin-top:auto;padding-top:10px;min-width:0}
+.wk-b .hc-v{flex:1;min-width:0;padding-top:0;margin-top:0}
+.wk-b .hc-s{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wbars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;width:44%;flex:none;height:3.6rem}
+.wb{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.wcol{position:relative;flex:1;width:100%;max-width:14px}
+.wfill{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column-reverse;border-radius:4px;overflow:hidden;box-shadow:0 0 8px -2px rgba(255,255,255,.25)}
+.wfill i{display:block;min-height:2px}
+.wzero{position:absolute;left:15%;right:15%;bottom:0;height:2px;border-radius:2px;background:rgba(255,255,255,.22)}
+.wb b{font-size:.62rem;font-weight:600;color:rgba(255,255,255,.62);line-height:1}
+.wb.now b{color:#fff}
+.wb.fut{opacity:.4}
+.wbars.big{width:100%;height:10rem;gap:8px;margin-top:6px}
+.wbars.big .wcol{max-width:30px}
+.wbars.big .wb b{font-size:var(--t-cap);color:var(--muted)}
+.wbars.big .wb.now b{color:var(--dj-signal)}
+.wbars.big em{font-style:normal;font-size:.68rem;color:var(--ink-2);min-height:1em;line-height:1}
+.wbars.big .wzero{background:rgba(255,255,255,.14)}
+.wchart{padding:14px 16px 16px}
+.wnav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wnav b{font-weight:650}
+.wnav .mv{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);background:var(--dj-tile);border:1px solid var(--dj-tile-line)}
+.wnav .mv svg{width:18px;height:18px}
+.wnav .mv:disabled{opacity:.3}
+.wleg{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:var(--t-cap);color:var(--muted)}
+.wleg span{display:inline-flex;align-items:center;gap:6px}
+.wleg i{width:9px;height:9px;border-radius:3px}
+.wstats{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--dj-quiet-rule);font-size:var(--t-sm);color:var(--muted)}
+.wstats b{display:block;font-size:var(--t-lg);font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+/* foto da atleta */
+.av{display:grid;place-items:center;border-radius:50%;overflow:hidden;font-weight:700;color:#F3A564;border:1px solid transparent;
+  background:radial-gradient(circle at 35% 28%,#4A230A,#2A1203 72%) padding-box,linear-gradient(150deg,#F2A766,#8E4A1C 60%,#C7783D) border-box}
+.av img{display:block;width:100%;height:100%;object-fit:cover}
+.row .ic .av{width:32px;height:32px;font-size:var(--t-sm)}
+.row .ic:has(.av){padding:0;background:none;border:0;border-radius:50%}
+.av.lg{width:88px;height:88px;font-size:2rem}
+.pf-h{display:flex;align-items:center;gap:16px;margin-top:10px}
+.pf-ph{position:relative;flex:none;border-radius:50%}
+.pf-cam{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#140903;background:linear-gradient(180deg,var(--hm-copper-hi),var(--hm-copper-lo));box-shadow:0 0 0 3px var(--bg)}
+.pf-cam svg{width:16px;height:16px}
+/* currículo */
+.cvprev img{display:block;width:100%;border-radius:10px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.45);margin-bottom:12px}
 /* ---------- B · Precision Glass ---------- */
 .dj-glass{--tint:var(--clay);border:1px solid transparent;border-radius:var(--dj-r-panel);
   background:radial-gradient(130% 110% at 0% 0%,color-mix(in srgb,var(--tint) 10%,transparent),transparent 58%) padding-box,var(--dj-glass-base) padding-box,
@@ -284,7 +331,7 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 .qgrid .hc{min-height:104px}
 
 /* guia */
-.ev{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-cap);font-weight:620;padding:3px 10px;border-radius:var(--r-pill);border:1px solid var(--line2);color:var(--muted);white-space:nowrap;background:rgba(255,255,255,.02)}
+.ev{display:inline-flex;align-items:center;gap:6px;max-width:100%;font-size:var(--t-cap);font-weight:620;padding:3px 10px;border-radius:14px;border:1px solid var(--line2);color:var(--muted);background:rgba(255,255,255,.02)}
 .ev i{width:7px;height:7px;border-radius:50%;background:currentColor}
 .ev.forte{color:var(--ok)} .ev.moderada{color:#D7B378} .ev.fraca{color:var(--faint)} .ev.consenso{color:var(--dj-signal)} .ev.regra{color:#7EA5E0}
 .g-card{padding:16px}
@@ -298,6 +345,9 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 .tbl th{text-align:left;font-weight:620;color:var(--muted);padding:6px 6px 6px 0;border-bottom:1px solid var(--line2)}
 .tbl td{padding:8px 6px 8px 0;border-bottom:1px solid var(--dj-quiet-rule);vertical-align:top;color:var(--ink-2)}
 .tbl td:first-child{white-space:nowrap}
+.big-text .tbl td:first-child{white-space:normal}
+.big-text .tbl{table-layout:fixed}
+.tbl td,.tbl th{overflow-wrap:anywhere}
 .tbl tr.me td{color:var(--dj-signal);font-weight:650}
 .refs a{display:block;padding:12px 0;border-top:1px solid var(--dj-quiet-rule);text-decoration:none;color:var(--text);font-size:var(--t-sm);font-weight:600}
 .refs a:first-child{border-top:0}
