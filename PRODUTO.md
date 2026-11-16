@@ -3,6 +3,56 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v4 · Hoje fixo, Treinos, Corpo, Perfil e Currículo (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
+
+### O que mudou
+- **Abas:** Hoje · Treinos · + · Golpes · Carreira. "Hoje" é o mesmo nome do Briceno Life e segue a regra da Apple de abas com uma palavra.
+- **Hoje** é um painel fixo que não cresce:
+  - Foco atual (âmbar, com "há X semanas");
+  - Torneio | Golpe;
+  - Semana com mini-gráfico de segunda a domingo (saibro);
+  - Corpo (celeste).
+  A lista de registros foi para Treinos.
+- **Cartões com tamanho fixo:** título em 1 linha, valor em até 2 e legenda em 1, com "…". A lâmina de luz ficou ~50% mais suave.
+- **Treinos** (nova): gráfico de segunda a domingo por tipo (treino, golpes, jogo), navegação por semana, totais, referência de horas, registros da semana e histórico das semanas anteriores.
+- **Corpo:**
+  - pergunta semanal de um toque ("Teve dor nesta semana?");
+  - registro de desconforto (local, lado, intensidade 0–10, impacto no tênis, observação, resolvido em);
+  - histórico por mês e orientação de quando procurar o médico.
+  - Sem contador de "dias sem dor".
+- **Foco atual** no lugar de "Foco da semana": mostra há quanto tempo está em trabalho.
+- **Perfil da atleta** (pelo nome no topo): foto, bolas, competências, equipamento, mês de nascimento, dados, Guia, Backup e Face ID. A aba Evolução deixou de existir, e seu conteúdo foi para o Perfil. As Prioridades foram para Golpes.
+- **Currículo** (em Carreira):
+  - modelos Completo, Uma página e Universidade EUA (inglês, com textos próprios);
+  - puxa foto, dados, títulos, resultados marcados, etapas e equipamento;
+  - editável;
+  - visualização e PDF gerado no aparelho (canvas para PDF, sem biblioteca externa).
+
+### Evidência
+| Decisão | Base | Força |
+|---|---|---|
+| Pergunta semanal sobre dor | Clarsen e colaboradores, 2013 (OSTRC: ~10× mais problemas de excesso de uso); validação OSTRC-H2 em 12–17 anos | Moderada a forte |
+| Importância em juniores de tênis | Pluim e colaboradores, 2016 (21% com problema de saúde por semana; 11–14 anos) | Moderada |
+| Sem contador de dias sem dor | Risco de esconder sintomas; regra do projeto (sem sequências) | Consenso / princípio |
+| Foco atual com metas próximas | Bandura e Schunk, 1981 (crianças) | Moderada |
+| Registrar o progresso semanal | Harkin e colaboradores, 2016 | Moderada a forte |
+
+### Dados
+- Chave `bricenotennis.v1` mantida. Novos campos: `health`, `focus`, `photo` e `cv`. Nada foi apagado ou migrado.
+- O foco atual existente conta desde a criação da prioridade.
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px e texto grande:
+  - fluxo completo;
+  - desconforto e resolvido;
+  - foto da atleta;
+  - currículo em PDF (válido, 1 página, 131 KB) e modelo em inglês;
+  - vídeos;
+  - backup completo restaurado;
+  - abre sem internet, sem erros.
+- Corrigido o transbordo das etiquetas do Guia com texto grande.
+- **Ainda não testado no iPhone:** compartilhar o PDF, foto pela câmera.
+
 ## v3 · Diário completo e sequência de cores (publicada em 15/11/2026, aprovada pelo Camilo com "Ok")
 
 ### O que mudou
