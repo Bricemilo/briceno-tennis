@@ -3,6 +3,16 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v5.2 · Golpe antes do torneio e "antes e agora" no Hoje (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
+
+### O que mudou
+- **Hoje:** o cartão Golpe vem antes do Torneio, seguindo a regra do app de processo antes de resultado.
+- **O cartão Golpe mostra a evolução:** com 2 ou mais vídeos do mesmo golpe, aparece "Forehand · antes e agora" e o intervalo ("5 meses · comparar"). O toque abre a comparação lado a lado, com preferência para o golpe que tem "melhor golpe". Com um vídeo só, o cartão continua como antes.
+- O nome do cartão continua "Golpe", para não repetir o nome da aba Evolução.
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px: o cartão abre a comparação com os 2 vídeos. Fluxo completo sem erros.
+
 ## v5.1 · Hoje mais leve e ícone de Torneios (publicada em 16/11/2026, aprovada pelo Camilo com "Publicar")
 
 ### O que mudou

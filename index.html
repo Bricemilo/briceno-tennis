@@ -788,6 +788,14 @@ function nextTourCard(a){
     : jewelCard({cls: "grama", icon: "bracket", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
 }
 function strokeCard(a){
+  // com 2 ou mais vídeos do mesmo golpe, o cartão mostra a evolução: "antes e agora", e o toque abre a comparação
+  const pairs = STROKES.map(s => [s, strokeMedia(a, s).filter(m => m.kind === "video")]).filter(([, v]) => v.length >= 2)
+    .sort((x, y) => (y[1][0].date || "").localeCompare(x[1][0].date || ""));
+  if (pairs.length) {
+    const [s, v] = pairs.find(([, v]) => v.some(m => m.best)) || pairs[0], now = v.find(m => m.best) || v[0], old = v[v.length - 1] === now ? v[v.length - 2] : v[v.length - 1];
+    const mo = monthsBetween(old.date < now.date ? old.date : now.date, old.date < now.date ? now.date : old.date);
+    return jewelCard({cls: "bola", icon: thumb(now, "sm"), title: "Golpe", value: s + " · antes e agora", txt: true, sub: (mo ? dur(mo) : "Menos de 1 mês") + " · comparar", aria: s + ": comparar antes e agora", fn: () => compareSheet(a, s, old.id, now.id)});
+  }
   const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
   const m = vs.find(v => v.best) || vs[0];
   return m ? jewelCard({cls: "bola", icon: thumb(m, "sm"), title: m.best ? "Melhor golpe" : "Golpe", value: m.stroke, txt: true, sub: fmtDs(m.date) + (m.kind === "video" ? " · vídeo" : " · foto"), fn: () => mediaViewer(a, m)})
