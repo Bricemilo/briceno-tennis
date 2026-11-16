@@ -3,6 +3,39 @@
 Endereço: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
 
+## v5 · Evolução pelas 4 áreas do tenista (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
+
+### O que mudou
+- **Abas:** Hoje · Treinos · + · Evolução · Torneios. "Torneios" substitui "Carreira": é mais claro e sem o peso de "carreira" para uma criança. O currículo continua lá dentro.
+- **Aba Evolução:**
+  - Linha do tempo (grama). Os marcos registrados: início, bolas, prioridades alcançadas, primeiro vídeo de cada golpe, títulos e raquetes.
+  - 4 cartões fixos, um por área: Técnica (bola), Tática (azul-noite), Física (azul-celeste) e Mental (âmbar).
+  - Prioridades de melhoria em ordem.
+- **Página de cada área:**
+  - prioridades da área;
+  - Técnica: golpe preferido e os 7 golpes com vídeos;
+  - Tática: jogos recentes;
+  - Física: Corpo e referência de horas;
+  - Mental: diversão;
+  - anotações da área e a evidência.
+- **Prioridades com área** (opcional). O Foco atual mostra a área.
+- **"Áreas trabalhadas"** no registro de treino e de jogo (opcional; golpes entram como técnica).
+- **Guia:** "As 4 áreas do tenista" e "O que o esporte deve desenvolver na criança" (4 Cs, sem nota).
+
+### Evidência
+| Decisão | Base | Força |
+|---|---|---|
+| Técnica, tática, física e mental, trabalhadas juntas | ITF Coaching Review (2015, 2016); USPTA | Consenso |
+| Peso da área mental em todas as fases | MacNamara, Button e Collins, 2010 | Fraca a moderada (qualitativa) |
+| 4 Cs como orientação (sem nota) | Côté e colaboradores, 2010 | Consenso |
+| Linha do tempo comparando a atleta com ela mesma | Harwood, 2015; Harkin, 2016 | Moderada |
+
+### Dados
+- Chave mantida. Novos campos: `area` nas prioridades e `areas` nos registros. As prioridades antigas ficam sem área até o Camilo escolher.
+
+### Testes
+- Simulador (Chromium com Playwright), 393 e 320 px e texto grande: as 4 áreas, a linha do tempo, prioridades com área e o fluxo completo (vídeos, PDF, backup completo, sem internet), sem erros.
+
 ## v4 · Hoje fixo, Treinos, Corpo, Perfil e Currículo (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
 
 ### O que mudou
