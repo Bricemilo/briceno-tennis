@@ -54,6 +54,7 @@ const ICON = {
   target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>',
   moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z"/></svg>',
   pulse:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>',
+  bracket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h5.5v6H3M3 13.5h5.5v6H3M8.5 7.5H14v9H8.5M14 12h7"/></svg>',
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>',
   doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5Z"/></svg>',
@@ -260,7 +261,7 @@ function rpePick(value){
 const numOrNull = s => { const n = parseFloat(String(s).replace(",", ".")); return isFinite(n) && n >= 0 ? n : null; };
 
 /* ---------- navegação ---------- */
-const TABS = [["hoje", "Hoje", "home"], ["treinos", "Treinos", "train"], ["evolucao", "Evolução", "growth"], ["torneios", "Torneios", "flag"]];
+const TABS = [["hoje", "Hoje", "home"], ["treinos", "Treinos", "train"], ["evolucao", "Evolução", "growth"], ["torneios", "Torneios", "bracket"]];
 const PAGES = ["guia", "perfil", "curriculo", "area"];   // telas abertas sem aba na barra (pelo topo ou por um cartão)
 let view = {tab: "hoje", more: 30};
 function paintTabs(){
@@ -359,8 +360,7 @@ function hoje(a){
       sub: f ? [f.top.area ? areaOf(f.top.area)[1] : null, sinceTxt(f.since), "prioridade 1 de " + f.n].filter(Boolean).join(" · ").replace(/^./, c => c.toUpperCase()) : "Uma prioridade de melhoria, escrita como processo", fn: () => prioSheet(a)}),
     h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
     lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
-    h("div", {style: "height:var(--hm-row)"}), weekCard(a),
-    h("div", {style: "height:var(--hm-row)"}), corpoCard(a)
+    h("div", {style: "height:var(--hm-row)"}), weekCard(a)
   ];
 }
 function weekCard(a){
@@ -374,8 +374,8 @@ function weekCard(a){
 }
 function nextTourCard(a){
   const t = today(), x = a.tours.filter(v => !v.singles && !v.doubles && (v.end || v.start || "") >= t).sort((p, q) => (p.start || "").localeCompare(q.start || ""))[0];
-  return x ? jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: x.name, txt: true, sub: x.start ? fmtDs(x.start) + inDays(x.start) : (x.level || ""), aria: "Próximo torneio: " + x.name, fn: () => tourForm(a, x)})
-    : jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
+  return x ? jewelCard({cls: "grama", icon: "bracket", title: "Torneio", value: x.name, txt: true, sub: x.start ? fmtDs(x.start) + inDays(x.start) : (x.level || ""), aria: "Próximo torneio: " + x.name, fn: () => tourForm(a, x)})
+    : jewelCard({cls: "grama", icon: "bracket", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)});
 }
 function strokeCard(a){
   const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
@@ -402,12 +402,12 @@ function treinos(a){
         h("span", null, h("b", null, String(st.es.length)), st.es.length === 1 ? "sessão" : "sessões"),
         h("span", null, h("b", null, w0 > cur ? "—" : String(st.rest)), st.rest === 1 ? "dia de descanso" : "dias de descanso"),
         h("span", null, h("b", null, st.withLoad ? st.load.toLocaleString("pt-BR") : "—"), "de carga"))),
+    h("div", {class: "list", style: "margin-top:12px"}, corpoRow(a)),
     weekRef(a),
     sec(w0 === cur ? "Registros desta semana" : "Registros da semana",
       list.length ? h("div", {class: "list"}, list.map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train",
         t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, e.type, e)})))
         : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum registro nesta semana"), "Toque no + para registrar um treino, um jogo ou golpes."))),
-    sec("Corpo", h("div", {class: "list"}, corpoRow(a))),
     weeks.length ? sec("Semanas anteriores", h("div", {class: "list"}, weeks.map(w => { const s = weekStats(a, w);
       return row({t1: weekLabel(w), t2: [s.min ? hm(s.min) : null, s.nT ? s.nT + (s.nT > 1 ? " treinos" : " treino") : null, s.nJ ? s.nJ + (s.nJ > 1 ? " jogos" : " jogo") : null, s.withLoad ? "carga " + s.load.toLocaleString("pt-BR") : null].filter(Boolean).join(" · "),
         fn: () => { view.week = w; render(); window.scrollTo({top: 0, behavior: "smooth"}); }}); }))) : null
@@ -442,14 +442,6 @@ function corpoState(a){
   return {answered: hs.some(x => x.date >= w0), open: hs.filter(x => x.kind === "dor" && !x.resolved), last: hs.find(x => x.kind === "dor"), hs};
 }
 const dorTitle = d => [d.local, d.lado].filter(Boolean).join(" ") + (d.int != null ? " · " + d.int + "/10" : "");
-function corpoCard(a){
-  const c = corpoState(a), o = c.open[0];
-  if (o) return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: dorTitle(o) + (c.open.length > 1 ? " e mais " + (c.open.length - 1) : ""), txt: true,
-    sub: "Desde " + fmtDs(o.date) + " · " + (IMPACTO.find(x => x[0] === o.impact) || ["", "sem registro do treino"])[1].toLowerCase() + " · toque para atualizar", fn: () => corpoSheet(a)});
-  if (!c.answered) return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: "Teve dor nesta semana?", txt: true, sub: "Um toque para responder. Cuidar cedo evita parar depois.", fn: () => corpoCheck(a)});
-  return jewelCard({cls: "celeste", wide: true, icon: "heart", title: "Corpo", value: "Sem desconforto nesta semana", txt: true,
-    sub: c.last ? "Último registro: " + fmtDs(c.last.date) + ", " + c.last.local.toLowerCase() + (c.last.resolved ? ", resolvido" : "") : "Nenhum desconforto registrado", fn: () => corpoSheet(a)});
-}
 function corpoRow(a){
   const c = corpoState(a), o = c.open[0];
   return row({ic: "heart", t1: o ? dorTitle(o) : c.answered ? "Sem desconforto nesta semana" : "Teve dor nesta semana?",
@@ -516,7 +508,7 @@ function quickSheet(){
       h("div", {class: "qgrid"},
         jewelCard({cls: "saibro", icon: "train", title: "Treino", sub: "Tempo, esforço e anotações", fn: go(() => entryForm(a, "treino"))}),
         jewelCard({cls: "noite", icon: "match", title: "Jogo", sub: "Placar e anotações", fn: go(() => entryForm(a, "jogo"))}),
-        jewelCard({cls: "grama", icon: "trophy", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))}),
+        jewelCard({cls: "grama", icon: "bracket", title: "Torneio", sub: "Planejado ou resultado", fn: go(() => tourForm(a))}),
         jewelCard({cls: "bola", icon: "stroke", title: "Golpes", sub: "Um golpe e como está", fn: go(() => entryForm(a, "golpes"))})));
   });
 }
@@ -899,8 +891,8 @@ function carreira(a){
   return [
     h("h1", {class: "page-h"}, "Torneios"), h("p", {class: "page-sub"}, "Planejados, resultados e currículo."),
     h("div", {class: "hgrid"},
-      next.length ? jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: next[0].name, txt: true, sub: next[0].start ? fmtDs(next[0].start) + inDays(next[0].start) : (next[0].level || ""), aria: "Próximo torneio: " + next[0].name, fn: () => tourForm(a, next[0])})
-        : jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)}),
+      next.length ? jewelCard({cls: "grama", icon: "bracket", title: "Torneio", value: next[0].name, txt: true, sub: next[0].start ? fmtDs(next[0].start) + inDays(next[0].start) : (next[0].level || ""), aria: "Próximo torneio: " + next[0].name, fn: () => tourForm(a, next[0])})
+        : jewelCard({cls: "grama", icon: "bracket", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)}),
       jewelCard({cls: "ambar", icon: "doc", title: "Currículo", value: (CV_TPL.find(t => t[0] === ((a.cv || {}).tpl || "completo")) || CV_TPL[0])[1], txt: true, sub: "Editar e gerar PDF", fn: () => go("curriculo")})),
     next.length > 1 ? sec("Depois", h("div", {class: "list"}, next.slice(1).map(x => tourRow(a, x)))) : null,
     years.length ? years.map(y => sec(y === "Sem data" ? y : "Resultados de " + y, h("div", {class: "list"}, past.filter(x => ((x.start || "").slice(0, 4) || "Sem data") === y).map(x => tourRow(a, x)))))
@@ -910,7 +902,7 @@ function carreira(a){
 function inDays(d){ const n = Math.round((parseD(d) - parseD(today())) / 864e5); return n === 0 ? " · hoje" : n === 1 ? " · amanhã" : n > 1 ? " · em " + n + " dias" : ""; }
 function tourRow(a, x){
   const res = [x.singles ? "Simples: " + resLabel(a, x.singles) : null, x.doubles ? "Duplas: " + resLabel(a, x.doubles) : null].filter(Boolean);
-  return row({ic: x.singles === "champ" || x.doubles === "champ" ? "trophy" : "flag", t1: x.name,
+  return row({ic: x.singles === "champ" || x.doubles === "champ" ? "trophy" : "bracket", t1: x.name,
     t2: [x.level, x.cat, x.city, x.start ? fmtDs(x.start) : null].filter(Boolean).join(" · "),
     t3: res.length ? res.join(" · ") : ((x.end || x.start || "") < today() ? "Sem resultado registrado" : null), fn: () => tourForm(a, x)});
 }
