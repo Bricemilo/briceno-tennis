@@ -97,7 +97,7 @@ b,strong{font-weight:650}
 .hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--hm-row) var(--hm-col)}
 .hgrid + .hgrid,.hc + .hgrid,.hgrid + .hc{margin-top:var(--hm-row)}
 .hc{--g:#EE8644;--gd:#1F0B02;--gt:#8F421B;--gb:#A04B21;--gr:#DE7E43;--gh:#FFD9A8;
-  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;height:var(--hc-h,7.5rem);text-align:left;color:#fff;
+  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;height:var(--hc-h,8.1rem);text-align:left;color:#fff;
   padding:var(--hm-pt) var(--hm-pad) var(--hm-pb);border-radius:var(--hm-r);border:1px solid transparent;
   background:
     radial-gradient(50% 62% at 100% 52%,color-mix(in srgb,var(--g) 24%,transparent),transparent 72%) padding-box,
@@ -206,7 +206,7 @@ b,strong{font-weight:650}
     linear-gradient(165deg,color-mix(in srgb,var(--tint) 36%,rgba(255,255,255,.08)),rgba(255,255,255,.055) 32%,rgba(255,255,255,.035) 72%,color-mix(in srgb,var(--tint) 14%,rgba(255,255,255,.03))) border-box;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 18px 32px -26px rgba(0,0,0,.9)}
 .dj-glass.pad{padding:16px}
-.t-saibro{--tint:#E07A4C} .t-bola{--tint:#D8E25C} .t-noite{--tint:#5E92DA} .t-celeste{--tint:#42B6EA} .t-grama{--tint:#55B56E} .t-orange{--tint:#F29A4C} .t-clay{--tint:#E08C4E}
+.t-saibro{--tint:#E07A4C} .t-bola{--tint:#D8E25C} .t-noite{--tint:#5E92DA} .t-celeste{--tint:#42B6EA} .t-grama{--tint:#55B56E} .t-orange{--tint:#F29A4C} .t-ambar{--tint:#E8A25B} .t-clay{--tint:#E08C4E}
 .card{background:var(--dj-quiet);border:1px solid var(--dj-quiet-line);border-radius:var(--dj-r-panel)}
 .card.pad{padding:16px}
 .card + .card,.dj-glass + .dj-glass{margin-top:10px}
@@ -432,7 +432,7 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 "use strict";
 /* Briceno Tennis · Fase 1
    Diário (treinos, jogos, sessões de golpes), Evolução (bolas, golpes, prioridades, equipamento),
-   Carreira (torneios planejados e resultados) e Guia (recomendações e referências).
+   Evolução (4 áreas e linha do tempo), Torneios (planejados, resultados e currículo) e Guia (recomendações e referências).
    Dados só neste aparelho (localStorage), com Face ID opcional e backup em arquivo. */
 
 /* ---------- utilidades ---------- */
@@ -691,8 +691,8 @@ function rpePick(value){
 const numOrNull = s => { const n = parseFloat(String(s).replace(",", ".")); return isFinite(n) && n >= 0 ? n : null; };
 
 /* ---------- navegação ---------- */
-const TABS = [["hoje", "Hoje", "home"], ["treinos", "Treinos", "train"], ["golpes", "Golpes", "stroke"], ["carreira", "Carreira", "flag"]];
-const PAGES = ["guia", "perfil", "curriculo"];   // telas abertas sem aba na barra (pelo topo ou por um cartão)
+const TABS = [["hoje", "Hoje", "home"], ["treinos", "Treinos", "train"], ["evolucao", "Evolução", "growth"], ["torneios", "Torneios", "flag"]];
+const PAGES = ["guia", "perfil", "curriculo", "area"];   // telas abertas sem aba na barra (pelo topo ou por um cartão)
 let view = {tab: "hoje", more: 30};
 function paintTabs(){
   const nav = $("#tabs"), a = active();
@@ -712,8 +712,8 @@ function render(){
   try { sessionStorage.setItem(KEY + ".view", JSON.stringify({tab: view.tab})); } catch (e) {}
   paintTabs();
   if (!a) { put(app, welcome()); return; }
-  const scr = {hoje, treinos, golpes, carreira, perfil, curriculo, guia}[view.tab] || hoje;
-  const backTo = PAGES.includes(view.tab) ? (view.tab === "curriculo" ? TABS[3] : TABS.find(t => t[0] === view.prev) || TABS[0]) : null;
+  const scr = {hoje, treinos, evolucao, torneios: carreira, perfil, curriculo, guia, area}[view.tab] || hoje;
+  const backTo = PAGES.includes(view.tab) ? (view.tab === "curriculo" ? TABS[3] : view.tab === "area" ? TABS[2] : TABS.find(t => t[0] === view.prev) || TABS[0]) : null;
   put(app, topBar(a), backTo ? h("button", {type: "button", class: "backlink", onclick: () => go(backTo[0])}, svg("back"), backTo[1]) : null, scr(a));
 }
 function topBar(a){
@@ -787,7 +787,7 @@ function hoje(a){
   return [
     h("h1", {class: "page-h"}, a.name), sub ? h("p", {class: "page-sub"}, sub) : h("div", {style: "height:12px"}),
     jewelCard({cls: "ambar", wide: true, icon: "target", title: "Foco atual", value: f ? f.top.text : "Escolher o foco", txt: true,
-      sub: f ? sinceTxt(f.since).replace(/^d/, "D").replace(/^h/, "H") + " · prioridade 1 de " + f.n : "Uma prioridade de melhoria, escrita como processo", fn: () => prioSheet(a)}),
+      sub: f ? [f.top.area ? areaOf(f.top.area)[1] : null, sinceTxt(f.since), "prioridade 1 de " + f.n].filter(Boolean).join(" · ").replace(/^./, c => c.toUpperCase()) : "Uma prioridade de melhoria, escrita como processo", fn: () => prioSheet(a)}),
     h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, nextTourCard(a), strokeCard(a)),
     lastGame && lastGame.date >= daysAgo(1) ? h("div", {class: "dj-glass t-saibro note", style: "margin-top:12px"}, h("b", null, "Depois do jogo: "), "primeiro pergunte como " + gx(a, "ela", "ele") + " se sentiu. A parte técnica pode esperar.") : null,
     h("div", {style: "height:var(--hm-row)"}), weekCard(a),
@@ -812,7 +812,7 @@ function strokeCard(a){
   const vs = (a.media || []).slice().sort((p, q) => (q.date || "").localeCompare(p.date || "") || (q.at || 0) - (p.at || 0));
   const m = vs.find(v => v.best) || vs[0];
   return m ? jewelCard({cls: "bola", icon: thumb(m, "sm"), title: m.best ? "Melhor golpe" : "Golpe", value: m.stroke, txt: true, sub: fmtDs(m.date) + (m.kind === "video" ? " · vídeo" : " · foto"), fn: () => mediaViewer(a, m)})
-    : jewelCard({cls: "bola", icon: "stroke", title: "Golpe", value: "Grave 5 s", txt: true, sub: "Toque para começar", fn: () => go("golpes")});
+    : jewelCard({cls: "bola", icon: "stroke", title: "Golpe", value: "Grave 5 s", txt: true, sub: "Toque para começar", fn: () => { view.area = "tecnica"; go("area"); }});
 }
 
 /* ---------- Treinos: gráfico da semana e histórico ---------- */
@@ -962,6 +962,7 @@ function entryForm(a, type, e, preset){
     const good = ta(e.good, type === "jogo" ? "Ex.: manteve a calma nos pontos longos" : "Ex.: o forehand saiu mais solto e para a frente");
     const improve = ta(e.improve, "Ex.: preparar a raquete mais cedo no backhand");
     const fun = choice(FUN, e.fun || null, true);
+    const areasPick = multi(AREAS.map(x => x[1]), (e.areas || (type === "golpes" ? ["tecnica"] : [])).map(k => areaOf(k)[1]));
     const opp = inp({value: e.opp || "", placeholder: "Nome", autocomplete: "off"});
     const score = inp({value: e.score || "", placeholder: "Ex.: 6/4 3/6 10/7", autocomplete: "off"});
     const surf = choice(SURFACES.map(s => [s, s]), e.surface || null, true);
@@ -973,7 +974,7 @@ function entryForm(a, type, e, preset){
     const mbtn = type === "golpes" && isNew ? h("button", {type: "button", class: "btn ghost block", onclick: () => pickMedia(f => { mfile = f; mlab.textContent = (/^video/.test(f.type) ? "Vídeo" : "Foto") + " escolhido · trocar"; })}, svg("plus"), mlab) : null;
     const doSave = once(() => {
       const d = date.value || today();
-      const n = Object.assign(e, {type, date: d, min: numOrNull(min.value), rpe: rpe.get(), good: clean(good.value), improve: clean(improve.value), fun: fun.get(),
+      const n = Object.assign(e, {type, date: d, min: numOrNull(min.value), rpe: rpe.get(), good: clean(good.value), improve: clean(improve.value), fun: fun.get(), areas: areasPick.get().map(l => AREAS.find(x => x[1] === l)[0]),
         strokes: type === "golpes" ? (strokes.get() ? [strokes.get()] : []) : strokes.get()});
       if (type === "jogo") Object.assign(n, {opp: clean(opp.value), score: clean(score.value), surface: surf.get(), outcome: outcome.get(), tid: tsel.value || null});
       if (type === "golpes" && !n.strokes.length) { toast("Escolha o golpe"); return; }
@@ -991,6 +992,7 @@ function entryForm(a, type, e, preset){
       mbtn ? h("div", {class: "fld"}, h("span", {class: "lbl"}, "Foto ou vídeo de até 5 s", h("span", {class: "opt"}, " · opcional")), mbtn) : null,
       fld("O que está bom", good),
       fld("Para melhorar", improve, "Escolha uma coisa principal para a próxima vez."),
+      group("Áreas trabalhadas", areasPick, true),
       type !== "golpes" ? group("Golpes trabalhados", strokes, true) : null,
       fld("Duração em minutos", min, null, true),
       group("Esforço de 0 a 10", rpe, true),
@@ -1004,21 +1006,90 @@ function entryForm(a, type, e, preset){
 }
 
 /* ---------- Golpes ---------- */
-function golpes(a){
-  const p = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
-  const all = a.media || [], nv = all.filter(m => m.kind === "video").length, nf = all.length - nv;
+/* ---------- Evolução: as 4 áreas do tenista (ITF e USPTA) e a linha do tempo dos marcos ----------
+   Técnica, tática, física e mental. A atleta é comparada só com ela mesma; nada de nota, nível ou pontos. */
+const AREAS = [
+  ["tecnica", "Técnica", "bola", "stroke", "Os golpes: como bater na bola."],
+  ["tatica", "Tática", "noite", "match", "As decisões no jogo: onde, quando e como jogar cada bola."],
+  ["fisica", "Física", "celeste", "pulse", "O corpo: deslocamento, coordenação, resistência, cuidados e recuperação."],
+  ["mental", "Mental", "ambar", "heart", "Confiança, emoções, atenção e diversão."]
+];
+const areaOf = k => AREAS.find(x => x[0] === k) || null;
+const entryAreas = e => e.areas && e.areas.length ? e.areas : (e.type === "golpes" ? ["tecnica"] : []);
+const areaNotes = (a, k) => a.entries.filter(e => entryAreas(e).includes(k) && (e.good || e.improve)).sort((x, y) => (y.date || "").localeCompare(x.date || "") || (y.at || 0) - (x.at || 0));
+const areaPrios = (a, k) => openPrio(a).filter(p => p.area === k);
+const deDo = s => (s === "Devolução" ? "da " : "do ") + s.toLowerCase();
+function funStats(a){ const xs = a.entries.filter(e => e.fun).sort((x, y) => (y.date || "").localeCompare(x.date || "")).slice(0, 10); const c = {sim: 0, mais: 0, nao: 0}; xs.forEach(e => c[e.fun]++); return {n: xs.length, c}; }
+function marcos(a){
+  const L = [];
+  if (a.start) L.push({d: a.start, t: "Começou no tênis", ic: "ball"});
+  BALLS.forEach(b => { if (a.balls[b.k]) L.push({d: a.balls[b.k], t: "Bola " + b.n.toLowerCase(), ic: h("span", {class: "ball b-" + b.k}), fn: () => ballsSheet(a)}); });
+  a.prio.filter(p => p.done).forEach(p => L.push({d: p.done, t: "Prioridade alcançada: " + p.text, s: p.area ? areaOf(p.area)[1] : null, ic: "check", fn: () => prioSheet(a)}));
+  STROKES.forEach(s => { const m = strokeMedia(a, s).slice().reverse()[0]; if (m) L.push({d: m.date, t: "Primeir" + (m.kind === "video" ? "o vídeo " : "a foto ") + deDo(s), s: "Técnica · compare com hoje", ic: thumb(m, "sm"), fn: () => strokeSheet(a, s)}); });
+  a.tours.filter(t => ["champ", "vice", "semi"].includes(bestRes(t))).forEach(t => L.push({d: t.start || t.end, t: resLabel(a, bestRes(t)) + " · " + t.name, s: [t.level, t.cat].filter(Boolean).join(" · "), ic: "trophy", fn: () => tourForm(a, t)}));
+  a.rackets.forEach(r => { if (r.from) L.push({d: r.from, t: "Raquete nova: " + ([r.brand, r.model].filter(Boolean).join(" ") || "raquete") + (r.size ? " " + r.size + "\"" : ""), ic: "racket", fn: () => racketsSheet(a)}); });
+  return L.filter(x => x.d).sort((x, y) => y.d.localeCompare(x.d));
+}
+function marcosSheet(a){
+  sheet("Linha do tempo", (el, close) => {
+    const L = marcos(a), years = [...new Set(L.map(x => x.d.slice(0, 4)))];
+    el.append(h("h2", null, "Linha do tempo"), h("p", {class: "sh-sub"}, "Os marcos " + gx(a, "dela", "dele") + ", do mais recente ao mais antigo. Tudo vem do que foi registrado."),
+      L.length ? years.map(y => [h("h2", {class: "sec-t"}, y), h("div", {class: "list"}, L.filter(x => x.d.startsWith(y)).map(x => row({ic: x.ic, t1: x.t, t2: [fmtD(x.d), x.s].filter(Boolean).join(" · "), fn: x.fn ? () => { close(); setTimeout(x.fn, 150); } : null})))])
+        : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum marco ainda"), "Registre o início no tênis, as bolas, os vídeos dos golpes, as prioridades alcançadas e os resultados.")));
+  });
+}
+function areaSummary(a, k){
+  const pr = areaPrios(a, k), ns = areaNotes(a, k);
+  if (k === "tecnica") { const ms = a.media || [], v = ms.filter(m => m.kind === "video").length; return [pr[0] ? pr[0].text : "7 golpes", [v ? v + (v > 1 ? " vídeos" : " vídeo") : null, ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") : null].filter(Boolean).join(" · ") || "Vídeos, fotos e anotações"]; }
+  if (k === "tatica") { const j = a.entries.filter(e => e.type === "jogo").length; return [pr[0] ? pr[0].text : "Sem prioridade", [j ? j + (j > 1 ? " jogos" : " jogo") : null, ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") : null].filter(Boolean).join(" · ") || "Decisões nos jogos"]; }
+  if (k === "fisica") { const c = corpoState(a); return [pr[0] ? pr[0].text : "Sem prioridade", c.open[0] ? c.open[0].local + " em acompanhamento" : c.answered ? "Sem desconforto nesta semana" : "Corpo, carga e cuidados"]; }
+  const f = funStats(a); return [pr[0] ? pr[0].text : "Sem prioridade", f.n ? "Se divertiu em " + f.c.sim + " de " + f.n + " registros" : "Confiança e diversão"];
+}
+function evolucao(a){
+  const L = marcos(a);
   return [
-    h("h1", {class: "page-h"}, "Golpes"),
-    h("p", {class: "page-sub"}, all.length ? [nv ? nv + (nv > 1 ? " vídeos" : " vídeo") : null, nf ? nf + (nf > 1 ? " fotos" : " foto") : null].filter(Boolean).join(" e ") + ". Toque num golpe para ver a evolução." : "Anotações, fotos e vídeos curtos de cada golpe."),
-    jewelCard({cls: "bola", wide: true, icon: "heart", title: "Golpe preferido", value: p && p.likes ? p.likes : (p ? "—" : "Perguntar " + gx(a, "a ela", "a ele")), txt: true,
-      sub: p ? [p.dislikes ? "Menos gosta: " + p.dislikes : null, "na voz " + gx(a, "dela", "dele") + ", em " + fmtDs(p.date)].filter(Boolean).join(" · ") : "O que mais gosta e o que menos gosta, com a data.", fn: () => prefSheet(a)}),
-    sec("Prioridades de melhoria", prioList(a)),
-    sec("Os 7 golpes", h("div", {class: "list"}, STROKES.map(s => {
-      const ms = strokeMedia(a, s), ns = strokeNotes(a, s), v = ms.filter(m => m.kind === "video").length;
-      const parts = [v ? v + (v > 1 ? " vídeos" : " vídeo") : null, ms.length - v ? (ms.length - v) + (ms.length - v > 1 ? " fotos" : " foto") : null, ns.length ? ns.length + (ns.length > 1 ? " anotações" : " anotação") : null].filter(Boolean);
-      const last = [ms[0] && ms[0].date, ns[0] && ns[0].date].filter(Boolean).sort().pop();
-      return row({ic: ms[0] ? thumb(ms[0], "sm") : "stroke", t1: s, t2: parts.length ? parts.join(" · ") : "Nada registrado ainda", t3: last ? "Último registro em " + fmtDs(last) + (ms.some(m => m.best) ? " · tem melhor golpe" : "") : null, fn: () => strokeSheet(a, s)});
-    })))
+    h("h1", {class: "page-h"}, "Evolução"), h("p", {class: "page-sub"}, "As 4 áreas do tenista e os marcos " + gx(a, "dela", "dele") + "."),
+    jewelCard({cls: "grama", wide: true, icon: "growth", title: "Linha do tempo", value: L[0] ? L[0].t : "Nenhum marco ainda", txt: true,
+      sub: L[0] ? fmtDs(L[0].d) + " · " + L.length + (L.length > 1 ? " marcos" : " marco") : "Bolas, títulos e prioridades alcançadas aparecem aqui", fn: () => marcosSheet(a)}),
+    h("div", {class: "hgrid", style: "margin-top:var(--hm-row)"}, AREAS.map(([k, l, cls, ic]) => { const [v, s] = areaSummary(a, k);
+      return jewelCard({cls, icon: ic, title: l, value: v, txt: true, sub: s, fn: () => { view.area = k; go("area"); }}); })),
+    sec("Prioridades de melhoria", prioList(a))
+  ];
+}
+function area(a){
+  const k = view.area || "tecnica", ar = areaOf(k) || AREAS[0], pr = areaPrios(a, k), ns = areaNotes(a, k), op = openPrio(a);
+  const p = a.prefs.slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""))[0];
+  const EVA = {
+    tecnica: ["Vídeo do próprio movimento parece ajudar mais do que só explicar com palavras. Compare a atleta só com ela mesma.", "moderada", "Mödinger e colaboradores, 2021"],
+    tatica: ["A ITF recomenda trabalhar a tática junto com a técnica desde cedo: escolher a bola certa em cada situação. As anotações dos jogos mostram o que repetir.", "consenso", "ITF Coaching Review, 2015 e 2016"],
+    fisica: ["Pergunte toda semana sobre dores e respeite os limites de horas e descanso. Vários esportes antes de especializar ajudam o corpo.", "moderada", "Clarsen, 2013; Jayanthi, 2015; Academia Americana de Pediatria, 2024"],
+    mental: ["Confiança, metas, autoavaliação e lidar com pressão pesam em todas as fases. Ambientes que valorizam esforço e melhora pessoal trazem mais diversão.", "moderada", "MacNamara e colaboradores, 2010; Harwood e colaboradores, 2015"]
+  }[k];
+  const f = funStats(a), adj = {tecnica: "técnicas", tatica: "táticas", fisica: "físicas", mental: "mentais"}[k];
+  return [
+    h("h1", {class: "page-h"}, ar[1]), h("p", {class: "page-sub"}, ar[4]),
+    sec("Prioridades " + adj, h("div", {class: "list"},
+      pr.map(x => row({ic: h("span", {style: "font-weight:700"}, String(op.indexOf(x) + 1)), t1: x.text, t2: op[0] === x ? "Foco atual · " + sinceTxt((a.focus && a.focus.since) || x.at || today()) : "Prioridade " + (op.indexOf(x) + 1) + " de " + op.length, fn: () => prioMenu(a, x, () => {})})),
+      row({ic: "plus", t1: "Adicionar prioridade " + (k === "tatica" ? "tática" : k === "fisica" ? "física" : k === "mental" ? "mental" : "técnica"), t2: "Escreva como processo: o que fazer", fn: () => prioSheet(a, k)}))),
+    k === "tecnica" ? [
+      jewelCard({cls: "bola", wide: true, icon: "heart", title: "Golpe preferido", value: p && p.likes ? p.likes : (p ? "—" : "Perguntar " + gx(a, "a ela", "a ele")), txt: true,
+        sub: p ? [p.dislikes ? "Menos gosta: " + p.dislikes : null, "na voz " + gx(a, "dela", "dele") + ", em " + fmtDs(p.date)].filter(Boolean).join(" · ") : "O que mais gosta e o que menos gosta, com a data", fn: () => prefSheet(a)}),
+      sec("Os 7 golpes", h("div", {class: "list"}, STROKES.map(s => {
+        const ms = strokeMedia(a, s), sn = strokeNotes(a, s), v = ms.filter(m => m.kind === "video").length;
+        const parts = [v ? v + (v > 1 ? " vídeos" : " vídeo") : null, ms.length - v ? (ms.length - v) + (ms.length - v > 1 ? " fotos" : " foto") : null, sn.length ? sn.length + (sn.length > 1 ? " anotações" : " anotação") : null].filter(Boolean);
+        const last = [ms[0] && ms[0].date, sn[0] && sn[0].date].filter(Boolean).sort().pop();
+        return row({ic: ms[0] ? thumb(ms[0], "sm") : "stroke", t1: s, t2: parts.length ? parts.join(" · ") : "Nada registrado ainda", t3: last ? "Último registro em " + fmtDs(last) + (ms.some(m => m.best) ? " · tem melhor golpe" : "") : null, fn: () => strokeSheet(a, s)});
+      })))] : null,
+    k === "tatica" ? sec("Jogos recentes", (() => { const js = a.entries.filter(e => e.type === "jogo").sort((x, y) => (y.date || "").localeCompare(x.date || "")).slice(0, 8);
+      return h("div", {class: "list"}, js.length ? js.map(e => row({ic: "match", t1: entryTitle(a, e), t2: entrySub(a, e), t3: e.good ? "Bom: " + e.good : (e.improve ? "Melhorar: " + e.improve : null), fn: () => entryForm(a, "jogo", e)}))
+        : h("div", {class: "empty"}, h("b", null, "Nenhum jogo ainda"), "Ao registrar um jogo, anote uma decisão que deu certo e uma para treinar.")); })()) : null,
+    k === "fisica" ? [sec("Corpo", h("div", {class: "list"}, corpoRow(a))), weekRef(a)] : null,
+    k === "mental" ? sec("Diversão", h("div", {class: "dj-glass t-ambar g-card"},
+      f.n ? h("p", null, f.n === 1 ? "No último registro com resposta: " : "Nos últimos " + f.n + " registros com resposta: ", h("b", null, f.c.sim + " sim"), ", " + f.c.mais + " mais ou menos, " + f.c.nao + " não.") : h("p", null, "Ainda sem respostas. No treino e no jogo, pergunte: \"Se divertiu?\""),
+      h("p", {class: "small muted", style: "margin:0"}, "Não é nota. Serve para conversar: o que deixou o treino mais gostoso?"))) : null,
+    sec("Anotações " + adj, ns.length ? h("div", {class: "list"}, ns.slice(0, 20).map(e => row({ic: e.type === "jogo" ? "match" : e.type === "golpes" ? "stroke" : "train", t1: entryTitle(a, e), t2: fmtD(e.date), t3: [e.good ? "Bom: " + e.good : null, e.improve ? "Melhorar: " + e.improve : null].filter(Boolean).join(" · ") || null, fn: () => entryForm(a, e.type, e)})))
+      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhuma anotação ainda"), "No treino ou no jogo, marque \"" + ar[1] + "\" em Áreas trabalhadas."))),
+    h("div", {class: "dj-glass g-card t-" + (k === "tecnica" ? "bola" : k === "tatica" ? "noite" : k === "fisica" ? "celeste" : "ambar"), style: "margin-top:16px"}, h("p", null, EVA[0]), h("div", {class: "g-meta"}, ev(EVA[1])), h("div", {class: "g-src"}, "Fonte: " + EVA[2]))
   ];
 }
 
@@ -1116,14 +1187,15 @@ function prefSheet(a){
 function prioList(a){
   const op = openPrio(a);
   return h("div", {class: "list"}, op.length
-    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {style: "font-weight:700;font-size:var(--t-body)"}, String(i + 1)), t1: p.text, t2: i === 0 ? "Foco atual" : null, fn: () => prioSheet(a)})),
+    ? [op.slice(0, 5).map((p, i) => row({ic: h("span", {style: "font-weight:700;font-size:var(--t-body)"}, String(i + 1)), t1: p.text, t2: [p.area ? areaOf(p.area)[1] : null, i === 0 ? "Foco atual" : null].filter(Boolean).join(" · ") || null, fn: () => prioSheet(a)})),
        op.length > 5 ? row({t1: "Mais " + (op.length - 5) + (op.length - 5 > 1 ? " prioridades" : " prioridade"), fn: () => prioSheet(a)}) : null]
     : row({ic: "list", t1: "Adicionar prioridades", t2: "Em ordem. A primeira vira o foco atual.", fn: () => prioSheet(a)}));
 }
-function prioSheet(a){
+function prioSheet(a, presetArea){
   sheet("Prioridades", (el, close) => {
     const box = h("div"), txt = inp({placeholder: "Ex.: girar o ombro no forehand", autocomplete: "off", enterkeyhint: "done"});
-    const add = () => { const t = clean(txt.value); if (!t) return; a.prio.push({id: uid(), text: t, at: today(), done: null}); save(); txt.value = ""; paint(); render(); };
+    const areaPick = choice(AREAS.map(x => [x[0], x[1]]), presetArea || null, true);
+    const add = () => { const t = clean(txt.value); if (!t) return; a.prio.push({id: uid(), text: t, area: areaPick.get(), at: today(), done: null}); save(); txt.value = ""; paint(); render(); };
     txt.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); add(); } });
     const done = () => a.prio.filter(p => p.done).sort((x, y) => (y.done || "").localeCompare(x.done || ""));
     function move(p, d){ const op = openPrio(a), i = op.indexOf(p), j = i + d; if (j < 0 || j >= op.length) return;
@@ -1132,7 +1204,7 @@ function prioSheet(a){
       const op = openPrio(a), dn = done();
       put(box,
         op.length ? h("div", {class: "card pad", style: "padding-top:4px;padding-bottom:4px"}, op.map((p, i) => h("div", {class: "ord"},
-          h("span", {class: "n"}, String(i + 1)), h("span", {class: "tx"}, p.text),
+          h("span", {class: "n"}, String(i + 1)), h("span", {class: "tx"}, p.text, p.area ? h("span", {class: "muted small", style: "display:block"}, areaOf(p.area)[1]) : null),
           h("button", {type: "button", class: "mv", "aria-label": "Subir " + p.text, disabled: i === 0 ? true : null, onclick: () => move(p, -1)}, svg("up")),
           h("button", {type: "button", class: "mv", "aria-label": "Mais opções para " + p.text, onclick: () => prioMenu(a, p, paint)}, svg("chev")))))
           : h("p", {class: "muted small"}, "Nenhuma prioridade ainda."),
@@ -1141,17 +1213,18 @@ function prioSheet(a){
     paint();
     el.append(h("h2", null, "Prioridades de melhoria"),
       h("p", {class: "sh-sub"}, "Em ordem. A primeira vira o foco atual. Escreva como processo (\"o que fazer\"), não como resultado (\"ganhar o torneio\"): metas de processo têm o maior efeito no desempenho."),
+      group("Área", areaPick, true),
       h("div", {class: "fld"}, h("div", {style: "display:flex;gap:8px"}, txt, h("button", {type: "button", class: "btn primary", "aria-label": "Adicionar prioridade", onclick: once(add)}, svg("plus")))),
       box);
   });
 }
 function prioMenu(a, p, repaint){
   sheet("Prioridade", (el, close) => {
-    const slot = h("div"), txt = inp({value: p.text});
+    const slot = h("div"), txt = inp({value: p.text}), ap = choice(AREAS.map(x => [x[0], x[1]]), p.area || null, true);
     const after = () => { save(); close(); repaint(); render(); };
-    el.append(h("h2", null, "Prioridade"), fld("Texto", txt),
+    el.append(h("h2", null, "Prioridade"), fld("Texto", txt), group("Área", ap, true),
       h("div", {class: "stack"},
-        h("button", {type: "button", class: "btn primary block", onclick: once(() => { const t = clean(txt.value); if (t) p.text = t; after(); })}, "Salvar"),
+        h("button", {type: "button", class: "btn primary block", onclick: once(() => { const t = clean(txt.value); if (t) p.text = t; p.area = ap.get(); after(); })}, "Salvar"),
         !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const op = openPrio(a); a.prio = [p, ...a.prio.filter(x => x !== p)]; void op; after(); toast("Agora é o foco atual"); })}, "Tornar o foco atual") : null,
         !p.done ? h("button", {type: "button", class: "btn ghost block", onclick: once(() => { const before = snap(); p.done = today(); after(); toast("Marcada como alcançada", () => undoTo(before)); })}, "Marcar como alcançada")
           : h("button", {type: "button", class: "btn ghost block", onclick: once(() => { p.done = null; after(); })}, "Voltar para a lista"),
@@ -1255,7 +1328,7 @@ function carreira(a){
   const past = all.filter(x => !next.includes(x));
   const years = [...new Set(past.map(x => (x.start || "").slice(0, 4) || "Sem data"))];
   return [
-    h("h1", {class: "page-h"}, "Carreira"), h("p", {class: "page-sub"}, "Torneios, resultados e currículo."),
+    h("h1", {class: "page-h"}, "Torneios"), h("p", {class: "page-sub"}, "Planejados, resultados e currículo."),
     h("div", {class: "hgrid"},
       next.length ? jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: next[0].name, txt: true, sub: next[0].start ? fmtDs(next[0].start) + inDays(next[0].start) : (next[0].level || ""), aria: "Próximo torneio: " + next[0].name, fn: () => tourForm(a, next[0])})
         : jewelCard({cls: "grama", icon: "flag", title: "Torneio", value: "Nenhum planejado", txt: true, sub: "Toque para planejar", fn: () => tourForm(a)}),
@@ -1299,7 +1372,7 @@ function tourForm(a, x){
         Object.assign(x, {name: clean(name.value), level: level.get(), cat: clean(cat.value), city: clean(city.value), start: start.value || null, end: end.value || null, surface: surf.get(),
           singles: sing.get(), doubles: dbl.get(), partner: clean(partner.value), scores: clean(scores.value), desc: clean(desc.value)});
         if (isNew) { x.id = uid(); a.tours.push(x); }
-        if (!save()) return; close(); if (isNew) view.tab = "carreira"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
+        if (!save()) return; close(); if (isNew) view.tab = "torneios"; render(); toast(isNew ? "Torneio registrado" : "Alterações salvas", () => undoTo(before)); })}, "Salvar"),
         !isNew ? h("button", {type: "button", class: "btn plain block danger", onclick: () => ask(slot, "Apagar este torneio?" + (a.entries.some(e => e.tid === x.id) ? " Os jogos ligados a ele continuam no Diário." : ""), "Apagar", () => {
           const before = snap(); a.tours = a.tours.filter(t => t !== x); a.entries.forEach(e => { if (e.tid === x.id) e.tid = null; }); save(); close(); render(); toast("Torneio apagado", () => undoTo(before)); })}, "Apagar torneio") : null),
       slot);
@@ -1544,7 +1617,7 @@ function curriculo(a){
     tours.length ? h("div", {class: "card", style: "padding:2px 16px"}, tours.map(x => { const on = cvPicked(a, x);
       return h("button", {type: "button", class: "chk" + (on ? " on" : ""), "aria-pressed": String(on), onclick: () => { (c.pick ||= {})[x.id] = !on; saveCv(); render(); }},
         h("span", {class: "bx"}, on ? svg("check") : null), h("span", null, h("b", null, x.name), h("span", {class: "muted small", style: "display:block"}, [resLabel(a, bestRes(x)), x.level, x.start ? fmtMY(x.start) : null].filter(Boolean).join(" · ")))); }))
-      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Registre torneios com resultado em Carreira.")),
+      : h("div", {class: "list"}, h("div", {class: "empty"}, h("b", null, "Nenhum resultado ainda"), "Registre torneios com resultado em Torneios.")),
     h("h2", {class: "sec-t"}, en ? "Contato do responsável" : "Contato do responsável"),
     h("p", {class: "small muted", style: "margin-top:-4px"}, "Opcional. Aparece só no PDF que você gerar e compartilhar."),
     fld("Nome", cin("name", "Ex.: Camilo Briceño")), h("div", {class: "two"}, fld("Telefone", cin("phone", "Ex.: +55 41 9…", "tel")), fld("E-mail", cin("email", "nome@email.com", "email"))),
@@ -1711,6 +1784,13 @@ function guia(a){
         [h("p", null, "Metas de processo (\"girar o ombro no forehand\") tiveram o maior efeito no desempenho; metas de resultado (\"ganhar o estadual\"), quase nenhum. Por isso as prioridades do app são escritas como processo, e a primeira vira o foco atual."),
          h("p", {class: "small muted"}, "Efeitos: processo d = 1,36; desempenho d = 0,44; resultado d = 0,09. Muitos estudos foram em laboratório, com amostras pequenas, e não são específicos de crianças.")],
         [ev("moderada")], "Estudos em atletas, a maioria adultos", "Williamson e colaboradores, International Review of Sport and Exercise Psychology (27 estudos)"),
+      gcard("As 4 áreas do tenista",
+        [h("p", null, "A ITF e a USPTA organizam o desenvolvimento em técnica, tática, física e mental, trabalhadas juntas e com metas de curto, médio e longo prazo. Por isso a aba Evolução e as prioridades usam essas 4 áreas."),
+         h("p", {class: "small muted"}, "Na parte mental, compromisso, metas, autoavaliação realista e lidar com pressão pesaram em todas as fases do caminho até a elite (estudos com entrevistas).")],
+        [ev("consenso"), ev("fraca", "Mental: fraca a moderada")], null, "ITF Coaching Review (2015, 2016); USPTA; MacNamara e colaboradores, 2010"),
+      gcard("O que o esporte deve desenvolver na criança",
+        h("p", null, "Os 4 Cs: competência (saber jogar), confiança, conexão (boas relações com treinador, família e colegas) e caráter. O app não dá nota a nenhum deles: servem para orientar a família."),
+        [ev("consenso")], "Esporte juvenil", "Côté e colaboradores, 2010"),
       gcard("Foco atual, não da semana",
         h("p", null, "Corrigir um golpe leva semanas ou meses. Metas próximas e claras, revistas com frequência, geraram mais confiança e interesse em crianças do que metas distantes. Por isso o foco mostra há quanto tempo está em trabalho e só muda quando vocês decidem."),
         [ev("moderada")], "Crianças", "Bandura e Schunk, 1981"),
@@ -1733,7 +1813,7 @@ function guia(a){
     (gcard.tint = "t-grama", null),
     sec("Resultados e idade",
       gcard("Resultados no infantil",
-        h("p", null, "Vencer é legítimo, e os resultados são registrados na Carreira. Mas o resultado até os 14 anos indica o futuro só um pouco (correlação de cerca de 0,21 nos meninos e 0,30 nas meninas com o ranking profissional). Por isso o dia a dia do app foca no processo."),
+        h("p", null, "Vencer é legítimo, e os resultados ficam registrados em Torneios. Mas o resultado até os 14 anos indica o futuro só um pouco (correlação de cerca de 0,21 nos meninos e 0,30 nas meninas com o ranking profissional). Por isso o dia a dia do app foca no processo."),
         [ev("moderada")], null, "Brouwers e colaboradores, 2012; Grove e Jetter, 2014"),
       gcard("Mês de nascimento",
         h("p", null, "No tênis juvenil, quem nasce no começo do ano aparece mais entre os melhores, em vários países e categorias. Ajuda a não julgar cedo demais quem nasceu no fim do ano."),
@@ -1745,12 +1825,12 @@ function guia(a){
 }
 // cada material tem um motivo no tênis
 const CORES = [
-  ["ambar", "Âmbar", "A cor das prioridades, a mesma do Briceno Life. É a cor do foco atual."],
-  ["grama", "Grama", "A superfície mais tradicional, com o roxo da história. É a cor da carreira e dos torneios."],
-  ["bola", "Bola amarela", "Olho na bola: a cor dos golpes e dos vídeos."],
+  ["ambar", "Âmbar", "A cor das prioridades, a mesma do Briceno Life. É a cor do foco atual e da área mental."],
+  ["grama", "Grama", "A superfície mais tradicional, com o roxo da história. É a cor dos torneios e da linha do tempo."],
+  ["bola", "Bola amarela", "Olho na bola: a cor dos golpes, dos vídeos e da área técnica."],
   ["saibro", "Saibro", "A quadra onde se constrói o jogo, com paciência. A mais comum nos clubes do Brasil. É a cor do treino e do tempo de tênis."],
-  ["celeste", "Azul-celeste", "A quadra dura do verão, onde a temporada recomeça. É a cor do descanso e da recuperação."],
-  ["noite", "Azul-noite", "As quadras duras nos jogos à noite: competição e intensidade. É a cor dos jogos e da carga."],
+  ["celeste", "Azul-celeste", "A quadra dura do verão, onde a temporada recomeça. É a cor do corpo, da recuperação e da área física."],
+  ["noite", "Azul-noite", "As quadras duras nos jogos à noite: competição e intensidade. É a cor dos jogos, da carga e da área tática."],
   ["b-red", "Bolas da ITF", "Vermelha, laranja, verde e amarela: as etapas de quem está aprendendo."]
 ];
 const REFS = [
@@ -1770,6 +1850,10 @@ const REFS = [
   ["Mödinger, Woll e Wagner, 2021 · German Journal of Exercise and Sport Research", "https://link.springer.com/10.1007/s12662-021-00782-y", "Vídeo do movimento em educação física, revisão sistemática · moderada"],
   ["Zhou, Shao e Wang, 2021 · IJERPH", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8296044/", "Retorno ao aluno em educação física, revisão sistemática · moderada"],
   ["Auto-observação positiva no esporte · Frontiers, 2011", "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2011.00155/full", "Rever os próprios melhores movimentos · fraca a moderada"],
+  ["ITF Coaching Review, 2016 · áreas do desenvolvimento", "https://itfcoachingreview.com/index.php/journal/article/download/177/492/589", "Física, mental, técnica e tática · consenso"],
+  ["ITF Coaching Review, 2015 · integração das áreas", "https://itfcoachingreview.com/index.php/journal/article/download/115/352/441", "Trabalho integrado das 4 áreas · consenso"],
+  ["MacNamara, Button e Collins, 2010", "https://clok.uclan.ac.uk/7391", "Características psicológicas no caminho até a elite · fraca a moderada"],
+  ["Côté e colaboradores, 2010 · os 4 Cs", "https://queensu.scholaris.ca/items/515784cb-ef94-4a8f-90ef-f694f0b9cfaa", "Competência, confiança, conexão e caráter · consenso"],
   ["Clarsen e colaboradores, 2013 · questionário OSTRC", "https://www.qxmd.com/r/23038786", "Excesso de uso: pergunta semanal · moderada a forte"],
   ["Pluim e colaboradores, 2016 · juniores de tênis", "https://www.pubmed.gov/25944058/", "Lesões e doenças em juniores de elite · moderada"],
   ["Bandura e Schunk, 1981", "https://uploads-ssl.webflow.com/59faaf5b01b9500001e95457/5bc552d85141987915dab842_Bandura%20&%20Schunk,%201981.pdf", "Metas próximas em crianças · moderada"],
@@ -1997,7 +2081,7 @@ function lockSheet(){
   document.documentElement.classList.toggle("big-text", px >= 21);
 })();
 load();
-try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v) v.tab = {diario: "hoje", torneios: "carreira", evolucao: "hoje"}[v.tab] || v.tab; if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
+try { const v = JSON.parse(sessionStorage.getItem(KEY + ".view")); if (v) v.tab = {diario: "hoje", golpes: "evolucao", carreira: "torneios"}[v.tab] || v.tab; if (v && TABS.some(t => t[0] === v.tab)) view.tab = v.tab; } catch (e) {}
 if (lockCfg()) lockShow(); else { appShown = true; render(); requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(bootDone, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 650))); }
 
 </script>
