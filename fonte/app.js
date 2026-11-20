@@ -299,9 +299,11 @@ function welcome(){
     h("div", {class: "mk", html: mark}),
     h("h1", null, "Briceno ", h("span", null, "Tennis")),
     h("p", null, "A evolução da sua atleta, organizada e baseada na ciência: treinos, jogos, golpes, bolas, equipamento e torneios."),
-    h("p", {class: "small"}, "Os dados ficam só neste aparelho."),
-    h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => athleteForm(null))}, "Cadastrar atleta"),
-      h("button", {type: "button", class: "btn plain block", onclick: once(() => restoreSheet())}, "Restaurar um backup")));
+    h("p", {class: "small"}, "Os dados ficam só neste aparelho, com backup em arquivo."),
+    h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: once(() => athleteForm(null))}, "Cadastrar atleta")),
+    // quem já usa o app (troca de celular ou de endereço) encontra o caminho logo na entrada, como no Briceno Life
+    h("div", {class: "card pad wl-back"}, h("div", {class: "cta"}, h("span", {class: "ic"}, svg("save")), h("div", null, h("b", null, "Já usa o Briceno Tennis?"), "Traga os seus dados com o arquivo de backup que você salvou.")),
+      h("button", {type: "button", class: "btn ghost block", style: "margin-top:12px", onclick: once(() => restoreSheet())}, "Restaurar meus dados")));
 }
 function sec(t, ...kids){ return [h("h2", {class: "sec-t"}, t), ...kids]; }
 function row(o){
@@ -1485,9 +1487,10 @@ async function shareOrDownload(blob, name, title){
   const url = URL.createObjectURL(blob), link = h("a", {href: url, download: name}); document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); return true;
 }
 async function doBackup(){
-  const ok = await shareOrDownload(new Blob([backupText()], {type: "application/json"}), "briceno-tennis-backup-" + today() + ".json", "Backup do Briceno Tennis");
+  const name = "briceno-tennis-backup-" + today() + ".json";
+  const ok = await shareOrDownload(new Blob([backupText()], {type: "application/json"}), name, "Backup do Briceno Tennis");
   if (ok) { S.meta.lastBackup = today(); save(); }
-  return ok;
+  return ok ? name : null;
 }
 /* Backup completo (.btbackup): "BTNS1\n" + tamanho do índice (12 dígitos) + "\n" + índice JSON + os arquivos, um depois do outro.
    Montado e lido por partes (Blob.slice): nenhum vídeo vira texto gigante na memória do iPhone. */
@@ -1499,9 +1502,10 @@ async function doFullBackup(onTick){
     index.push(e); }
   const head = new TextEncoder().encode(JSON.stringify({app: "briceno-tennis", version: VERSION, exportedAt: new Date().toISOString(), data: S, media: index}));
   const blob = new Blob(["BTNS1\n", String(head.length).padStart(12, "0"), "\n", head, ...parts], {type: "application/octet-stream"});
-  const ok = await shareOrDownload(blob, "briceno-tennis-completo-" + today() + ".btbackup", "Backup completo do Briceno Tennis");
+  const name = "briceno-tennis-completo-" + today() + ".btbackup";
+  const ok = await shareOrDownload(blob, name, "Backup completo do Briceno Tennis");
   if (ok) { S.meta.lastBackup = today(); S.meta.lastFull = today(); save(); }
-  return ok;
+  return ok ? {name, n: index.length} : null;
 }
 async function readBackup(f){
   const magic = await f.slice(0, 6).text();
@@ -1517,48 +1521,74 @@ function spareMedia(){
     for (const m of (a.media || [])) if (!keep.has(m)) drop.push([a, m]); }
   return drop;
 }
-function backupSheet(){
-  sheet("Backup", (el, close) => {
-    const lb = S.meta.lastBackup, all = S.athletes.flatMap(x => x.media || []), msize = all.reduce((t, m) => t + (m.size || 0), 0);
-    const dsize = new Blob([JSON.stringify(S)]).size, used = h("span"), prog = h("p", {class: "small muted", role: "status"}), slot = h("div");
-    if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(e => { if (e && e.usage) used.textContent = " No total, o app ocupa " + fmtMB(e.usage) + " neste iPhone."; }).catch(() => {});
-    const spare = spareMedia(), free = spare.reduce((t, [, m]) => t + (m.size || 0), 0);
-    el.append(h("h2", null, "Backup e espaço"), h("p", {class: "sh-sub"}, lb ? "Último backup: " + fmtD(lb) + "." : "Nenhum backup feito ainda."),
-      h("div", {class: "dj-glass t-celeste g-card"}, h("p", null, h("b", null, "Registros: "), fmtMB(dsize) + "."), h("p", null, h("b", null, "Fotos e vídeos: "), all.length ? fmtMB(msize) + " em " + all.length + (all.length > 1 ? " arquivos" : " arquivo") + "." : "nenhum ainda."), h("p", {class: "small muted", style: "margin:0"}, used)),
-      h("div", {class: "note dj-glass t-saibro", style: "margin-top:10px"}, "Tudo fica só neste aparelho. No iPhone, apagar o ícone do app apaga os dados, as fotos e os vídeos: faça o backup antes e guarde o arquivo no app Arquivos."),
-      h("div", {class: "stack"},
-        h("button", {type: "button", class: "btn primary block", onclick: once(async () => { if (await doBackup()) { close(); toast("Backup dos registros salvo"); render(); } }, 1500)}, "Backup dos registros"),
-        all.length ? h("button", {type: "button", class: "btn ghost block", onclick: once(async () => { prog.textContent = "Preparando…"; if (await doFullBackup(f => prog.textContent = "Preparando… " + Math.round(f * 100) + "%")) { close(); toast("Backup completo salvo"); render(); } else prog.textContent = ""; }, 3000)}, "Backup com fotos e vídeos · " + fmtMB(msize + dsize)) : null,
-        spare.length ? h("button", {type: "button", class: "btn ghost block", onclick: () => ask(slot, "Liberar " + fmtMB(free) + "? Em cada golpe, o app guarda um registro por mês e os marcados como melhor golpe, e apaga " + spare.length + (spare.length > 1 ? " outros" : " outro") + ". Os originais no app Fotos não são afetados.", "Liberar", () => {
-          const before = snap(); for (const [a, m] of spare) a.media = a.media.filter(x => x !== m); save(); close(); render(); dropLater(spare.map(([, m]) => m.id)); toast("Espaço liberado", () => undoTo(before)); })}, "Liberar espaço · " + fmtMB(free)) : null,
-        h("button", {type: "button", class: "btn plain block", onclick: once(() => { close(); setTimeout(restoreSheet, 150); })}, "Restaurar de um arquivo")),
-      prog, slot);
-  });
-}
-function restoreSheet(){
-  sheet("Restaurar", (el, close) => {
-    const status = h("p", {class: "small muted", role: "status"}), slot = h("div");
+/* Backup e restauração (mesmo padrão do Briceno Life v64/v65): um caminho principal, com o passo a passo do iPhone,
+   confirmação em verde com o nome do arquivo, e a restauração separada. Vindo das boas-vindas, abre só a restauração. */
+function backupSheet(opts = {}){
+  sheet(opts.restore ? "Restaurar" : "Backup", (el, close) => {
+    const all = S.athletes.flatMap(x => x.media || []), msize = all.reduce((t, m) => t + (m.size || 0), 0), dsize = new Blob([JSON.stringify(S)]).size;
+    const status = h("p", {class: "small muted", role: "status", style: "margin:0;text-align:center"}), slot = h("div");
     const file = h("input", {type: "file", hidden: true});
+    let shareFiles = false; try { shareFiles = !!(navigator.canShare && navigator.canShare({files: [new File(["{}"], "b.json", {type: "application/json"})]})); } catch (e) {}
+    const saveSteps = btn => h("ol", {class: "bk-steps"}, h("li", null, "Toque em ", h("b", null, btn), "."),
+      shareFiles ? [h("li", null, "Na janela do iPhone, escolha ", h("b", null, "Salvar em Arquivos"), "."), h("li", null, "Escolha ", h("b", null, "iCloud Drive"), " e toque em ", h("b", null, "Salvar"), ".")]
+        : h("li", null, "O arquivo vai para a pasta de downloads deste aparelho."));
+    // restauração: fotos e vídeos primeiro (gravar arquivo novo não apaga nada); depois os registros, com uma cópia do que havia antes
     file.addEventListener("change", async () => {
-      const f = file.files && file.files[0]; if (!f) return;
+      const f = file.files && file.files[0]; file.value = ""; if (!f) return;
+      status.textContent = "Lendo o arquivo…";
       let d; try { d = await readBackup(f); } catch (e) { status.textContent = "Este arquivo não é um backup válido."; return; }
       const data = d && d.app === "briceno-tennis" && d.data && Array.isArray(d.data.athletes) ? d.data : null;
       if (!data) { status.textContent = "Este arquivo não é um backup do Briceno Tennis."; return; }
+      status.textContent = "";
       const n = data.athletes.length, nm = (d.media || []).length;
-      ask(slot, "Restaurar o backup de " + (d.exportedAt ? fmtD(d.exportedAt.slice(0, 10)) : "data desconhecida") + " com " + n + (n === 1 ? " atleta" : " atletas") + (nm ? " e " + nm + (nm > 1 ? " fotos e vídeos" : " foto ou vídeo") : "") + "? Os registros atuais deste aparelho serão substituídos." + (nm ? "" : " As fotos e vídeos que já estão aqui continuam."), "Restaurar", async () => {
+      ask(slot, (S.athletes.length ? "Substituir os registros deste aparelho por " : "Restaurar ") + n + (n === 1 ? " atleta" : " atletas") + (nm ? " e " + nm + (nm > 1 ? " fotos e vídeos" : " foto ou vídeo") : "") + " do backup de " + (d.exportedAt ? fmtD(d.exportedAt.slice(0, 10)) : "data desconhecida") + "?" + (nm || !all.length ? "" : " As fotos e vídeos que já estão aqui continuam."), "Restaurar", async () => {
         try { let i = 0; for (const e of (d.media || [])) { status.textContent = "Restaurando fotos e vídeos… " + Math.round(++i / nm * 100) + "%";
             const blob = d.file.slice(d.body + e.off, d.body + e.off + e.len, e.type), th = e.tlen ? d.file.slice(d.body + e.toff, d.body + e.toff + e.tlen, e.ttype) : null;
             await mput(e.id, {blob: new Blob([await blob.arrayBuffer()], {type: e.type}), thumb: th ? new Blob([await th.arrayBuffer()], {type: e.ttype}) : null, type: e.type}); URLS.delete(e.id); } }
-        catch (err) { status.textContent = "Não foi possível restaurar as fotos e vídeos. Os registros não foram alterados."; return; }
-        const before = snap(); S = data; S.athletes = S.athletes.filter(x => x && typeof x === "object").map(normAthlete); S.meta = S.meta || {lastBackup: null};
+        catch (err) { status.textContent = "Não foi possível guardar as fotos e vídeos neste aparelho (espaço cheio ou bloqueado). Os registros não foram alterados."; return; }
+        try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (x) {}
+        const before = snap(); try { localStorage.setItem(KEY + ".antes-de-restaurar", before); } catch (x) {}
+        S = data; S.athletes = S.athletes.filter(x => x && typeof x === "object").map(normAthlete); S.meta = S.meta || {lastBackup: null};
         if (!S.athletes.some(x => x.id === S.activeId)) S.activeId = S.athletes[0] ? S.athletes[0].id : null;
-        if (!save()) return; close(); render(); toast("Backup restaurado", () => undoTo(before));
+        if (!save()) { S = JSON.parse(before); status.textContent = "Não foi possível restaurar: o armazenamento deste aparelho está cheio ou bloqueado. Nada foi alterado."; return; }
+        close(); view.tab = "hoje"; render(); toast(nm ? "Backup restaurado com " + nm + (nm > 1 ? " fotos e vídeos" : " foto ou vídeo") : "Backup restaurado", () => undoTo(before));
       });
     });
-    el.append(h("h2", null, "Restaurar backup"), h("p", {class: "sh-sub"}, "Escolha o arquivo salvo antes: .json (registros) ou .btbackup (com fotos e vídeos). O app pede confirmação, e dá para desfazer."),
-      h("div", {class: "stack"}, h("button", {type: "button", class: "btn primary block", onclick: () => file.click()}, "Escolher arquivo")), file, status, slot);
+    const pick = h("button", {type: "button", class: "btn primary block", onclick: () => file.click()}, "Escolher o arquivo do backup");
+    if (opts.restore) {
+      el.append(h("h2", null, "Restaurar meus dados"),
+        h("ol", {class: "bk-steps"}, h("li", null, "Toque em ", h("b", null, "Escolher o arquivo do backup"), "."),
+          h("li", null, "Abra ", h("b", null, "iCloud Drive"), " (ou onde você salvou) e toque no arquivo ", h("b", null, "briceno-tennis-completo"), " ou ", h("b", null, "briceno-tennis-backup"), "."),
+          h("li", null, "Confira e toque em ", h("b", null, "Restaurar"), ".")),
+        h("div", {class: "bk-row"}, pick, file, status, slot, h("button", {type: "button", class: "btn plain block", onclick: close}, "Fechar")));
+      return;
+    }
+    const lb = S.meta.lastBackup, sub = h("p", {class: "sh-sub"}, lb ? "Último backup: " + fmtD(lb) + "." : "Nenhum backup feito ainda.");
+    const saved = h("p", {class: "bk-ok", role: "status"}); saved.hidden = true;
+    const prog = h("p", {class: "small muted", role: "status", style: "margin:0;text-align:center"});
+    const what = h("p", {class: "small muted", style: "margin:0;text-align:center"}, "Leva todos os registros" + (all.length ? ", " + all.length + (all.length > 1 ? " fotos e vídeos" : " foto ou vídeo") + " (" + fmtMB(msize + dsize) + ")" : " (" + fmtMB(dsize) + ")") + ". Sem criptografia: guarde em um lugar só seu.");
+    const spare = spareMedia(), free = spare.reduce((t, [, m]) => t + (m.size || 0), 0);
+    const restoreBox = h("div", {class: "bk-row"}, h("p", {class: "small muted", style: "margin:0"}, "Para trocar de celular ou de endereço do app. Os registros deste aparelho são substituídos pelos do backup."), pick);
+    restoreBox.hidden = true;
+    const restoreBtn = h("button", {type: "button", class: "btn ghost block", "aria-expanded": "false", onclick: () => { restoreBox.hidden = false; restoreBtn.hidden = true; }}, "Restaurar um backup");
+    el.append(h("h2", null, "Backup"), sub, saveSteps("Salvar backup"),
+      h("div", {class: "bk-row"},
+        h("button", {type: "button", class: "btn primary block", onclick: once(async () => { prog.textContent = all.length ? "Preparando…" : "";
+          const r = await doFullBackup(f => prog.textContent = "Preparando… " + Math.round(f * 100) + "%"); prog.textContent = "";
+          if (r) { sub.textContent = "Último backup: hoje."; saved.hidden = false; saved.textContent = "Pronto: " + r.name + (r.n ? ", com " + r.n + (r.n > 1 ? " fotos e vídeos" : " foto ou vídeo") : "") + ". Para conferir, abra o app Arquivos → iCloud Drive."; render(); } }, 3000)}, "Salvar backup"),
+        prog, saved, what,
+        h("button", {type: "button", class: "btn plain block", onclick: once(async () => { const name = await doBackup(); if (name) { sub.textContent = "Último backup: hoje."; saved.hidden = false; saved.textContent = "Pronto: " + name + " (só os registros, sem fotos e vídeos). Para conferir, abra o app Arquivos → iCloud Drive."; render(); } }, 1500)}, "Salvar só os registros (arquivo leve)"),
+        h("div", {class: "bk-sep"}),
+        h("div", {class: "dj-glass t-celeste g-card"}, h("p", null, h("b", null, "Registros: "), fmtMB(dsize) + "."), h("p", {style: "margin:0"}, h("b", null, "Fotos e vídeos: "), all.length ? fmtMB(msize) + " em " + all.length + (all.length > 1 ? " arquivos" : " arquivo") + "." : "nenhum ainda.")),
+        spare.length ? h("button", {type: "button", class: "btn ghost block", onclick: () => ask(slot, "Liberar " + fmtMB(free) + "? Em cada golpe, o app guarda um registro por mês e os marcados como melhor golpe, e apaga " + spare.length + (spare.length > 1 ? " outros" : " outro") + ". Os originais no app Fotos não são afetados.", "Liberar", () => {
+          const before = snap(); for (const [a, m] of spare) a.media = a.media.filter(x => x !== m); save(); close(); render(); dropLater(spare.map(([, m]) => m.id)); toast("Espaço liberado", () => undoTo(before)); })}, "Liberar espaço · " + fmtMB(free)) : null,
+        h("div", {class: "note dj-glass t-saibro"}, "Tudo fica só neste aparelho. No iPhone, apagar o ícone do app apaga os registros, as fotos e os vídeos: faça o backup antes."),
+        h("div", {class: "bk-sep"}),
+        restoreBtn, restoreBox, file, status, slot,
+        h("button", {type: "button", class: "btn plain block", onclick: close}, "Fechar")));
   });
 }
+const restoreSheet = () => backupSheet({restore: true});
 
 /* Face ID opcional (mesmo padrão do Briceno Life): passkey deste aparelho com verificação do usuário.
    É uma tranca na entrada do app, não criptografia. A configuração fica numa chave à parte e não vai no backup. */

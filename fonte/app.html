@@ -376,6 +376,18 @@ input[type=date].input{-webkit-appearance:none;appearance:none;display:block}
 .cmp-l span{color:var(--muted);font-weight:450}
 .rng{width:100%;height:44px;accent-color:var(--dj-signal)}
 @media (max-width:360px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* backup (mesmo padrão do Briceno Life) */
+.bk-row{display:flex;flex-direction:column;gap:10px}
+.bk-steps{margin:2px 0 16px;padding-left:1.4em;display:flex;flex-direction:column;gap:6px;color:var(--ink-2);font-size:var(--t-body);line-height:1.45}
+.bk-steps b{color:var(--text);font-weight:650}
+.bk-sep{height:1px;background:var(--dj-quiet-rule);margin:8px 0 4px}
+.bk-ok{margin:0;text-align:center;color:var(--ok);font-size:var(--t-sm);font-weight:600;line-height:1.45}
+.cta{display:flex;align-items:center;gap:14px}
+.cta .ic{width:42px;height:42px;border-radius:12px;background:var(--clay-soft);color:var(--dj-signal);display:grid;place-items:center;flex:none}
+.cta .ic svg{width:20px;height:20px}
+.cta div{flex:1;min-width:0;font-size:var(--t-sm);color:var(--muted)}
+.cta b{display:block;color:var(--text);font-size:var(--t-body);font-weight:650;margin-bottom:1px}
+.wl-back{margin-top:18px}
 /* toast */
 #toast{position:fixed;left:50%;bottom:calc(var(--tabbar) + var(--sab) + 18px);transform:translate(-50%,20px);z-index:60;display:flex;align-items:center;gap:14px;max-width:calc(100% - 32px);padding:12px 16px;border-radius:16px;
   background:rgba(38,33,29,.96);border:1px solid rgba(255,255,255,.1);color:#fff;font-size:var(--t-sm);font-weight:560;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 14px 34px rgba(0,0,0,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
