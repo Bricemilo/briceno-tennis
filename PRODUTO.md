@@ -1,7 +1,28 @@
 # Briceno Tennis — registro do produto
 
-Endereço: https://bricemilo.github.io/briceno-tennis/
+Endereço: https://briceno-tennis.pages.dev/ (Cloudflare Pages, desde 20/11/2026; o Cloudflare só hospeda o app, nenhum dado vai para a nuvem). Endereço antigo, até a confirmação da migração: https://bricemilo.github.io/briceno-tennis/
 Proposta e pesquisa: `PROPOSTA.md`. Sistema visual: `fonte/DESIGN.md`.
+
+## v6 · Backup no padrão do Briceno Life e nova hospedagem (publicada em 21/11/2026, aprovada pelo Camilo com "Publica")
+
+### O que mudou
+- **Hospedagem:** Cloudflare Pages (`briceno-tennis.pages.dev`), projeto `briceno-tennis`, pasta `docs`, publicação automática a partir da `main`. A migração foi feita pelo Camilo com o "Backup com fotos e vídeos" e conferida no iPhone. O endereço antigo fica até 22/11/2026.
+- **Diretriz da empresa Briceno** registrada em `CLAUDE.md`. A versão anterior foi guardada na branch `v5-estavel` antes desta publicação.
+- **Tela de backup:**
+  - passo a passo do iPhone (Salvar backup → Salvar em Arquivos → iCloud Drive → Salvar);
+  - um botão principal "Salvar backup", que gera o backup completo, com fotos e vídeos;
+  - opção discreta "Salvar só os registros";
+  - confirmação em verde, abaixo do botão, com o nome do arquivo.
+- **Boas-vindas:** bloco "Já usa o Briceno Tennis? Restaurar meus dados", que abre uma tela só de restaurar, com o passo a passo.
+- **Restauração mais segura:** grava primeiro as fotos e vídeos; antes de trocar os registros, guarda uma cópia dos atuais (`bricenotennis.v1.antes-de-restaurar`); tem "Desfazer". Se faltar espaço, nada é alterado.
+
+### Testes
+- Simulador (Chromium com Playwright):
+  - backup completo com confirmação verde;
+  - restauração pelas boas-vindas em outro perfil de navegador, com as 3 fotos e vídeos;
+  - restauração de backup só de registros (.json), mostrando a compatibilidade;
+  - fluxo completo sem erros.
+- **No iPhone:** o "Salvar em Arquivos" é do próprio iPhone e foi simulado nas capturas.
 
 ## v5.2 · Golpe antes do torneio e "antes e agora" no Hoje (publicada em 16/11/2026, aprovada pelo Camilo com "Publica")
 
